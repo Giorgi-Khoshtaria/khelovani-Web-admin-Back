@@ -49,12 +49,16 @@ const UserSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+
+    // ✅ Correct — ObjectId ref to Role model
+    role: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Role",
+      required: true,
+    },
   },
-  {
-    timestamps: true,
-  },
+  { timestamps: true },
 );
 
 const User = mongoose.model("User", UserSchema);
-
 export default User;
