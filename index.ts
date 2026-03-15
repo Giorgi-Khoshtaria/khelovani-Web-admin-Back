@@ -3,7 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import userRoutes from "./src/routes/user.routes.js";
-
+import { globalLimiter } from "./src/utils/rate-limit.js";
 dotenv.config();
 
 const app = express();
@@ -19,7 +19,7 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
-
+app.use(globalLimiter);
 app.use("/api/user", userRoutes);
 
 mongoose
