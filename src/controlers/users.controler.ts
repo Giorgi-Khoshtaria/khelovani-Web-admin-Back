@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import type { Request, Response } from "express";
-import User from "../modules/user.modules.js";
+import User from "../models/user.model.js";
 import { UserTypes } from "../utils/userTypes.js";
 import { validateRegistration } from "../utils/registerValidation.js";
 import { generateJWTToken } from "../utils/genereateJWT-token.js";
