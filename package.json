@@ -5,7 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon --exec tsx index.ts"
+    "dev": "nodemon --exec tsx index.ts",
+    "seed:roles": "tsx src/utils/seedRoles/seedRoles.ts"
   },
   "keywords": [],
   "author": "",

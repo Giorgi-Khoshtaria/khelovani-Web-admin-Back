@@ -9,6 +9,7 @@ import { generateJWTToken } from "../utils/token/genereateJWT-token.js";
 
 // ── Populated Role Type ──────────────────────────────────────────────────────
 import { Types } from "mongoose";
+import { ROLES } from "../utils/middleware/permition.js";
 
 interface PopulatedRole {
   _id: Types.ObjectId;
@@ -59,7 +60,7 @@ export const registerUser = async (
     }
 
     // ── Find default role ──────────────────────────────────────────────────
-    const defaultRole = await Role.findOne({ name: "user" });
+    const defaultRole = await Role.findOne({ name: ROLES.USER });
     if (!defaultRole) {
       res.status(500).json({
         message: "Default role not found. Run seedRoles first.",
