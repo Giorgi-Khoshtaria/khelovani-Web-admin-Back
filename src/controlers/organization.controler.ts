@@ -8,7 +8,7 @@ import { UserTypes } from "../utils/types/userTypes.js";
 import { validateRegistration } from "../utils/validations/forms/registerValidation.js";
 import { validateLoginForm } from "../utils/validations/forms/loginValidation.js";
 import { generateJWTToken } from "../utils/token/genereateJWT-token.js";
-import { ROLES } from "../utils/middleware/permition.js";
+import { ROLES } from "../utils/middleware/role-middleware/permition.js";
 
 // ── Populated Role Type ──────────────────────────────────────────────────────
 interface PopulatedRole {

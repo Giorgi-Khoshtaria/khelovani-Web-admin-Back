@@ -50,6 +50,10 @@ const UserSchema = new mongoose.Schema(
       required: true,
       minlength: 8,
     },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
     isActive: {
       type: Boolean,
       default: true,

@@ -1,25 +1,30 @@
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import mongoose from "mongoose";
 import userRoutes from "./src/routes/user.routes.js";
 import { globalLimiter } from "./src/utils/limiters/rate-limit.js";
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(express.json());
-
+// ✅ 1. cors პირველი
 app.use(
   cors({
-    origin: process.env.FRONT_URL,
+    origin: process.env.FRONTEND_URL,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
+
+// ✅ 2. body parser მეორე
+app.use(express.json());
+
+// ✅ 3. rate limiter მესამე
 app.use(globalLimiter);
+
+// ✅ 4. routes ბოლოს
 app.use("/api/user", userRoutes);
 
 mongoose
