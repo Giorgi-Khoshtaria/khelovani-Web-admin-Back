@@ -4,7 +4,7 @@ import type { Request, Response } from "express";
 import User from "../models/user.model.js";
 import Role from "../models/role.model.js";
 import { UserTypes } from "../utils/types/userTypes.js";
-import { validateRegistration } from "../utils/validations/registerValidation.js";
+import { validateRegistration } from "../utils/validations/forms/registerValidation.js";
 import { generateJWTToken } from "../utils/token/genereateJWT-token.js";
 
 // ── Populated Role Type ──────────────────────────────────────────────────────
