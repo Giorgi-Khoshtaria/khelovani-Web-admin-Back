@@ -6,6 +6,7 @@ export interface UserTypes {
   city: string;
   address: string;
   email: string;
+  phone: string;
   password: string;
   isActive: boolean;
 }

@@ -34,6 +34,7 @@ export const registerUser = async (
       city,
       address,
       email,
+      phone,
       password,
     }: UserTypes = req.body;
 
@@ -79,6 +80,7 @@ export const registerUser = async (
       city: city.trim().toLowerCase(),
       address: address.trim(),
       email: email.trim().toLowerCase(),
+      phone: phone.trim(),
       password: hashedPassword,
       role: defaultRole._id,
     });

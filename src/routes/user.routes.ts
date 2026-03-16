@@ -17,7 +17,7 @@ import { PERMISSIONS, PANELS } from "../utils/middleware/permition.js";
 const router = Router();
 
 // ✅ Public — no auth
-router.post("/register", oneHourLimiter, registerUser);
+router.post("/register", twoMinutesLimiter, registerUser);
 router.post("/login", twoMinutesLimiter, loginUser);
 
 // ✅ Protected — just needs login

@@ -3,6 +3,7 @@ import { validateEmail } from "../shared/email.validation.js";
 import { validatePassword } from "../shared/password.validation.js";
 import { validateCity } from "../shared/city.validation.js";
 import { validateNameGe, validateNameEn } from "../shared/name.validation.js";
+import { validatePhone } from "../shared/phone.validation.js";
 
 export interface ValidationError {
   field: string;
@@ -91,6 +92,10 @@ export const validateRegistration = (
   passwordErrors.forEach((msg) =>
     errors.push({ field: "password", message: msg }),
   );
+
+  // ── phone ──────────────────────────────────────────────────────────────
+  const phoneError = validatePhone(data.phone);
+  if (phoneError) errors.push({ field: "phone", message: phoneError });
 
   return errors;
 };
