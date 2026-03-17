@@ -5,9 +5,9 @@ import Role from "../models/role.model.js";
 import { UserTypes } from "../utils/types/userTypes.js";
 import { validateRegistration } from "../utils/validations/forms/registerValidation.js";
 import { generateJWTToken } from "../utils/token/genereateJWT-token.js";
-import { sendUserRegistrationVerificationEmail } from "../utils/middleware/verification-middleware/emailVerification/sendUserEmails/sendUserRegistrationVerificationEmail.js";
+import { sendUserRegistrationVerificationEmail } from "../middleware/verification-middleware/emailVerification/sendUserEmails/sendUserRegistrationVerificationEmail.js";
 import { Types } from "mongoose";
-import { ROLES } from "../utils/middleware/role-middleware/permition.js";
+import { ROLES } from "../middleware/role-middleware/permition.js";
 
 interface PopulatedRole {
   _id: Types.ObjectId;

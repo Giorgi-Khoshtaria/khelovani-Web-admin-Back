@@ -9,14 +9,14 @@ import {
   twoMinutesLimiter,
   oneHourLimiter,
 } from "../utils/limiters/rate-limit.js";
-import { authenticate } from "../utils/middleware/auth-middleware/authenticate.js";
-import { requirePermission } from "../utils/middleware/role-middleware/requirePermission.js";
-import { requirePanel } from "../utils/middleware/role-middleware/requirePanel.js";
+import { authenticate } from "../middleware/auth-middleware/authenticate.js";
+import { requirePermission } from "../middleware/role-middleware/requirePermission.js";
+import { requirePanel } from "../middleware/role-middleware/requirePanel.js";
 import {
   PERMISSIONS,
   PANELS,
-} from "../utils/middleware/role-middleware/permition.js";
-import { verifyEmailCallback } from "../utils/middleware/verification-middleware/emailVerification/sendUserEmails/Verifyemailcallback.js";
+} from "../middleware/role-middleware/permition.js";
+import { verifyEmailCallback } from "../middleware/verification-middleware/emailVerification/sendUserEmails/Verifyemailcallback.js";
 
 const router = Router();
 
