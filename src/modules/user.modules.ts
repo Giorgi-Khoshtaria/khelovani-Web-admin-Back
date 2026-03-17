@@ -59,7 +59,6 @@ const UserSchema = new mongoose.Schema(
       default: true,
     },
 
-    // ✅ Correct — ObjectId ref to Role model
     role: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Role",

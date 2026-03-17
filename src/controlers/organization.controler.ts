@@ -2,8 +2,8 @@
 import bcrypt from "bcrypt";
 import type { Request, Response } from "express";
 import { Types } from "mongoose";
-import User from "../models/user.model.js";
-import Role from "../models/role.model.js";
+import User from "../modules/user.modules.js";
+import Role from "../modules/role.modules.js";
 import { UserTypes } from "../utils/types/userTypes.js";
 import { validateRegistration } from "../utils/validations/forms/registerValidation.js";
 import { validateLoginForm } from "../utils/validations/forms/loginValidation.js";

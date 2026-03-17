@@ -1,10 +1,10 @@
 import { Router } from "express";
+import { registerUser } from "../controlers/user-controler/registration.js";
+import { loginUser } from "../controlers/user-controler/login.js";
 import {
-  registerUser,
-  loginUser,
-  // getAllUsers,
-  // deleteUser,
-} from "../controlers/users.controler.js";
+  forgotPassword,
+  resetPassword,
+} from "../controlers/user-controler/forgot-password.js";
 import {
   twoMinutesLimiter,
   oneHourLimiter,
@@ -23,6 +23,8 @@ const router = Router();
 // ✅ Public
 router.post("/register", twoMinutesLimiter, registerUser);
 router.post("/login", twoMinutesLimiter, loginUser);
+router.post("/forgot-password", twoMinutesLimiter, forgotPassword);
+router.post("/reset-password", twoMinutesLimiter, resetPassword);
 
 router.get("/verify-user-registration", verifyEmailCallback);
 

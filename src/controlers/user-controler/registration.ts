@@ -1,24 +1,12 @@
 import bcrypt from "bcrypt";
 import type { Request, Response } from "express";
-import User from "../models/user.model.js";
-import Role from "../models/role.model.js";
-import { UserTypes } from "../utils/types/userTypes.js";
-import { validateRegistration } from "../utils/validations/forms/registerValidation.js";
-import { generateJWTToken } from "../utils/token/genereateJWT-token.js";
-import { sendUserRegistrationVerificationEmail } from "../middleware/verification-middleware/emailVerification/sendUserEmails/sendUserRegistrationVerificationEmail.js";
-import { Types } from "mongoose";
-import { ROLES } from "../middleware/role-middleware/permition.js";
+import { ROLES } from "../../middleware/role-middleware/permition.js";
+import { sendUserRegistrationVerificationEmail } from "../../middleware/verification-middleware/emailVerification/sendUserEmails/sendUserRegistrationVerificationEmail.js";
+import Role from "../../modules/role.modules.js";
+import User from "../../modules/user.modules.js";
+import { UserTypes } from "../../utils/types/userTypes.js";
+import { validateRegistration } from "../../utils/validations/forms/registerValidation.js";
 
-interface PopulatedRole {
-  _id: Types.ObjectId;
-  name: string;
-  permissions: string[];
-  allowedPanels: string[];
-  description: string;
-  isActive: boolean;
-}
-
-// ── Register ──────────────────────────────────────────────────────────────────
 export const registerUser = async (
   req: Request,
   res: Response,
@@ -108,53 +96,6 @@ export const registerUser = async (
     res.status(201).json({
       message:
         "მომხმარებელი წარმატებით დარეგისტრირდა! გთხოვთ შეამოწმოთ ელ-ფოსტა დასადასტურებლად",
-    });
-  } catch (error) {
-    res.status(500).json({ message: (error as Error).message });
-  }
-};
-
-// ── Login ─────────────────────────────────────────────────────────────────────
-export const loginUser = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { email, password } = req.body;
-
-    const user = await User.findOne({
-      email: email.trim().toLowerCase(),
-    }).populate<{ role: PopulatedRole }>("role");
-
-    if (!user) {
-      res.status(422).json({ message: "მომხმარებელი არ მოიძებნა" });
-      return;
-    }
-
-    if (!user.isVerified) {
-      res.status(403).json({
-        message: "გთხოვთ ჯერ დაადასტუროთ ელ-ფოსტა",
-        code: "EMAIL_NOT_VERIFIED",
-      });
-      return;
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      res.status(422).json({ message: "არასწორი მეილი ან პაროლი" });
-      return;
-    }
-
-    const token = generateJWTToken({
-      id: user._id.toString(),
-      role: user.role.name,
-      permissions: user.role.permissions,
-      allowedPanels: user.role.allowedPanels,
-    });
-
-    const { password: _, ...userWithoutPassword } = user.toObject();
-
-    res.status(200).json({
-      message: "მომხმარებელი წარმატებით შევიდა სისტემაში",
-      token,
-      user: userWithoutPassword,
     });
   } catch (error) {
     res.status(500).json({ message: (error as Error).message });

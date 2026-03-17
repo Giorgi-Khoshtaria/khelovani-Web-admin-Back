@@ -1,3 +1,5 @@
+import { Types } from "mongoose";
+
 export interface UserTypes {
   idNumber: string;
   nameGe?: string;
@@ -8,5 +10,14 @@ export interface UserTypes {
   email: string;
   phone: string;
   password: string;
+  isActive: boolean;
+}
+
+export interface PopulatedRole {
+  _id: Types.ObjectId;
+  name: string;
+  permissions: string[];
+  allowedPanels: string[];
+  description: string;
   isActive: boolean;
 }
