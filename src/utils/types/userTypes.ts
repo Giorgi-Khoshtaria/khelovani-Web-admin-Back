@@ -21,3 +21,6 @@ export interface PopulatedRole {
   description: string;
   isActive: boolean;
 }
+
+export type EmailType = "registration" | "forgot-password";
+export type BtnText = "დაადასტურე ელ-ფოსტა" | "აღადგინე პაროლი";

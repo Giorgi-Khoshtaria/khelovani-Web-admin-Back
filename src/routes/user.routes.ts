@@ -26,7 +26,7 @@ router.post("/login", twoMinutesLimiter, loginUser);
 router.post("/forgot-password", twoMinutesLimiter, forgotPassword);
 router.post("/reset-password", twoMinutesLimiter, resetPassword);
 
-router.get("/verify-user-registration", verifyEmailCallback);
+router.get("/verify", verifyEmailCallback);
 
 // ✅ Protected
 // router.get("/profile", authenticate, getProfile);

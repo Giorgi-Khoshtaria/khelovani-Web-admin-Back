@@ -8,6 +8,8 @@ export const sendUserRegistrationVerificationEmail = async (
 
   const verificationLink = `${process.env.FRONTEND_URL}/verify-user-registration?token=${verificationToken}`;
   const subject = "მომხმარებლის რეგისტრაციისთვის ელ-ფოსტის დადასტურება";
-
-  await sendVerificationEmail(email, verificationLink, subject);
+  const emailType = "registration";
+  const emailDescription =
+    "მადლობა რეგისტრაციისთვის! გთხოვთ დაადასტუროთ თქვენი ელ-ფოსტის მისამართი ქვემოთ მოცემულ ღილაკზე დაჭერით.";
+  await sendVerificationEmail(email, verificationLink, subject, emailType);
 };

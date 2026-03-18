@@ -2,8 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import type { Request, Response } from "express";
 import User from "../../modules/user.modules.js";
-import { generateRememberToken } from "../../middleware/verification-middleware/generateRememberToken.js";
-import { sendVerificationEmail } from "../../middleware/verification-middleware/emailVerification/email-middleware/sendVerificationEmail.js";
+import { sendUserForgotPasswordEmail } from "../../middleware/verification-middleware/emailVerification/sendUserEmails/sendUserForgotPasswordEmail.js";
 import {
   validateForgotPassword,
   validateResetPassword,
@@ -38,11 +37,7 @@ export const forgotPassword = async (
       return;
     }
 
-    const resetToken = generateRememberToken(trimmedEmail);
-    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
-    const subject = "პაროლის აღდგენა";
-
-    await sendVerificationEmail(trimmedEmail, resetLink, subject);
+    await sendUserForgotPasswordEmail(trimmedEmail);
 
     res.status(200).json({
       message:

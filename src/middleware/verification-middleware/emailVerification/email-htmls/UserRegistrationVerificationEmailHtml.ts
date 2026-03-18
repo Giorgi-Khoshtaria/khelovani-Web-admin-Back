@@ -1,5 +1,6 @@
 export const UserRegistrationVerificationEmailHtml = (
   verificationLink: string,
+  { btnText, emailDescription }: { btnText: string; emailDescription: string },
 ): string => `
 <!DOCTYPE html>
 <html lang="ka">
@@ -26,20 +27,19 @@ export const UserRegistrationVerificationEmailHtml = (
               <td style="color:#555; font-size:15px; line-height:1.6; padding-bottom:28px;">
                 <p style="margin:0 0 12px;">გამარჯობა,</p>
                 <p style="margin:0;">
-                  მადლობა რეგისტრაციისთვის! გთხოვთ დაადასტუროთ თქვენი
-                  ელ-ფოსტის მისამართი ქვემოთ მოცემულ ღილაკზე დაჭერით.
+                  ${emailDescription}
                 </p>
               </td>
             </tr>
             <tr>
               <td align="center" style="padding-bottom:28px;">
                 <a href="${verificationLink}"
-                  style="display:inline-block; padding:14px 32px;
-                         background:#222; color:#ffffff; font-size:15px;
-                         font-weight:600; border-radius:8px;
-                         text-decoration:none; letter-spacing:0.3px;">
-                  დაადასტურე ელ-ფოსტა
-                </a>
+  style="display:inline-block; padding:14px 32px;
+         background:#222; color:#ffffff; font-size:15px;
+         font-weight:600; border-radius:8px;
+         text-decoration:none; letter-spacing:0.3px;">
+  ${btnText}
+</a>
               </td>
             </tr>
             <tr>
