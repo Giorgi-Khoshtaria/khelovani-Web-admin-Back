@@ -52,7 +52,11 @@ const OrganisationSchema = new mongoose.Schema(
       required: false,
       trim: true,
     },
-
+    password: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     // ── Status ───────────────────────────────────────────────────────────────
     status: {
       type: String,

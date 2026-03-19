@@ -2,11 +2,11 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import type { Request, Response } from "express";
 import User from "../../modules/user.modules.js";
-import { sendUserForgotPasswordEmail } from "../../middleware/verification-middleware/emailVerification/sendUserEmails/sendUserForgotPasswordEmail.js";
 import {
   validateForgotPassword,
   validateResetPassword,
 } from "../../utils/validations/forms/forgotPasswordValidations.js";
+import { sendUserForgotPasswordEmail } from "../../middleware/verification-middleware/emailVerification/sendEmails/sendUserEmails.js";
 
 // ── Forgot Password ───────────────────────────────────────────────────────────
 // Accepts an email, validates it, looks the user up, and sends a reset link.

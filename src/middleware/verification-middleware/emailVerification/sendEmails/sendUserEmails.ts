@@ -13,3 +13,14 @@ export const sendUserRegistrationVerificationEmail = async (
     "მადლობა რეგისტრაციისთვის! გთხოვთ დაადასტუროთ თქვენი ელ-ფოსტის მისამართი ქვემოთ მოცემულ ღილაკზე დაჭერით.";
   await sendVerificationEmail(email, verificationLink, subject, emailType);
 };
+
+export const sendUserForgotPasswordEmail = async (
+  email: string,
+): Promise<void> => {
+  const verificationToken = generateRememberToken(email);
+
+  const verificationLink = `${process.env.FRONTEND_URL}/reset-password?token=${verificationToken}`;
+  const subject = "მომხმარებლის დავიწყებული პაროლის აღდგენა";
+  const emailType = "forgot-password";
+  await sendVerificationEmail(email, verificationLink, subject, emailType);
+};

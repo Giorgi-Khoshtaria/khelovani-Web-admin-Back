@@ -2,12 +2,16 @@ import { Request, Response } from "express";
 import Organisation from "../../modules/organization.modules.js";
 import { PartnerRegisterData } from "../../utils/types/partnerTypes.js";
 import { validatePartnerRegistration } from "../../utils/validations/forms/partnerValidation.js";
+import crypto from "crypto";
+import bcrypt from "bcrypt";
+import { sendPartnerPasswordEmail } from "../../middleware/verification-middleware/emailVerification/sendEmails/sendPartnerEmail.js";
 
 export const registerPartner = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
   try {
+    const len = req.query.lang as string;
     const data: PartnerRegisterData = req.body;
 
     // ── Validate all fields ────────────────────────────────────────────────
@@ -35,6 +39,10 @@ export const registerPartner = async (
       return;
     }
 
+    // ── Generate Random Password ───────────────────────────────────────────
+    const plainPassword = crypto.randomBytes(6).toString("hex");
+    const hashedPassword = await bcrypt.hash(plainPassword, 10);
+
     // ── Create Organisation ────────────────────────────────────────────────
     await Organisation.create({
       companyNameGe: data.companyNameGe.trim(),
@@ -47,7 +55,15 @@ export const registerPartner = async (
       address: data.address.trim(),
       description: data.description?.trim(),
       status: "pending",
+      password: hashedPassword,
     });
+
+    // ── Send Password Email ────────────────────────────────────────────────
+    await sendPartnerPasswordEmail(
+      data.email.trim().toLowerCase(),
+      data.companyNameGe.trim(),
+      plainPassword,
+    );
 
     res.status(201).json({ message: "პარტნიორი წარმატებით დარეგისტრირდა" });
   } catch (error) {

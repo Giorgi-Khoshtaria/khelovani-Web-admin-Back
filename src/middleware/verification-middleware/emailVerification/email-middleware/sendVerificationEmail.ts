@@ -1,5 +1,5 @@
 import { transporter } from "./email.js";
-import { UserRegistrationVerificationEmailHtml } from "../email-htmls/UserRegistrationVerificationEmailHtml.js";
+import { verifyEmailHTML } from "../email-htmls/verifyEmailHTML.js";
 
 const checkEmailType = (
   emailType: string,
@@ -35,9 +35,6 @@ export const sendVerificationEmail = async (
     from: process.env.EMAIL_USER,
     to: email,
     subject,
-    html: UserRegistrationVerificationEmailHtml(
-      verificationLink,
-      checkEmailType(emailType),
-    ),
+    html: verifyEmailHTML(verificationLink, checkEmailType(emailType)),
   });
 };

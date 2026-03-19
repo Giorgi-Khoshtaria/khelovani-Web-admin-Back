@@ -16,7 +16,7 @@ import {
   PERMISSIONS,
   PANELS,
 } from "../middleware/role-middleware/permition.js";
-import { verifyEmailCallback } from "../middleware/verification-middleware/emailVerification/sendUserEmails/Verifyemailcallback.js";
+import { verifyEmailCallback } from "../middleware/verification-middleware/emailVerification/sendEmails/Verifyemailcallback.js";
 
 const router = Router();
 

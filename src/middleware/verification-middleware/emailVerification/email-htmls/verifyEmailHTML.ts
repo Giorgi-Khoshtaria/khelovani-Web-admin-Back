@@ -1,4 +1,4 @@
-export const UserRegistrationVerificationEmailHtml = (
+export const verifyEmailHTML = (
   verificationLink: string,
   { btnText, emailDescription }: { btnText: string; emailDescription: string },
 ): string => `

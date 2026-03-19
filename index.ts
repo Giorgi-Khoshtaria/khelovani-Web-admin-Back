@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import userRoutes from "./src/routes/user.routes.js";
 import partnerRoutes from "./src/routes/partner.routes.js";
 import { globalLimiter } from "./src/utils/limiters/rate-limit.js";
+import adminAuthRoutes from "./src/routes/adminCalls/adminAuth.routes.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -28,7 +29,7 @@ app.use(globalLimiter);
 // ✅ 4. routes ბოლოს
 app.use("/api/user", userRoutes);
 app.use("/api/partner", partnerRoutes);
-
+app.use("/api/admin", adminAuthRoutes);
 mongoose
   .connect(process.env.MONGODB_URI!)
   .then(() => console.log("MongoDB connected"))

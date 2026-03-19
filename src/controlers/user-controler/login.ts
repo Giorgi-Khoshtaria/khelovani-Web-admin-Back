@@ -1,9 +1,9 @@
 import bcrypt from "bcrypt";
 import type { Request, Response } from "express";
 import User from "../../modules/user.modules.js";
-import { PopulatedRole } from "../../utils/types/userTypes.js";
 import { generateJWTToken } from "../../utils/token/genereateJWT-token.js";
 import { validateLoginForm } from "../../utils/validations/forms/loginValidation.js";
+import { PopulatedRole } from "../../utils/types/userTypes.js";
 
 // ── Login ─────────────────────────────────────────────────────────────────────
 export const loginUser = async (req: Request, res: Response): Promise<void> => {

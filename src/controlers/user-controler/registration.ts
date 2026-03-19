@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import type { Request, Response } from "express";
 import { ROLES } from "../../middleware/role-middleware/permition.js";
-import { sendUserRegistrationVerificationEmail } from "../../middleware/verification-middleware/emailVerification/sendUserEmails/sendUserRegistrationVerificationEmail.js";
+import { sendUserRegistrationVerificationEmail } from "../../middleware/verification-middleware/emailVerification/sendEmails/sendUserEmails.js";
 import Role from "../../modules/role.modules.js";
 import User from "../../modules/user.modules.js";
 import { UserTypes } from "../../utils/types/userTypes.js";

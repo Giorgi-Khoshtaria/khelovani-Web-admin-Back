@@ -2,13 +2,13 @@
 import bcrypt from "bcrypt";
 import type { Request, Response } from "express";
 import { Types } from "mongoose";
-import User from "../../modules/user.modules.js";
-import Role from "../../modules/role.modules.js";
-import { UserTypes } from "../../utils/types/userTypes.js";
-import { validateRegistration } from "../../utils/validations/forms/registerValidation.js";
-import { validateLoginForm } from "../../utils/validations/forms/loginValidation.js";
-import { generateJWTToken } from "../../utils/token/genereateJWT-token.js";
-import { ROLES } from "../../middleware/role-middleware/permition.js";
+import User from "../../../modules/user.modules.js";
+import Role from "../../../modules/role.modules.js";
+import { UserTypes } from "../../../utils/types/userTypes.js";
+import { validateRegistration } from "../../../utils/validations/forms/registerValidation.js";
+import { validateLoginForm } from "../../../utils/validations/forms/loginValidation.js";
+import { generateJWTToken } from "../../../utils/token/genereateJWT-token.js";
+import { ROLES } from "../../../middleware/role-middleware/permition.js";
 
 // ── Populated Role Type ──────────────────────────────────────────────────────
 interface PopulatedRole {
@@ -21,7 +21,10 @@ interface PopulatedRole {
 }
 
 // ── Login ─────────────────────────────────────────────────────────────────────
-export const loginUser = async (req: Request, res: Response): Promise<void> => {
+export const loginPartner = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   try {
     const { email, password } = req.body;
 
