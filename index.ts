@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import userRoutes from "./src/routes/user.routes.js";
+import partnerRoutes from "./src/routes/partner.routes.js";
 import { globalLimiter } from "./src/utils/limiters/rate-limit.js";
 
 const app = express();
@@ -26,6 +27,7 @@ app.use(globalLimiter);
 
 // ✅ 4. routes ბოლოს
 app.use("/api/user", userRoutes);
+app.use("/api/partner", partnerRoutes);
 
 mongoose
   .connect(process.env.MONGODB_URI!)

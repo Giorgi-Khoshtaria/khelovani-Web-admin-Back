@@ -59,18 +59,6 @@ const OrganisationSchema = new mongoose.Schema(
       enum: ["pending", "approved", "rejected"],
       default: "pending", // ← admin reviews before approving
     },
-
-    // ── Link to the user who registered this organisation ───────────────────
-    owner: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-
-    isActive: {
-      type: Boolean,
-      default: false, // ← only active after admin approval
-    },
   },
   { timestamps: true },
 );
