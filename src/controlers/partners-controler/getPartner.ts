@@ -40,3 +40,32 @@ export const getAllPartners = async (
     res.status(500).json({ message: (error as Error).message });
   }
 };
+
+export const updatePartnerStatus = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id as string)) {
+      res.status(400).json({ message: "არასწორი პარტნიორის ID" });
+      return;
+    }
+
+    const partner = await Organisation.findById(id);
+
+    if (!partner) {
+      res.status(404).json({ message: "პარტნიორი ვერ მოიძებნა" });
+      return;
+    }
+
+    partner.status = status;
+    await partner.save();
+
+    res.status(200).json({ message: "პარტნიორის სტატუსი განახლდა" });
+  } catch (error) {
+    res.status(500).json({ message: (error as Error).message });
+  }
+};
