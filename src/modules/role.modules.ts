@@ -7,7 +7,7 @@ const RoleSchema = new mongoose.Schema(
       required: true,
       unique: true,
       trim: true,
-      enum: ["super_admin", "moderator", "org", "user"],
+      enum: ["super_admin", "moderator", "organization", "user"],
     },
     allowedPanels: [
       {

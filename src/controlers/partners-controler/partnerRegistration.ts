@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Organisation from "../../modules/organization.modules.js";
+import Role from "../../modules/role.modules.js";
 import { PartnerRegisterData } from "../../utils/types/partnerTypes.js";
 import { validatePartnerRegistration } from "../../utils/validations/forms/partnerValidation.js";
 import crypto from "crypto";
@@ -39,6 +40,18 @@ export const registerPartner = async (
       return;
     }
 
+    // ── Get or Create Partner Role ─────────────────────────────────────────
+    let partnerRole = await Role.findOne({ name: "organization" });
+    if (!partnerRole) {
+      partnerRole = await Role.create({
+        name: "organization",
+        allowedPanels: ["admin"],
+        permissions: ["org_management"],
+        description: "Organization account with access to the admin panel and website",
+        isActive: true,
+      });
+    }
+
     // ── Generate Random Password ───────────────────────────────────────────
     const plainPassword = crypto.randomBytes(6).toString("hex");
     const hashedPassword = await bcrypt.hash(plainPassword, 10);
@@ -56,6 +69,7 @@ export const registerPartner = async (
       description: data.description?.trim(),
       status: "pending",
       password: hashedPassword,
+      role: partnerRole._id,
     });
 
     // ── Send Password Email ────────────────────────────────────────────────

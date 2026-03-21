@@ -1,4 +1,3 @@
-// models/organisation.model.ts
 import mongoose from "mongoose";
 
 const OrganisationSchema = new mongoose.Schema(
@@ -57,11 +56,15 @@ const OrganisationSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    // ── Status ───────────────────────────────────────────────────────────────
     status: {
       type: String,
       enum: ["pending", "approved", "rejected"],
-      default: "pending", // ← admin reviews before approving
+      default: "pending",
+    },
+    role: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Role",
+      required: true,
     },
   },
   { timestamps: true },

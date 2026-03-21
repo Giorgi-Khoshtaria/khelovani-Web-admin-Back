@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "nodemon --exec tsx index.ts",
     "seed:roles": "tsx src/utils/seedRoles/seedRoles.ts",
+    "seed:admin": "tsx src/utils/seedRoles/seedAdmin.ts",
     "start": "tsx src/utils/seedRoles/seedRoles.ts && tsx index.ts"
   },
   "keywords": [],

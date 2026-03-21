@@ -5,15 +5,21 @@ import mongoose from "mongoose";
 import userRoutes from "./src/routes/user.routes.js";
 import partnerRoutes from "./src/routes/partner.routes.js";
 import { globalLimiter } from "./src/utils/limiters/rate-limit.js";
-import adminAuthRoutes from "./src/routes/adminCalls/adminAuth.routes.js";
+import adminAuthRoutes from "./src/routes/adminRoutes/adminAuth.routes.js";
+import adminPartnersRoutes from "./src/routes/adminRoutes/adminPartners.routes.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 // ✅ 1. cors პირველი
+const origins: string[] = [];
+if (process.env.FRONTEND_URL) origins.push(process.env.FRONTEND_URL);
+if (process.env.FRONTEND_URL_ADMIN)
+  origins.push(process.env.FRONTEND_URL_ADMIN);
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: origins,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -29,7 +35,8 @@ app.use(globalLimiter);
 // ✅ 4. routes ბოლოს
 app.use("/api/user", userRoutes);
 app.use("/api/partner", partnerRoutes);
-app.use("/api/admin", adminAuthRoutes);
+app.use("/api/admin/auth", adminAuthRoutes);
+// app.use("/api/admin/partners", adminPartnersRoutes);
 mongoose
   .connect(process.env.MONGODB_URI!)
   .then(() => console.log("MongoDB connected"))

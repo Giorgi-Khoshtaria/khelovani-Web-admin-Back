@@ -15,8 +15,5 @@ export const validateLoginForm = (data: {
   const emailError = validateEmail(data.email);
   if (emailError) errors.email = emailError;
 
-  const passwordErrors = validatePassword(data.password);
-  if (passwordErrors.length > 0) errors.password = passwordErrors[0]; // show first error only
-
   return errors;
 };
