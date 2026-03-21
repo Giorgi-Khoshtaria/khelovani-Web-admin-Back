@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { PartnerStatusEnum } from "../utils/types/partnerStatus.js";
 
 const OrganisationSchema = new mongoose.Schema(
   {
@@ -58,8 +59,8 @@ const OrganisationSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "approved", "rejected"],
-      default: "pending",
+      enum: Object.values(PartnerStatusEnum),
+      default: PartnerStatusEnum.PENDING,
     },
     role: {
       type: mongoose.Schema.Types.ObjectId,

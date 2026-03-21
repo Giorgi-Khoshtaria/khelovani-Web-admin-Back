@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import type { Request, Response } from "express";
 import { Types } from "mongoose";
 import { validateLoginForm } from "../../../utils/validations/forms/loginValidation.js";
+import { PartnerStatusEnum } from "../../../utils/types/partnerStatus.js";
 import { generateJWTToken } from "../../../utils/token/genereateJWT-token.js";
 import Organisation from "../../../modules/organization.modules.js";
 import Admin from "../../../modules/admin.modules.js";
@@ -85,7 +86,7 @@ export const loginAdmin = async (
     }
 
     // ── Guard: organisation must be approved ─────────────────────────────────
-    if (partner.status !== "approved") {
+    if (partner.status !== PartnerStatusEnum.APPROVED) {
       res
         .status(403)
         .json({ message: "ორგანიზაცია ჯერ არ არის დადასტურებული" });

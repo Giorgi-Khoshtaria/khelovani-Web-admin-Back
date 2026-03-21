@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Organisation from "../../modules/organization.modules.js";
 import Role from "../../modules/role.modules.js";
 import { PartnerRegisterData } from "../../utils/types/partnerTypes.js";
+import { PartnerStatusEnum } from "../../utils/types/partnerStatus.js";
 import { validatePartnerRegistration } from "../../utils/validations/forms/partnerValidation.js";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
@@ -67,7 +68,7 @@ export const registerPartner = async (
       email: data.email.trim().toLowerCase(),
       address: data.address.trim(),
       description: data.description?.trim(),
-      status: "pending",
+      status: PartnerStatusEnum.PENDING,
       password: hashedPassword,
       role: partnerRole._id,
     });
