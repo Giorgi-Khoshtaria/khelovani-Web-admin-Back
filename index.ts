@@ -36,7 +36,7 @@ app.use(globalLimiter);
 app.use("/api/user", userRoutes);
 app.use("/api/partner", partnerRoutes);
 app.use("/api/admin/auth", adminAuthRoutes);
-// app.use("/api/admin/partners", adminPartnersRoutes);
+app.use("/api/admin/partners", adminPartnersRoutes);
 mongoose
   .connect(process.env.MONGODB_URI!)
   .then(() => console.log("MongoDB connected"))
