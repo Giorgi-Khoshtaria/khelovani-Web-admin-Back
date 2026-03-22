@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import Organisation from "../../modules/organization.modules.js";
 import { PartnerStatusEnum } from "../../utils/types/partnerStatus.js";
+import crypto from "crypto";
+import bcrypt from "bcrypt";
+import { sendPartnerPasswordEmail } from "../../middleware/verification-middleware/emailVerification/sendEmails/sendPartnerEmail.js";
 
 import mongoose from "mongoose";
 
@@ -48,7 +51,9 @@ export const getAllPartners = async (
       query.status = status;
     }
 
-    const partners = await Organisation.find(query).select("-password");
+    const partners = await Organisation.find(query)
+      .select("-password")
+      .sort({ createdAt: -1 });
 
     res.status(200).json(partners);
   } catch (error) {
@@ -94,6 +99,23 @@ export const updatePartnerStatus = async (
         .status(200)
         .json({ message: "პარტნიორი უარყოფილია და წაიშალა ბაზიდან" });
       return;
+    }
+
+    if (status === PartnerStatusEnum.APPROVED) {
+      try {
+        const plainPassword = crypto.randomBytes(6).toString("hex");
+        const hashedPassword = await bcrypt.hash(plainPassword, 10);
+        partner.password = hashedPassword;
+
+        await sendPartnerPasswordEmail(
+          partner.email,
+          partner.companyNameGe,
+          plainPassword
+        );
+      } catch (emailError) {
+        res.status(500).json({ message: "მეილის გაგზავნა ჩაიშალა, სტატუსი არ განახლებულა" });
+        return;
+      }
     }
 
     partner.status = status;

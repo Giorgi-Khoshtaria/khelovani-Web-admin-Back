@@ -3,7 +3,7 @@ import Organisation from "../../modules/organization.modules.js";
 import Role from "../../modules/role.modules.js";
 import { PartnerRegisterData } from "../../utils/types/partnerTypes.js";
 import { PartnerStatusEnum } from "../../utils/types/partnerStatus.js";
-import { validatePartnerRegistration } from "../../utils/validations/forms/partnerValidation.js";
+import { validatePartnerRegistration } from "../../validations/forms/partnerValidation.js";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 import { sendPartnerPasswordEmail } from "../../middleware/verification-middleware/emailVerification/sendEmails/sendPartnerEmail.js";
@@ -48,7 +48,8 @@ export const registerPartner = async (
         name: "organization",
         allowedPanels: ["admin"],
         permissions: ["org_management"],
-        description: "Organization account with access to the admin panel and website",
+        description:
+          "Organization account with access to the admin panel and website",
         isActive: true,
       });
     }
@@ -58,7 +59,7 @@ export const registerPartner = async (
     const hashedPassword = await bcrypt.hash(plainPassword, 10);
 
     // ── Create Organisation ────────────────────────────────────────────────
-    await Organisation.create({
+    const newOrg = await Organisation.create({
       companyNameGe: data.companyNameGe.trim(),
       companyNameEn: data.companyNameEn.trim(),
       identificationCode: data.identificationCode.trim(),
@@ -67,18 +68,14 @@ export const registerPartner = async (
       city: data.city.trim().toLowerCase(),
       email: data.email.trim().toLowerCase(),
       address: data.address.trim(),
+      addressEn: data.addressEn.trim(),
       description: data.description?.trim(),
       status: PartnerStatusEnum.PENDING,
       password: hashedPassword,
       role: partnerRole._id,
     });
 
-    // ── Send Password Email ────────────────────────────────────────────────
-    await sendPartnerPasswordEmail(
-      data.email.trim().toLowerCase(),
-      data.companyNameGe.trim(),
-      plainPassword,
-    );
+    // Password email will be sent upon Admin Approval in updatePartnerStatus
 
     res.status(201).json({ message: "პარტნიორი წარმატებით დარეგისტრირდა" });
   } catch (error) {

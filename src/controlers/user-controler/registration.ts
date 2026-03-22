@@ -5,7 +5,7 @@ import { sendUserRegistrationVerificationEmail } from "../../middleware/verifica
 import Role from "../../modules/role.modules.js";
 import User from "../../modules/user.modules.js";
 import { UserTypes } from "../../utils/types/userTypes.js";
-import { validateRegistration } from "../../utils/validations/forms/registerValidation.js";
+import { validateRegistration } from "../../validations/forms/registerValidation.js";
 
 export const registerUser = async (
   req: Request,

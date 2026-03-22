@@ -5,7 +5,7 @@ import User from "../../modules/user.modules.js";
 import {
   validateForgotPassword,
   validateResetPassword,
-} from "../../utils/validations/forms/forgotPasswordValidations.js";
+} from "../../validations/forms/forgotPasswordValidations.js";
 import { sendUserForgotPasswordEmail } from "../../middleware/verification-middleware/emailVerification/sendEmails/sendUserEmails.js";
 
 // ── Forgot Password ───────────────────────────────────────────────────────────

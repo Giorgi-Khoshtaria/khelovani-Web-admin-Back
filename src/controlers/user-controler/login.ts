@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import type { Request, Response } from "express";
 import User from "../../modules/user.modules.js";
 import { generateJWTToken } from "../../utils/token/genereateJWT-token.js";
-import { validateLoginForm } from "../../utils/validations/forms/loginValidation.js";
+import { validateLoginForm } from "../../validations/forms/loginValidation.js";
 import { PopulatedRole } from "../../utils/types/userTypes.js";
 
 // ── Login ─────────────────────────────────────────────────────────────────────

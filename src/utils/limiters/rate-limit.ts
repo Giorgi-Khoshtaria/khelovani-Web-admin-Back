@@ -28,7 +28,7 @@ export const oneHourLimiter = rateLimit({
 // ====================== GLOBAL LIMITER ======================
 export const globalLimiter = rateLimit({
   windowMs: 2 * 60 * 1000, // 2 minutes (as you requested)
-  max: 100, // ← 100 requests per IP every 2 minutes
+  max: 1000, // ← 1000 requests per IP every 2 minutes
   standardHeaders: true,
   legacyHeaders: false,
   handler: (req, res) => {

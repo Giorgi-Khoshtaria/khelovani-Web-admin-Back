@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import type { Request, Response } from "express";
 import { Types } from "mongoose";
-import { validateLoginForm } from "../../../utils/validations/forms/loginValidation.js";
+import { validateLoginForm } from "../../../validations/forms/loginValidation.js";
 import { PartnerStatusEnum } from "../../../utils/types/partnerStatus.js";
 import { generateJWTToken } from "../../../utils/token/genereateJWT-token.js";
 import Organisation from "../../../modules/organization.modules.js";

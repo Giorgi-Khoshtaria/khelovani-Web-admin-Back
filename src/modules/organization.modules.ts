@@ -47,6 +47,11 @@ const OrganisationSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    addressEn: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     description: {
       type: String,
       required: false,

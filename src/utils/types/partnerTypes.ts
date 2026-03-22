@@ -7,6 +7,7 @@ export interface PartnerRegisterData {
   city: string;
   email: string;
   address: string;
+  addressEn: string;
   description: string;
   terms: boolean;
 }

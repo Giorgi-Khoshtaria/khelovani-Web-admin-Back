@@ -2,7 +2,7 @@ import { validateEmail } from "../shared/email.validation.js";
 import { validatePassword } from "../shared/password.validation.js";
 import { validateCity } from "../shared/city.validation.js";
 import { validatePhone } from "../shared/phone.validation.js";
-import { PartnerRegisterData } from "../../types/partnerTypes.js";
+import { PartnerRegisterData } from "../../utils/types/partnerTypes.js";
 
 export interface ValidationError {
   field: string;
@@ -58,6 +58,23 @@ export const validatePartnerRegistration = (
 
   if (!data.address || data.address.trim() === "") {
     errors.push({ field: "address", message: "მისამართი სავალდებულოა" });
+  } else if (!/^[ა-ჰ0-9\s.,/\\\-()]+$/.test(data.address.trim())) {
+    errors.push({
+      field: "address",
+      message: "მისამართი უნდა იყოს ქართულად",
+    });
+  }
+
+  if (!data.addressEn || data.addressEn.trim() === "") {
+    errors.push({
+      field: "addressEn",
+      message: "მისამართი (ინგლისურად) სავალდებულოა",
+    });
+  } else if (!/^[a-zA-Z0-9\s.,/\\\-()]+$/.test(data.addressEn.trim())) {
+    errors.push({
+      field: "addressEn",
+      message: "მისამართი (ინგლისურად) უნდა იყოს ინგლისურად",
+    });
   }
 
   if (!data.terms) {
