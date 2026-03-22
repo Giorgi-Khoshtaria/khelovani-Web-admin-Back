@@ -1,22 +1,22 @@
 import { Router } from "express";
-import { registerUser } from "../controlers/user-controler/registration.js";
-import { loginUser } from "../controlers/user-controler/login.js";
+import { registerUser } from "../controllers/user/registration.controller.js";
+import { loginUser } from "../controllers/user/login.controller.js";
 import {
   forgotPassword,
   resetPassword,
-} from "../controlers/user-controler/forgot-password.js";
+} from "../controllers/user/forgot-password.controller.js";
 import {
   twoMinutesLimiter,
   oneHourLimiter,
 } from "../utils/limiters/rate-limit.js";
-import { authenticate } from "../middleware/auth-middleware/authenticate.js";
-import { requirePermission } from "../middleware/role-middleware/requirePermission.js";
-import { requirePanel } from "../middleware/role-middleware/requirePanel.js";
+import { authenticate } from "../middleware/auth/authenticate.js";
+import { requirePermission } from "../middleware/role/requirePermission.js";
+import { requirePanel } from "../middleware/role/requirePanel.js";
 import {
   PERMISSIONS,
   PANELS,
-} from "../middleware/role-middleware/permition.js";
-import { verifyEmailCallback } from "../middleware/verification-middleware/emailVerification/sendEmails/Verifyemailcallback.js";
+} from "../middleware/role/permissions.js";
+import { verifyEmailCallback } from "../controllers/verification/verifyEmail.controller.js";
 
 const router = Router();
 

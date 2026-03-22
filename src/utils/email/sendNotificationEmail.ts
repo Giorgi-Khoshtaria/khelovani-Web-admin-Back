@@ -1,8 +1,8 @@
-import { transporter } from "./email.js";
+import { transporter } from "./transporter.js";
 import {
   notifyEmailHtml,
   NotifyEmailData,
-} from "../email-htmls/notifyEmailHtml.js";
+} from "./templates/notifyEmailHtml.js";
 
 const getNotificationContent = (
   emailType: string,

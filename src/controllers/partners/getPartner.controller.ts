@@ -3,7 +3,7 @@ import Organisation from "../../modules/organization.modules.js";
 import { PartnerStatusEnum } from "../../utils/types/partnerStatus.js";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
-import { sendPartnerPasswordEmail } from "../../middleware/verification-middleware/emailVerification/sendEmails/sendPartnerEmail.js";
+import { sendPartnerPasswordEmail } from "../../utils/email/sendPartnerEmail.js";
 
 import mongoose from "mongoose";
 

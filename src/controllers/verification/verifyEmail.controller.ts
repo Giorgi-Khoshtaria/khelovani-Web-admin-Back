@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import User from "../../../../modules/user.modules.js";
+import User from "../../modules/user.modules.js";
 
 interface JwtPayload {
   email: string;

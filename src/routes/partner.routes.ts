@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { registerPartner } from "../controlers/partners-controler/partnerRegistration.js";
+import { registerPartner } from "../controllers/partners/partnerRegistration.controller.js";
 import { twoMinutesLimiter } from "../utils/limiters/rate-limit.js";
 
 const router = Router();

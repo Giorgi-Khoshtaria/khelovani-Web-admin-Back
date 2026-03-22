@@ -1,5 +1,5 @@
-import { transporter } from "./email.js";
-import { verifyEmailHTML } from "../email-htmls/verifyEmailHTML.js";
+import { transporter } from "./transporter.js";
+import { verifyEmailHTML } from "./templates/verifyEmailHTML.js";
 
 const checkEmailType = (
   emailType: string,

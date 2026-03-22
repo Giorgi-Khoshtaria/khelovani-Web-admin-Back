@@ -6,7 +6,7 @@ import {
   validateForgotPassword,
   validateResetPassword,
 } from "../../validations/forms/forgotPasswordValidations.js";
-import { sendUserForgotPasswordEmail } from "../../middleware/verification-middleware/emailVerification/sendEmails/sendUserEmails.js";
+import { sendUserForgotPasswordEmail } from "../../utils/email/sendUserEmails.js";
 
 // ── Forgot Password ───────────────────────────────────────────────────────────
 // Accepts an email, validates it, looks the user up, and sends a reset link.

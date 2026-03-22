@@ -7,6 +7,7 @@ import partnerRoutes from "./src/routes/partner.routes.js";
 import { globalLimiter } from "./src/utils/limiters/rate-limit.js";
 import adminAuthRoutes from "./src/routes/adminRoutes/adminAuth.routes.js";
 import adminPartnersRoutes from "./src/routes/adminRoutes/adminPartners.routes.js";
+import translationRoutes from "./src/routes/adminRoutes/translation.routes.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -37,6 +38,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/partner", partnerRoutes);
 app.use("/api/admin/auth", adminAuthRoutes);
 app.use("/api/admin/partners", adminPartnersRoutes);
+app.use("/api/admin/translations", translationRoutes);
 mongoose
   .connect(process.env.MONGODB_URI!)
   .then(() => console.log("MongoDB connected"))

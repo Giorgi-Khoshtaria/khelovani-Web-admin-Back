@@ -3,8 +3,8 @@ import {
   getAllPartners,
   getPartnerById,
   updatePartnerStatus,
-} from "../../controlers/partners-controler/getPartner.js";
-import { authenticate } from "../../middleware/auth-middleware/authenticate.js";
+} from "../../controllers/partners/getPartner.controller.js";
+import { authenticate } from "../../middleware/auth/authenticate.js";
 
 const router = Router();
 

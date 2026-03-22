@@ -1,4 +1,4 @@
-import { sendNotificationEmail } from "../email-middleware/sendNotificationEmail.js";
+import { sendNotificationEmail } from "./sendNotificationEmail.js";
 
 export const sendPartnerPasswordEmail = async (
   email: string,
