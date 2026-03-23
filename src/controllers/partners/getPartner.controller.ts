@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import Organisation from "../../modules/organization.modules.js";
-import { PartnerStatusEnum } from "../../utils/types/partnerStatus.js";
+import { PartnerStatusEnum } from "../../types/partnerStatus.js";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 import { sendPartnerPasswordEmail } from "../../utils/email/sendPartnerEmail.js";
@@ -110,10 +110,12 @@ export const updatePartnerStatus = async (
         await sendPartnerPasswordEmail(
           partner.email,
           partner.companyNameGe,
-          plainPassword
+          plainPassword,
         );
       } catch (emailError) {
-        res.status(500).json({ message: "მეილის გაგზავნა ჩაიშალა, სტატუსი არ განახლებულა" });
+        res
+          .status(500)
+          .json({ message: "მეილის გაგზავნა ჩაიშალა, სტატუსი არ განახლებულა" });
         return;
       }
     }

@@ -21,7 +21,7 @@ const rolesToSeed = [
     isActive: true,
   },
   {
-    name: "org",
+    name: "organization",
     allowedPanels: ["admin"],
     permissions: ["org_management"],
     description:

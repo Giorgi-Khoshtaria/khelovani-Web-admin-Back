@@ -2,15 +2,20 @@ import bcrypt from "bcrypt";
 import type { Request, Response } from "express";
 import { Types } from "mongoose";
 import { validateLoginForm } from "../../../validations/forms/loginValidation.js";
-import { PartnerStatusEnum } from "../../../utils/types/partnerStatus.js";
+import { PartnerStatusEnum } from "../../../types/partnerStatus.js";
 import { generateJWTToken } from "../../../utils/token/genereateJWT-token.js";
 import Organisation from "../../../modules/organization.modules.js";
 import Admin from "../../../modules/admin.modules.js";
 
+interface PopulatedPermission {
+  _id: Types.ObjectId;
+  name: string;
+}
+
 interface PopulatedRole {
   _id: Types.ObjectId;
   name: string;
-  permissions: string[];
+  permissions: PopulatedPermission[];
   allowedPanels: string[];
   description: string;
   isActive: boolean;
@@ -35,7 +40,10 @@ export const loginAdmin = async (
     // ── Find admin + populate role ──────────────────────────────────────────
     const admin = await Admin.findOne({ email }).populate<{
       role: PopulatedRole;
-    }>("role");
+    }>({
+      path: "role",
+      populate: { path: "permissions" },
+    });
 
     if (admin) {
       if (!admin.role || !admin.role.isActive) {
@@ -54,7 +62,7 @@ export const loginAdmin = async (
       const token = generateJWTToken({
         id: admin._id.toString(),
         role: admin.role.name,
-        permissions: admin.role.permissions,
+        permissions: admin.role.permissions.map((p) => p.name),
         allowedPanels: admin.role.allowedPanels,
       });
 
@@ -72,7 +80,10 @@ export const loginAdmin = async (
     // ── Find organisation + populate role ────────────────────────────────────
     const partner = await Organisation.findOne({ email }).populate<{
       role: PopulatedRole;
-    }>("role");
+    }>({
+      path: "role",
+      populate: { path: "permissions" },
+    });
 
     if (!partner) {
       res.status(422).json({ message: "მომხმარებელი არ მოიძებნა" });
@@ -104,7 +115,7 @@ export const loginAdmin = async (
     const token = generateJWTToken({
       id: partner._id.toString(),
       role: partner.role.name,
-      permissions: partner.role.permissions,
+      permissions: partner.role.permissions.map((p) => p.name),
       allowedPanels: partner.role.allowedPanels,
     });
 

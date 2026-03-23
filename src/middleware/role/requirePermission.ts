@@ -7,8 +7,8 @@ export const requirePermission = (...permissions: string[]) => {
       return;
     }
 
-    // ✅ check if user has ALL required permissions
-    const hasPermission = permissions.every((p) =>
+    // ✅ check if user has ALL required permissions (or 'all' God-mode)
+    const hasPermission = req.user!.permissions.includes("all") || permissions.every((p) =>
       req.user!.permissions.includes(p),
     );
 

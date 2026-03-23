@@ -2,36 +2,34 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { Namespace } from "../../modules/translation.modules.js";
 import Translation from "../../modules/translation.modules.js";
-import { TranslationNamespace } from "../../utils/types/translation.enum.js";
-
 dotenv.config();
 
 const namespacesToSeed = [
-  { _id: TranslationNamespace.Alerts, name: "Alerts" },
-  { _id: TranslationNamespace.Inputs, name: "Inputs" },
-  { _id: TranslationNamespace.Navigation, name: "Navigation" },
-  { _id: TranslationNamespace.Pages, name: "Pages" },
-  { _id: TranslationNamespace.Common, name: "Common" },
+  { _id: "alerts", name: "Alerts" },
+  { _id: "inputs", name: "Inputs" },
+  { _id: "navigation", name: "Navigation" },
+  { _id: "pages", name: "Pages" },
+  { _id: "common", name: "Common" },
 ];
 
 const translationsToSeed = [
   {
-    namespace: TranslationNamespace.Common,
+    namespace: "common",
     key: "save",
     translations: { ge: "შენახვა", en: "Save" },
   },
   {
-    namespace: TranslationNamespace.Common,
+    namespace: "common",
     key: "cancel",
     translations: { ge: "გაუქმება", en: "Cancel" },
   },
   {
-    namespace: TranslationNamespace.Alerts,
+    namespace: "alerts",
     key: "success_save",
     translations: { ge: "წარმატებით შეინახა", en: "Successfully saved" },
   },
   {
-    namespace: TranslationNamespace.Navigation,
+    namespace: "navigation",
     key: "home",
     translations: { ge: "მთავარი", en: "Home" },
   },

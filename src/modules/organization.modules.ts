@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { PartnerStatusEnum } from "../utils/types/partnerStatus.js";
+import { PartnerStatusEnum } from "../types/partnerStatus.js";
 
 const OrganisationSchema = new mongoose.Schema(
   {

@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import { loadTranslationCache } from "./src/types/translate.util.js";
 import mongoose from "mongoose";
 import userRoutes from "./src/routes/user.routes.js";
 import partnerRoutes from "./src/routes/partner.routes.js";
@@ -8,6 +9,9 @@ import { globalLimiter } from "./src/utils/limiters/rate-limit.js";
 import adminAuthRoutes from "./src/routes/adminRoutes/adminAuth.routes.js";
 import adminPartnersRoutes from "./src/routes/adminRoutes/adminPartners.routes.js";
 import translationRoutes from "./src/routes/adminRoutes/translation.routes.js";
+import roleRoutes from "./src/routes/adminRoutes/role.routes.js";
+import permissionRoutes from "./src/routes/adminRoutes/permission.routes.js";
+import { seedPermissions } from "./src/utils/seeds/seedPermissions.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -39,9 +43,15 @@ app.use("/api/partner", partnerRoutes);
 app.use("/api/admin/auth", adminAuthRoutes);
 app.use("/api/admin/partners", adminPartnersRoutes);
 app.use("/api/admin/translations", translationRoutes);
+app.use("/api/admin/roles", roleRoutes);
+app.use("/api/admin/permissions", permissionRoutes);
 mongoose
   .connect(process.env.MONGODB_URI!)
-  .then(() => console.log("MongoDB connected"))
+  .then(() => {
+    console.log("MongoDB connected");
+    loadTranslationCache();
+    seedPermissions();
+  })
   .catch(console.error);
 
 app.listen(PORT, () => {

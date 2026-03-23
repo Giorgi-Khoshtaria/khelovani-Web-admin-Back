@@ -1,4 +1,4 @@
-import { generateRememberToken } from "../tokens/generateRememberToken.js";
+import { generateRememberToken } from "../token/generateRememberToken.js";
 import { sendVerificationEmail } from "./sendVerificationEmail.js";
 
 export const sendUserRegistrationVerificationEmail = async (

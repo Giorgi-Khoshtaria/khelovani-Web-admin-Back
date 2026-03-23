@@ -1,4 +1,4 @@
-import { UserTypes } from "../../utils/types/userTypes.js";
+import { UserTypes } from "../../types/userTypes.js";
 import { validateEmail } from "../shared/email.validation.js";
 import { validatePassword } from "../shared/password.validation.js";
 import { validateCity } from "../shared/city.validation.js";

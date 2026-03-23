@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import Translation, { Namespace } from "../../../modules/translation.modules.js";
+import { validateTranslation } from "../../../validations/forms/translationValidation.js";
+import { loadTranslationCache } from "../../../types/translate.util.js";
 
 // GET /api/admin/translations
 // Returns translations grouped by namespace and raw list
@@ -8,7 +10,19 @@ export const getTranslations = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const translations = await Translation.find().lean();
+    const { namespace, search } = req.query;
+    
+    let filter: any = {};
+    if (namespace) filter.namespace = namespace;
+    if (search) {
+      filter.$or = [
+        { key: { $regex: search as string, $options: "i" } },
+        { "translations.ge": { $regex: search as string, $options: "i" } },
+        { "translations.en": { $regex: search as string, $options: "i" } },
+      ];
+    }
+
+    const translations = await Translation.find(filter).lean();
     
     // Group by namespace for easy consumption
     const grouped: Record<string, Record<string, { ge: string; en: string }>> = {};
@@ -54,8 +68,9 @@ export const addTranslation = async (
   try {
     const { namespace, key, translations } = req.body;
 
-    if (!namespace || !key || !translations || !translations.ge || !translations.en) {
-      res.status(400).json({ success: false, message: "Missing required fields" });
+    const validationErrors = validateTranslation({ namespace, key, translations });
+    if (validationErrors.length > 0) {
+      res.status(400).json({ success: false, errors: validationErrors });
       return;
     }
 
@@ -79,6 +94,8 @@ export const addTranslation = async (
       translations,
     });
 
+    loadTranslationCache();
+
     res.status(201).json({ success: true, data: newTranslation });
   } catch (error) {
     res.status(500).json({ success: false, message: (error as Error).message });
@@ -95,7 +112,10 @@ export const updateTranslation = async (
     const { translations } = req.body;
 
     if (!translations || (!translations.ge && !translations.en)) {
-      res.status(400).json({ success: false, message: "At least one translation is required" });
+      res.status(400).json({
+        success: false,
+        errors: [{ field: "ge", message: "ერთი თარგმანი მაინც სავალდებულოა" }],
+      });
       return;
     }
 
@@ -114,7 +134,31 @@ export const updateTranslation = async (
 
     await translation.save();
 
+    loadTranslationCache();
+
     res.status(200).json({ success: true, message: "Translation updated", data: translation });
+  } catch (error) {
+    res.status(500).json({ success: false, message: (error as Error).message });
+  }
+};
+
+// DELETE /api/admin/translations/:id
+export const deleteTranslation = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    const translation = await Translation.findByIdAndDelete(id);
+    if (!translation) {
+      res.status(404).json({ success: false, message: "Translation not found" });
+      return;
+    }
+
+    loadTranslationCache();
+
+    res.status(200).json({ success: true, message: "Translation deleted successfully" });
   } catch (error) {
     res.status(500).json({ success: false, message: (error as Error).message });
   }

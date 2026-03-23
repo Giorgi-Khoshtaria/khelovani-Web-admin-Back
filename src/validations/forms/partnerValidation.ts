@@ -2,7 +2,7 @@ import { validateEmail } from "../shared/email.validation.js";
 import { validatePassword } from "../shared/password.validation.js";
 import { validateCity } from "../shared/city.validation.js";
 import { validatePhone } from "../shared/phone.validation.js";
-import { PartnerRegisterData } from "../../utils/types/partnerTypes.js";
+import { PartnerRegisterData } from "../../types/partnerTypes.js";
 
 export interface ValidationError {
   field: string;

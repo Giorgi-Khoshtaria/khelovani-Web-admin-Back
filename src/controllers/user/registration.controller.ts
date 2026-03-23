@@ -4,8 +4,10 @@ import { ROLES } from "../../middleware/role/permissions.js";
 import { sendUserRegistrationVerificationEmail } from "../../utils/email/sendUserEmails.js";
 import Role from "../../modules/role.modules.js";
 import User from "../../modules/user.modules.js";
-import { UserTypes } from "../../utils/types/userTypes.js";
+import { UserTypes } from "../../types/userTypes.js";
 import { validateRegistration } from "../../validations/forms/registerValidation.js";
+import { getTranslation } from "../../types/translate.util.js";
+import { Lang } from "../../types/lang.types.js";
 
 export const registerUser = async (
   req: Request,
@@ -23,6 +25,7 @@ export const registerUser = async (
       phone,
       password,
     }: UserTypes = req.body;
+    const lang = (req.query.lang as Lang) || "ge";
 
     // ── Validate ───────────────────────────────────────────────────────────
     const validationErrors = validateRegistration(req.body);
@@ -41,12 +44,12 @@ export const registerUser = async (
       if (!existingByEmail.isVerified) {
         await sendUserRegistrationVerificationEmail(trimmedEmail);
         res.status(200).json({
-          message: "ვერიფიკაციის ლინკი ხელახლა გაიგზავნა თქვენს ელ-ფოსტაზე",
+          message: getTranslation("auth", "verification_email_resent", lang),
         });
         return;
       }
       res.status(409).json({
-        message: "ამ ელ. ფოსტით მომხმარებელი უკვე არსებობს",
+        message: getTranslation("auth", "email_already_exists", lang),
       });
       return;
     }
@@ -58,7 +61,7 @@ export const registerUser = async (
 
     if (existingByIdNumber) {
       res.status(409).json({
-        message: "ამ პირადი ნომრით მომხმარებელი უკვე არსებობს",
+        message: getTranslation("auth", "id_number_already_exists", lang),
       });
       return;
     }
@@ -94,8 +97,7 @@ export const registerUser = async (
     await sendUserRegistrationVerificationEmail(trimmedEmail);
 
     res.status(201).json({
-      message:
-        "მომხმარებელი წარმატებით დარეგისტრირდა! გთხოვთ შეამოწმოთ ელ-ფოსტა დასადასტურებლად",
+      message: getTranslation("auth", "register_success_verify_email", lang),
     });
   } catch (error) {
     res.status(500).json({ message: (error as Error).message });
