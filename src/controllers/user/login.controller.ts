@@ -6,6 +6,7 @@ import { validateLoginForm } from "../../validations/forms/loginValidation.js";
 import { PopulatedRole } from "../../types/userTypes.js";
 import { getTranslation } from "../../types/translate.util.js";
 import { Lang } from "../../types/lang.types.js";
+import { TranslationNamespace } from "../../types/translation.enum.js";
 
 // ── Login ─────────────────────────────────────────────────────────────────────
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
@@ -14,7 +15,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     const lang = (req.query.lang as Lang) || "ge";
 
     // ── Validate fields ──────────────────────────────────────────────────────
-    const validationErrors = validateLoginForm({ email, password });
+    const validationErrors = validateLoginForm({ email, password }, lang);
     if (Object.keys(validationErrors).length > 0) {
       res.status(422).json({ errors: validationErrors });
       return;
@@ -27,13 +28,13 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     if (!user) {
       res
         .status(422)
-        .json({ message: getTranslation("auth", "user_not_found", lang) });
+        .json({ message: getTranslation(TranslationNamespace.Auth, "user_not_found", lang) });
       return;
     }
 
     if (!user.isVerified) {
       res.status(403).json({
-        message: getTranslation("auth", "email_not_verified", lang),
+        message: getTranslation(TranslationNamespace.Auth, "email_not_verified", lang),
         code: "EMAIL_NOT_VERIFIED",
       });
       return;
@@ -44,7 +45,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       res
         .status(422)
         .json({
-          message: getTranslation("auth", "invalid_email_password", lang),
+          message: getTranslation(TranslationNamespace.Auth, "invalid_email_password", lang),
         });
       return;
     }
@@ -59,7 +60,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     const { password: _, ...userWithoutPassword } = user.toObject();
 
     res.status(200).json({
-      message: getTranslation("auth", "login_success", lang),
+      message: getTranslation(TranslationNamespace.Auth, "login_success", lang),
       token,
       user: userWithoutPassword,
     });

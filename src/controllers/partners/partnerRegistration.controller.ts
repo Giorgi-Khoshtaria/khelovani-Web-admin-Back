@@ -14,11 +14,11 @@ export const registerPartner = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const len = req.query.lang as string;
+    const lang = (req.query.lang as string) === "en" ? "en" : "ge";
     const data: PartnerRegisterData = req.body;
 
     // ── Validate all fields ────────────────────────────────────────────────
-    const validationErrors = await validatePartnerRegistration(data);
+    const validationErrors = await validatePartnerRegistration(data, lang);
     if (validationErrors.length > 0) {
       res.status(422).json({ errors: validationErrors });
       return;

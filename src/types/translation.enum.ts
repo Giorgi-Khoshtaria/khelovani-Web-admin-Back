@@ -6,4 +6,6 @@ export enum TranslationNamespace {
   Navigation = "navigation",
   Pages = "pages",
   Common = "common",
+  Validation = "validation",
+  Auth = "auth",
 }

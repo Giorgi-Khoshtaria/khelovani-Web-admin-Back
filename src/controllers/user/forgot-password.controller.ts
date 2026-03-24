@@ -9,6 +9,7 @@ import {
 import { sendUserForgotPasswordEmail } from "../../utils/email/sendUserEmails.js";
 import { getTranslation } from "../../types/translate.util.js";
 import { Lang } from "../../types/lang.types.js";
+import { TranslationNamespace } from "../../types/translation.enum.js";
 
 // ── Forgot Password ───────────────────────────────────────────────────────────
 // Accepts an email, validates it, looks the user up, and sends a reset link.
@@ -21,7 +22,7 @@ export const forgotPassword = async (
     const lang = (req.query.lang as Lang) || "ge";
 
     // Validate input
-    const errors = validateForgotPassword({ email });
+    const errors = validateForgotPassword({ email }, lang);
     if (Object.keys(errors).length > 0) {
       res.status(422).json({ errors });
       return;
@@ -34,7 +35,7 @@ export const forgotPassword = async (
     // Always respond with 200 to prevent email enumeration
     if (!user || !user.isVerified) {
       res.status(200).json({
-        message: getTranslation("auth", "forgot_password_success", lang),
+        message: getTranslation(TranslationNamespace.Auth, "forgot_password_success", lang),
       });
       return;
     }
@@ -42,7 +43,7 @@ export const forgotPassword = async (
     await sendUserForgotPasswordEmail(trimmedEmail, lang);
 
     res.status(200).json({
-      message: getTranslation("auth", "forgot_password_success", lang),
+      message: getTranslation(TranslationNamespace.Auth, "forgot_password_success", lang),
     });
   } catch (error) {
     res.status(500).json({ message: (error as Error).message });
@@ -62,12 +63,12 @@ export const resetPassword = async (
     if (!token) {
       res
         .status(422)
-        .json({ message: getTranslation("auth", "token_required", lang) });
+        .json({ message: getTranslation(TranslationNamespace.Auth, "token_required", lang) });
       return;
     }
 
     // Validate new password
-    const errors = validateResetPassword({ password });
+    const errors = validateResetPassword({ password }, lang);
     if (Object.keys(errors).length > 0) {
       res.status(422).json({ errors });
       return;
@@ -80,7 +81,7 @@ export const resetPassword = async (
     } catch {
       res
         .status(400)
-        .json({ message: getTranslation("auth", "token_invalid", lang) });
+        .json({ message: getTranslation(TranslationNamespace.Auth, "token_invalid", lang) });
       return;
     }
 
@@ -88,7 +89,7 @@ export const resetPassword = async (
     if (!user) {
       res
         .status(404)
-        .json({ message: getTranslation("auth", "user_not_found", lang) });
+        .json({ message: getTranslation(TranslationNamespace.Auth, "user_not_found", lang) });
       return;
     }
 
@@ -98,7 +99,7 @@ export const resetPassword = async (
     res
       .status(200)
       .json({
-        message: getTranslation("auth", "password_reset_success", lang),
+        message: getTranslation(TranslationNamespace.Auth, "password_reset_success", lang),
       });
   } catch (error) {
     res.status(500).json({ message: (error as Error).message });

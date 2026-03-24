@@ -8,6 +8,7 @@ import { UserTypes } from "../../types/userTypes.js";
 import { validateRegistration } from "../../validations/forms/registerValidation.js";
 import { getTranslation } from "../../types/translate.util.js";
 import { Lang } from "../../types/lang.types.js";
+import { TranslationNamespace } from "../../types/translation.enum.js";
 
 export const registerUser = async (
   req: Request,
@@ -28,7 +29,7 @@ export const registerUser = async (
     const lang = (req.query.lang as Lang) || "ge";
 
     // ── Validate ───────────────────────────────────────────────────────────
-    const validationErrors = validateRegistration(req.body);
+    const validationErrors = validateRegistration(req.body, lang);
     if (validationErrors.length > 0) {
       res.status(422).json({ errors: validationErrors });
       return;
@@ -44,12 +45,12 @@ export const registerUser = async (
       if (!existingByEmail.isVerified) {
         await sendUserRegistrationVerificationEmail(trimmedEmail, lang);
         res.status(200).json({
-          message: getTranslation("auth", "verification_email_resent", lang),
+          message: getTranslation(TranslationNamespace.Auth, "verification_email_resent", lang),
         });
         return;
       }
       res.status(409).json({
-        message: getTranslation("auth", "email_already_exists", lang),
+        message: getTranslation(TranslationNamespace.Auth, "email_already_exists", lang),
       });
       return;
     }
@@ -61,7 +62,7 @@ export const registerUser = async (
 
     if (existingByIdNumber) {
       res.status(409).json({
-        message: getTranslation("auth", "id_number_already_exists", lang),
+        message: getTranslation(TranslationNamespace.Auth, "id_number_already_exists", lang),
       });
       return;
     }
@@ -97,7 +98,7 @@ export const registerUser = async (
     await sendUserRegistrationVerificationEmail(trimmedEmail, lang);
 
     res.status(201).json({
-      message: getTranslation("auth", "register_success_verify_email", lang),
+      message: getTranslation(TranslationNamespace.Auth, "register_success_verify_email", lang),
     });
   } catch (error) {
     res.status(500).json({ message: (error as Error).message });

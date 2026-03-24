@@ -1,19 +1,30 @@
+import { getTranslation } from "../../types/translate.util.js";
+import { Lang } from "../../types/lang.types.js";
+import { TranslationNamespace } from "../../types/translation.enum.js";
+
 // Georgian name
-export const validateNameGe = (name?: string): string | null => {
+export const validateNameGe = (
+  name?: string,
+  lang: Lang = "ge",
+): string | null => {
   if (!name || name.trim() === "") return null; // optional
   if (name.trim().length < 2)
-    return "სახელი (ქართულად) უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს";
+    return getTranslation(TranslationNamespace.Validation, "name_ge_min_length", lang);
   if (!/^[\u10D0-\u10FF\s'-]+$/.test(name.trim()))
-    return "სახელი (ქართულად) უნდა შეიცავდეს მხოლოდ ქართულ ასოებს";
+    return getTranslation(TranslationNamespace.Validation, "name_ge_letters_only", lang);
   return null;
 };
 
 // English name
-export const validateNameEn = (name?: string): string | null => {
-  if (!name || name.trim() === "") return "სახელი (ინგლისურად) სავალდებულოა";
+export const validateNameEn = (
+  name?: string,
+  lang: Lang = "ge",
+): string | null => {
+  if (!name || name.trim() === "")
+    return getTranslation(TranslationNamespace.Validation, "name_en_required", lang);
   if (name.trim().length < 2)
-    return "სახელი (ინგლისურად) უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს";
+    return getTranslation(TranslationNamespace.Validation, "name_en_min_length", lang);
   if (!/^[A-Za-z\s'-]+$/.test(name.trim()))
-    return "სახელი (ინგლისურად) უნდა შეიცავდეს მხოლოდ ლათინურ ასოებს";
+    return getTranslation(TranslationNamespace.Validation, "name_en_letters_only", lang);
   return null;
 };

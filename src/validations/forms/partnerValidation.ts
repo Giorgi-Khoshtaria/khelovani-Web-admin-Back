@@ -5,6 +5,9 @@ import { validatePhone } from "../shared/phone.validation.js";
 import { PartnerRegisterData } from "../../types/partnerTypes.js";
 import Admin from "../../modules/admin.modules.js";
 import Organisation from "../../modules/organization.modules.js";
+import { Lang } from "../../types/lang.types.js";
+import { getTranslation } from "../../types/translate.util.js";
+import { TranslationNamespace } from "../../types/translation.enum.js";
 
 export interface ValidationError {
   field: string;
@@ -13,87 +16,94 @@ export interface ValidationError {
 
 export const validatePartnerRegistration = async (
   data: Partial<PartnerRegisterData>,
+  lang: Lang = "ge",
 ): Promise<ValidationError[]> => {
   const errors: ValidationError[] = [];
 
   if (!data.companyNameGe || data.companyNameGe.trim() === "") {
     errors.push({
       field: "companyNameGe",
-      message: "კომპანიის ქართული სახელი სავალდებულოა",
+      message: getTranslation(TranslationNamespace.Validation, "companyNameGe_required", lang),
     });
   }
 
   if (!data.companyNameEn || data.companyNameEn.trim() === "") {
     errors.push({
       field: "companyNameEn",
-      message: "კომპანიის ინგლისური სახელი სავალდებულოა",
+      message: getTranslation(TranslationNamespace.Validation, "companyNameEn_required", lang),
     });
   }
 
   if (!data.identificationCode || data.identificationCode.trim() === "") {
     errors.push({
       field: "identificationCode",
-      message: "საიდენტიფიკაციო კოდი სავალდებულოა",
+      message: getTranslation(TranslationNamespace.Validation, "id_code_required", lang),
     });
   } else if (!/^\d{9}$/.test(data.identificationCode.trim())) {
     errors.push({
       field: "identificationCode",
-      message: "საიდენტიფიკაციო კოდი უნდა შეიცავდეს 9 ციფრს",
+      message: getTranslation(TranslationNamespace.Validation, "id_code_invalid", lang),
     });
   }
 
   if (!data.contactPerson || data.contactPerson.trim() === "") {
     errors.push({
       field: "contactPerson",
-      message: "საკონტაქტო პირი სავალდებულოა",
+      message: getTranslation(TranslationNamespace.Validation, "contact_person_required", lang),
     });
   }
 
-  const phoneError = validatePhone(data.phone);
+  const phoneError = validatePhone(data.phone, lang);
   if (phoneError) errors.push({ field: "phone", message: phoneError });
 
-  const cityError = validateCity(data.city);
+  const cityError = validateCity(data.city, lang);
   if (cityError) errors.push({ field: "city", message: cityError });
 
-  const emailError = validateEmail(data.email);
+  const emailError = validateEmail(data.email, lang);
   if (emailError) errors.push({ field: "email", message: emailError });
 
   if (!data.address || data.address.trim() === "") {
-    errors.push({ field: "address", message: "მისამართი სავალდებულოა" });
+    errors.push({
+      field: "address",
+      message: getTranslation(TranslationNamespace.Validation, "address_required", lang),
+    });
   } else if (!/^[ა-ჰ0-9\s.,/\\\-()]+$/.test(data.address.trim())) {
     errors.push({
       field: "address",
-      message: "მისამართი უნდა იყოს ქართულად",
+      message: getTranslation(TranslationNamespace.Validation, "address_needs_georgian", lang),
     });
   }
 
   if (!data.addressEn || data.addressEn.trim() === "") {
     errors.push({
       field: "addressEn",
-      message: "მისამართი (ინგლისურად) სავალდებულოა",
+      message: getTranslation(TranslationNamespace.Validation, "addressEn_required", lang),
     });
   } else if (!/^[a-zA-Z0-9\s.,/\\\-()]+$/.test(data.addressEn.trim())) {
     errors.push({
       field: "addressEn",
-      message: "მისამართი (ინგლისურად) უნდა იყოს ინგლისურად",
+      message: getTranslation(TranslationNamespace.Validation, "addressEn_needs_english", lang),
     });
   }
 
   if (!data.terms) {
     errors.push({
       field: "terms",
-      message: "წესებზე და პირობებზე დათანხმება აუცილებელია",
+      message: getTranslation(TranslationNamespace.Validation, "terms_required", lang),
     });
   }
 
   // ── Database Uniqueness Checks ──────────────────────────────────────────
   if (data.email) {
-    const emailExists = 
-      (await Admin.findOne({ email: data.email.trim().toLowerCase() })) || 
+    const emailExists =
+      (await Admin.findOne({ email: data.email.trim().toLowerCase() })) ||
       (await Organisation.findOne({ email: data.email.trim().toLowerCase() }));
 
     if (emailExists) {
-      errors.push({ field: "email", message: "ეს ელ-ფოსტა უკვე დაკავებულია" });
+      errors.push({
+        field: "email",
+        message: getTranslation(TranslationNamespace.Validation, "email_taken", lang),
+      });
     }
   }
 
@@ -105,7 +115,7 @@ export const validatePartnerRegistration = async (
     if (existingOrgByCode) {
       errors.push({
         field: "identificationCode",
-        message: "ამ საიდენტიფიკაციო კოდით ორგანიზაცია უკვე არსებობს",
+        message: getTranslation(TranslationNamespace.Validation, "id_code_taken", lang),
       });
     }
   }

@@ -1,5 +1,6 @@
 import Translation from "../modules/translation.modules.js";
 import { Lang } from "../types/lang.types.js";
+import { TranslationNamespace } from "./translation.enum.js";
 
 interface CacheStructure {
   [namespace: string]: {
@@ -43,7 +44,7 @@ export const loadTranslationCache = async (): Promise<void> => {
  * Falls back to 'ge' then the key itself if no match is found.
  */
 export const getTranslation = (
-  namespace: string,
+  namespace: TranslationNamespace,
   key: string,
   lang: Lang = "ge",
 ): string => {
