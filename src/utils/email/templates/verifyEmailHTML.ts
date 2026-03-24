@@ -1,68 +1,117 @@
 export const verifyEmailHTML = (
   verificationLink: string,
-  { btnText, emailDescription }: { btnText: string; emailDescription: string },
+  {
+    btnTextGeo,
+    btnTextEng,
+    emailDescriptionGeo,
+    emailDescriptionEng,
+  }: {
+    btnTextGeo: string;
+    btnTextEng: string;
+    emailDescriptionGeo: string;
+    emailDescriptionEng: string;
+  },
 ): string => `
 <!DOCTYPE html>
 <html lang="ka">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ელ-ფოსტის დადასტურება</title>
+    <title>დადასტურება / Verification</title>
   </head>
   <body style="margin:0; padding:0; background:#f4f4f4; font-family: sans-serif;">
     <table width="100%" cellpadding="0" cellspacing="0" style="padding: 40px 0;">
       <tr>
         <td align="center">
-          <table width="480" cellpadding="0" cellspacing="0"
+          
+          <!-- GEORGIAN SECTION -->
+          <table width="460" cellpadding="0" cellspacing="0"
             style="background:#ffffff; border-radius:12px;
-                   padding:40px; box-shadow: 0 4px 24px rgba(0,0,0,0.08);">
+                   padding:36px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); margin-bottom: 30px;">
             <tr>
-              <td align="center" style="padding-bottom: 24px;">
-                <h1 style="margin:0; font-size:22px; color:#222;">
+              <td align="center" style="padding-bottom: 20px;">
+                <h1 style="margin:0; font-size:18px; color:#222; font-weight:700;">
                   ელ-ფოსტის დადასტურება
                 </h1>
               </td>
             </tr>
             <tr>
-              <td style="color:#555; font-size:15px; line-height:1.6; padding-bottom:28px;">
-                <p style="margin:0 0 12px;">გამარჯობა,</p>
+              <td style="color:#444; font-size:14px; line-height:1.6; padding-bottom:24px;">
+                <p style="margin:0 0 10px; font-weight:700;">გამარჯობა,</p>
                 <p style="margin:0;">
-                  ${emailDescription}
+                  ${emailDescriptionGeo}
                 </p>
               </td>
             </tr>
             <tr>
-              <td align="center" style="padding-bottom:28px;">
+              <td align="center" style="padding-bottom:24px;">
                 <a href="${verificationLink}"
-  style="display:inline-block; padding:14px 32px;
-         background:#222; color:#ffffff; font-size:15px;
-         font-weight:600; border-radius:8px;
-         text-decoration:none; letter-spacing:0.3px;">
-  ${btnText}
-</a>
-              </td>
-            </tr>
-            <tr>
-              <td style="color:#999; font-size:13px; padding-bottom:24px;">
-                <p style="margin:0 0 6px;">
-                  თუ ღილაკი არ მუშაობს, დააკოპირე ეს ლინკი ბრაუზერში:
-                </p>
-                <a href="${verificationLink}"
-                  style="color:#555; word-break:break-all; font-size:12px;">
-                  ${verificationLink}
+                  style="display:inline-block; padding:12px 28px;
+                         background:#1a1a1a; color:#ffffff; font-size:14px;
+                         font-weight:600; border-radius:6px;
+                         text-decoration:none; letter-spacing:0.3px;">
+                  ${btnTextGeo}
                 </a>
               </td>
             </tr>
             <tr>
-              <td style="border-top:1px solid #eee; padding-top:20px;
-                         color:#aaa; font-size:12px;">
-                <p style="margin:0;">
-                  ლინკი მოქმედებს <strong>24 საათი</strong>.
-                  თუ თქვენ არ მოგითხოვიათ რეგისტრაცია, უგულებელყავით ეს წერილი.
-                </p>
+              <td style="color:#888; font-size:12px; padding-bottom:20px;">
+                <p style="margin:0 0 4px;">თუ ღილაკი არ მუშაობს, დააკოპირე ლინკი:</p>
+                <a href="${verificationLink}" style="color:#666; word-break:break-all;">${verificationLink}</a>
+              </td>
+            </tr>
+            <tr>
+              <td style="border-top:1px solid #eee; padding-top:16px; color:#999; font-size:12px;">
+                <p style="margin:0 0 4px;">ლინკი მოქმედებს <strong>24 საათი</strong>.</p>
+                <p style="margin:0;">თუ თქვენ არ მოგითხოვიათ მოქმედება, უგულებელყავით.</p>
               </td>
             </tr>
           </table>
+
+          <!-- ENGLISH SECTION -->
+          <table width="460" cellpadding="0" cellspacing="0"
+            style="background:#ffffff; border-radius:12px;
+                   padding:36px; box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
+            <tr>
+              <td align="center" style="padding-bottom: 20px;">
+                <h1 style="margin:0; font-size:18px; color:#222; font-weight:700;">
+                  Email Verification
+                </h1>
+              </td>
+            </tr>
+            <tr>
+              <td style="color:#444; font-size:14px; line-height:1.6; padding-bottom:24px;">
+                <p style="margin:0 0 10px; font-weight:700;">Hello,</p>
+                <p style="margin:0;">
+                  ${emailDescriptionEng}
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td align="center" style="padding-bottom:24px;">
+                <a href="${verificationLink}"
+                  style="display:inline-block; padding:12px 28px;
+                         background:#1a1a1a; color:#ffffff; font-size:14px;
+                         font-weight:600; border-radius:6px;
+                         text-decoration:none; letter-spacing:0.3px;">
+                  ${btnTextEng}
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td style="color:#888; font-size:12px; padding-bottom:20px;">
+                <p style="margin:0 0 4px;">If the button doesn't work, copy the link:</p>
+                <a href="${verificationLink}" style="color:#666; word-break:break-all;">${verificationLink}</a>
+              </td>
+            </tr>
+            <tr>
+              <td style="border-top:1px solid #eee; padding-top:16px; color:#999; font-size:12px;">
+                <p style="margin:0 0 4px;">Link is active for <strong>24 hours</strong>.</p>
+                <p style="margin:0;">If you didn't request this action, discard this email.</p>
+              </td>
+            </tr>
+          </table>
+
         </td>
       </tr>
     </table>

@@ -39,7 +39,7 @@ export const forgotPassword = async (
       return;
     }
 
-    await sendUserForgotPasswordEmail(trimmedEmail);
+    await sendUserForgotPasswordEmail(trimmedEmail, lang);
 
     res.status(200).json({
       message: getTranslation("auth", "forgot_password_success", lang),

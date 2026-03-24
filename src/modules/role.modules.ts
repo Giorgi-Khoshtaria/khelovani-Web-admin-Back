@@ -11,7 +11,7 @@ const RoleSchema = new mongoose.Schema(
     allowedPanels: [
       {
         type: String,
-        enum: ["web", "admin"],
+        enum: ["web", "admin", "admin-organization"],
       },
     ],
     permissions: [

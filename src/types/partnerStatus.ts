@@ -8,4 +8,3 @@ export const PartnerStatusEnum = {
 
 export type PartnerStatusEnum =
   (typeof PartnerStatusEnum)[keyof typeof PartnerStatusEnum];
-``;

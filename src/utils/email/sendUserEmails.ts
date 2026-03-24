@@ -3,24 +3,24 @@ import { sendVerificationEmail } from "./sendVerificationEmail.js";
 
 export const sendUserRegistrationVerificationEmail = async (
   email: string,
+  lang: string = "ge",
 ): Promise<void> => {
   const verificationToken = generateRememberToken(email);
 
   const verificationLink = `${process.env.FRONTEND_URL}/verify-user-registration?token=${verificationToken}`;
-  const subject = "მომხმარებლის რეგისტრაციისთვის ელ-ფოსტის დადასტურება";
+  const subject = lang === "en" ? "User Email Verification" : "მომხმარებლის რეგისტრაციისთვის ელ-ფოსტის დადასტურება";
   const emailType = "registration";
-  const emailDescription =
-    "მადლობა რეგისტრაციისთვის! გთხოვთ დაადასტუროთ თქვენი ელ-ფოსტის მისამართი ქვემოთ მოცემულ ღილაკზე დაჭერით.";
   await sendVerificationEmail(email, verificationLink, subject, emailType);
 };
 
 export const sendUserForgotPasswordEmail = async (
   email: string,
+  lang: string = "ge",
 ): Promise<void> => {
   const verificationToken = generateRememberToken(email);
 
   const verificationLink = `${process.env.FRONTEND_URL}/reset-password?token=${verificationToken}`;
-  const subject = "მომხმარებლის დავიწყებული პაროლის აღდგენა";
+  const subject = lang === "en" ? "Reset Password Request" : "მომხმარებლის დავიწყებული პაროლის აღდგენა";
   const emailType = "forgot-password";
   await sendVerificationEmail(email, verificationLink, subject, emailType);
 };

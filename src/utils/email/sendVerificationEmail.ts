@@ -3,24 +3,28 @@ import { verifyEmailHTML } from "./templates/verifyEmailHTML.js";
 
 const checkEmailType = (
   emailType: string,
-): { btnText: string; emailDescription: string } => {
+): { btnTextGeo: string; btnTextEng: string; emailDescriptionGeo: string; emailDescriptionEng: string } => {
   switch (emailType) {
     case "registration":
       return {
-        btnText: "დაადასტურე ელ-ფოსტა",
-        emailDescription:
-          "მადლობა რეგისტრაციისთვის! გთხოვთ დაადასტუროთ თქვენი ელ-ფოსტის მისამართი ქვემოთ მოცემულ ღილაკზე დაჭერით.",
+        btnTextGeo: "დაადასტურე ელ-ფოსტა",
+        btnTextEng: "Verify Email",
+        emailDescriptionGeo: "მადლობა რეგისტრაციისთვის! გთხოვთ დაადასტუროთ თქვენი ელ-ფოსტის მისამართი ქვემოთ მოცემულ ღილაკზე დაჭერით.",
+        emailDescriptionEng: "Thank you for registering! Please verify your email address by clicking the button below.",
       };
     case "forgot-password":
       return {
-        btnText: "აღადგინე პაროლი",
-        emailDescription:
-          "პაროლი დაგავიწყდა შეცვალე შენი პაროლი ქვემოთ მოცემულ ღილაკზე დაჭერით.",
+        btnTextGeo: "აღადგინე პაროლი",
+        btnTextEng: "Reset Password",
+        emailDescriptionGeo: "პაროლი დაგავიწყდა შეცვალე შენი პაროლი ქვემოთ მოცემულ ღილაკზე დაჭერით.",
+        emailDescriptionEng: "Forgot your password? Reset it by clicking the button below.",
       };
     default:
       return {
-        btnText: "",
-        emailDescription: "",
+        btnTextGeo: "",
+        btnTextEng: "",
+        emailDescriptionGeo: "",
+        emailDescriptionEng: "",
       };
   }
 };

@@ -49,27 +49,27 @@ export const loginAdmin = async (
       if (!admin.role || !admin.role.isActive) {
         res
           .status(403)
-          .json({ message: "ადმინისტრატორის როლი არ არის აქტიური" });
+          .json({ message: "admin_role_not_active" });
         return;
       }
 
       const isPasswordValid = await bcrypt.compare(password, admin.password);
       if (!isPasswordValid) {
-        res.status(422).json({ message: "არასწორი მეილი ან პაროლი" });
+        res.status(422).json({ message: "invalid_email_or_password" });
         return;
       }
 
       const token = generateJWTToken({
         id: admin._id.toString(),
         role: admin.role.name,
-        permissions: admin.role.permissions.map((p) => p.name),
-        allowedPanels: admin.role.allowedPanels,
+        permissions: admin.role.permissions?.map((p) => p.name) || [],
+        allowedPanels: admin.role.allowedPanels || [],
       });
 
       const { password: _, ...adminWithoutPassword } = admin.toObject();
 
       res.status(200).json({
-        message: "ადმინისტრატორი წარმატებით შევიდა სისტემაში",
+        message: "admin_login_success",
         token,
         // admin: adminWithoutPassword,
         // userType: "admin",
@@ -86,13 +86,13 @@ export const loginAdmin = async (
     });
 
     if (!partner) {
-      res.status(422).json({ message: "მომხმარებელი არ მოიძებნა" });
+      res.status(422).json({ message: "user_not_found" });
       return;
     }
 
     // ── Guard: role must exist and be active ─────────────────────────────────
     if (!partner.role || !partner.role.isActive) {
-      res.status(403).json({ message: "ორგანიზაცია არ არის აქტიური" });
+      res.status(403).json({ message: "org_not_active" });
       return;
     }
 
@@ -100,14 +100,14 @@ export const loginAdmin = async (
     if (partner.status !== PartnerStatusEnum.APPROVED) {
       res
         .status(403)
-        .json({ message: "ორგანიზაცია ჯერ არ არის დადასტურებული" });
+        .json({ message: "org_not_verified" });
       return;
     }
 
     // ── Check password ───────────────────────────────────────────────────────
     const isPasswordValid = await bcrypt.compare(password, partner.password);
     if (!isPasswordValid) {
-      res.status(422).json({ message: "არასწორი მეილი ან პაროლი" });
+      res.status(422).json({ message: "invalid_email_or_password" });
       return;
     }
 
@@ -115,15 +115,15 @@ export const loginAdmin = async (
     const token = generateJWTToken({
       id: partner._id.toString(),
       role: partner.role.name,
-      permissions: partner.role.permissions.map((p) => p.name),
-      allowedPanels: partner.role.allowedPanels,
+      permissions: partner.role.permissions?.map((p) => p.name) || [],
+      allowedPanels: partner.role.allowedPanels || [],
     });
 
     // ── Strip password before sending ────────────────────────────────────────
     const { password: _, ...partnerWithoutPassword } = partner.toObject();
 
     res.status(200).json({
-      message: "ორგანიზაცია წარმატებით შევიდა სისტემაში",
+      message: "org_login_success",
       token,
       // partner: partnerWithoutPassword,
       // userType: "partner",

@@ -14,7 +14,7 @@ export const verifyEmailCallback = async (
     const { token } = req.query;
 
     if (!token || typeof token !== "string") {
-      res.status(400).json({ message: "ტოკენი არ მოიძებნა" });
+      res.status(400).json({ message: "token_not_found" });
       return;
     }
 
@@ -22,7 +22,7 @@ export const verifyEmailCallback = async (
     const user = await User.findOne({ email: decoded.email });
 
     if (!user) {
-      res.status(404).json({ message: "მომხმარებელი ვერ მოიძებნა" });
+      res.status(404).json({ message: "user_not_found" });
       return;
     }
 
@@ -41,8 +41,7 @@ export const verifyEmailCallback = async (
       res.status(400).json({
         status: "error",
         code: "expired",
-        message:
-          "ვერიფიკაციის ლინკის ვადა გასულია. გთხოვთ ხელახლა დარეგისტრირდეთ.",
+        message: "verification_link_expired",
       });
       return;
     }
@@ -50,14 +49,14 @@ export const verifyEmailCallback = async (
       res.status(400).json({
         status: "error",
         code: "invalid",
-        message: "ლინკი არასწორია ან დაზიანებულია.",
+        message: "link_invalid",
       });
       return;
     }
     res.status(500).json({
       status: "error",
       code: "server",
-      message: "სერვერის შეცდომა. სცადეთ მოგვიანებით.",
+      message: "server_error",
     });
   }
 };

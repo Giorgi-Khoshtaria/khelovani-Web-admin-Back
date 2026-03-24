@@ -17,6 +17,14 @@ export const seedPermissions = async () => {
         }
       }
     }
+
+    // Cleanup old permissions no longer in PERMISSIONS template
+    const currentKeys = Object.values(PERMISSIONS).flatMap(cat => Object.values(cat as Record<string, string>));
+    const deleteResult = await Permission.deleteMany({ name: { $nin: currentKeys } });
+    if (deleteResult.deletedCount > 0) {
+      console.log(`Deleted ${deleteResult.deletedCount} deprecated permissions.`);
+    }
+
     console.log("Seeding permissions completed.");
   } catch (error) {
     console.error("Error seeding permissions:", error);

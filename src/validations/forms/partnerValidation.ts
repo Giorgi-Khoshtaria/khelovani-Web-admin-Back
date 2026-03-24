@@ -3,15 +3,17 @@ import { validatePassword } from "../shared/password.validation.js";
 import { validateCity } from "../shared/city.validation.js";
 import { validatePhone } from "../shared/phone.validation.js";
 import { PartnerRegisterData } from "../../types/partnerTypes.js";
+import Admin from "../../modules/admin.modules.js";
+import Organisation from "../../modules/organization.modules.js";
 
 export interface ValidationError {
   field: string;
   message: string;
 }
 
-export const validatePartnerRegistration = (
+export const validatePartnerRegistration = async (
   data: Partial<PartnerRegisterData>,
-): ValidationError[] => {
+): Promise<ValidationError[]> => {
   const errors: ValidationError[] = [];
 
   if (!data.companyNameGe || data.companyNameGe.trim() === "") {
@@ -82,6 +84,30 @@ export const validatePartnerRegistration = (
       field: "terms",
       message: "წესებზე და პირობებზე დათანხმება აუცილებელია",
     });
+  }
+
+  // ── Database Uniqueness Checks ──────────────────────────────────────────
+  if (data.email) {
+    const emailExists = 
+      (await Admin.findOne({ email: data.email.trim().toLowerCase() })) || 
+      (await Organisation.findOne({ email: data.email.trim().toLowerCase() }));
+
+    if (emailExists) {
+      errors.push({ field: "email", message: "ეს ელ-ფოსტა უკვე დაკავებულია" });
+    }
+  }
+
+  if (data.identificationCode) {
+    const existingOrgByCode = await Organisation.findOne({
+      identificationCode: data.identificationCode.trim(),
+    });
+
+    if (existingOrgByCode) {
+      errors.push({
+        field: "identificationCode",
+        message: "ამ საიდენტიფიკაციო კოდით ორგანიზაცია უკვე არსებობს",
+      });
+    }
   }
 
   return errors;

@@ -12,6 +12,9 @@ import {
 } from "../../controllers/admin/translation/bulkTranslation.controller.js";
 import { authenticate } from "../../middleware/auth/authenticate.js";
 
+import { requirePermission } from "../../middleware/role/requirePermission.js";
+import { PERMISSIONS } from "../../middleware/role/permissions.js";
+
 const router = Router();
 
 // ✅ Public Routes (needed by frontend to load translations before login)
@@ -19,10 +22,10 @@ router.get("/", getTranslations);
 router.get("/namespaces", getNamespaces);
 
 // 🔒 Protected Routes (Admin only to manage translations)
-router.post("/", authenticate, addTranslation);
-router.post("/bulk", authenticate, bulkTranslation);
-router.post("/bulk-delete", authenticate, bulkDeleteTranslations);
-router.put("/:id", authenticate, updateTranslation);
-router.delete("/:id", authenticate, deleteTranslation);
+router.post("/", authenticate, requirePermission(PERMISSIONS.TRANSLATIONS.EDIT), addTranslation);
+router.post("/bulk", authenticate, requirePermission(PERMISSIONS.TRANSLATIONS.EDIT), bulkTranslation);
+router.post("/bulk-delete", authenticate, requirePermission(PERMISSIONS.TRANSLATIONS.DELETE), bulkDeleteTranslations);
+router.put("/:id", authenticate, requirePermission(PERMISSIONS.TRANSLATIONS.EDIT), updateTranslation);
+router.delete("/:id", authenticate, requirePermission(PERMISSIONS.TRANSLATIONS.DELETE), deleteTranslation);
 
 export default router;

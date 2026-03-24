@@ -1,18 +1,35 @@
 export const PERMISSIONS = {
   USERS: {
     READ: "users:read",
-    WRITE: "users:write",
+    CREATE: "users:create",
+    EDIT: "users:edit",
+    SUSPEND: "users:suspend",
     DELETE: "users:delete",
   },
   ORGS: {
-    READ: "organisations:read",
     MANAGE: "organisations:manage",
+    READ: "organisations:read",
+    CREATE: "organisations:create",
+    EDIT: "organisations:edit",
+    VERIFY: "organisations:verify",
+    REJECT: "organisations:reject",
+    SUSPEND: "organisations:suspend",
+    DELETE: "organisations:delete",
   },
   ROLES: {
-    MANAGE: "roles:manage",
+    READ: "roles:read",
+    CREATE: "roles:create",
+    EDIT: "roles:edit",
+    DELETE: "roles:delete",
   },
   SETTINGS: {
-    MANAGE: "settings:manage",
+    READ: "settings:read",
+    EDIT: "settings:edit",
+  },
+  TRANSLATIONS: {
+    READ: "translations:read",
+    EDIT: "translations:edit",
+    DELETE: "translations:delete",
   },
   REPORTS: {
     VIEW: "reports:view",
@@ -20,7 +37,7 @@ export const PERMISSIONS = {
 } as const;
 
 export const PANELS = {
-  WEB: "web",
+  WEB: "admin-organization",
   ADMIN: "admin",
 } as const;
 

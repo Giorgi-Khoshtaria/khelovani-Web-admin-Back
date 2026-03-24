@@ -2,7 +2,7 @@ import rateLimit from "express-rate-limit";
 
 export const twoMinutesLimiter = rateLimit({
   windowMs: 2 * 60 * 1000, // 2 minutes
-  max: 3,
+  max: 10,
   skipSuccessfulRequests: true,
   standardHeaders: true,
   legacyHeaders: false,

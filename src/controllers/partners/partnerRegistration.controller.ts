@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Organisation from "../../modules/organization.modules.js";
+import Admin from "../../modules/admin.modules.js";
 import Role from "../../modules/role.modules.js";
 import { PartnerRegisterData } from "../../types/partnerTypes.js";
 import { PartnerStatusEnum } from "../../types/partnerStatus.js";
@@ -17,27 +18,9 @@ export const registerPartner = async (
     const data: PartnerRegisterData = req.body;
 
     // ── Validate all fields ────────────────────────────────────────────────
-    const validationErrors = validatePartnerRegistration(data);
+    const validationErrors = await validatePartnerRegistration(data);
     if (validationErrors.length > 0) {
       res.status(422).json({ errors: validationErrors });
-      return;
-    }
-
-    // ── Check for duplicate Organisation ──────────────────────────────────
-    const existingOrg = await Organisation.findOne({
-      $or: [
-        { email: data.email },
-        { identificationCode: data.identificationCode },
-      ],
-    });
-
-    if (existingOrg) {
-      res.status(409).json({
-        message:
-          existingOrg.email === data.email
-            ? "ამ ელ. ფოსტით ორგანიზაცია უკვე არსებობს"
-            : "ამ საიდენტიფიკაციო კოდით ორგანიზაცია უკვე არსებობს",
-      });
       return;
     }
 
@@ -77,7 +60,7 @@ export const registerPartner = async (
 
     // Password email will be sent upon Admin Approval in updatePartnerStatus
 
-    res.status(201).json({ message: "პარტნიორი წარმატებით დარეგისტრირდა" });
+    res.status(201).json({ message: "partner_registered" });
   } catch (error) {
     res.status(500).json({ message: (error as Error).message });
   }

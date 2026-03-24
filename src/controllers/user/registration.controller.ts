@@ -42,7 +42,7 @@ export const registerUser = async (
 
     if (existingByEmail) {
       if (!existingByEmail.isVerified) {
-        await sendUserRegistrationVerificationEmail(trimmedEmail);
+        await sendUserRegistrationVerificationEmail(trimmedEmail, lang);
         res.status(200).json({
           message: getTranslation("auth", "verification_email_resent", lang),
         });
@@ -94,7 +94,7 @@ export const registerUser = async (
       isVerified: false,
     });
 
-    await sendUserRegistrationVerificationEmail(trimmedEmail);
+    await sendUserRegistrationVerificationEmail(trimmedEmail, lang);
 
     res.status(201).json({
       message: getTranslation("auth", "register_success_verify_email", lang),
