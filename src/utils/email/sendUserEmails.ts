@@ -7,7 +7,7 @@ export const sendUserRegistrationVerificationEmail = async (
 ): Promise<void> => {
   const verificationToken = generateRememberToken(email);
 
-  const verificationLink = `${process.env.FRONTEND_URL}/verify-user-registration?token=${verificationToken}`;
+  const verificationLink = `${process.env.FRONTEND_URL}/verify?token=${verificationToken}`;
   const subject = lang === "en" ? "User Email Verification" : "მომხმარებლის რეგისტრაციისთვის ელ-ფოსტის დადასტურება";
   const emailType = "registration";
   await sendVerificationEmail(email, verificationLink, subject, emailType);

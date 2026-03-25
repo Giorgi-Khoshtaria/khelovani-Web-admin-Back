@@ -7,6 +7,7 @@ import {
   ROLES,
   PERMISSIONS,
 } from "../../middleware/role/permissions.js";
+import { seedPermissions } from "./seedPermissions.js";
 
 dotenv.config();
 
@@ -14,22 +15,15 @@ const rolesToSeed = [
   {
     name: ROLES.ADMIN,
     allowedPanels: [PANELS.ADMIN],
-    permissions: [],
+    permissions: Object.values(PERMISSIONS.ADMIN),
     description:
       "Administrator with full access over the admin panel and website",
     isActive: true,
   },
   {
-    name: ROLES.MODERATOR,
-    allowedPanels: [PANELS.ADMIN],
-    permissions: ["moderate_content"],
-    description: "Moderator with access to moderate content",
-    isActive: true,
-  },
-  {
     name: ROLES.ORGANISATION,
-    allowedPanels: [PANELS.WEB],
-    permissions: [PERMISSIONS.ORGS.MANAGE],
+    allowedPanels: [PANELS.ORGANIZATION],
+    permissions: Object.values(PERMISSIONS.PARTNER),
     description:
       "Organization account with access to the admin panel and website",
     isActive: true,
@@ -44,6 +38,9 @@ const seedRoles = async () => {
 
     await mongoose.connect(process.env.MONGODB_URI);
     console.log("Connected to MongoDB");
+
+    // ── Seed Permissions first ─────────────────────────────────────────────
+    await seedPermissions();
 
     for (const roleData of rolesToSeed) {
       // Look up correct permission ObjectIds from DB for strings
@@ -71,7 +68,9 @@ const seedRoles = async () => {
         existingRole.permissions = permissionIds;
 
         await existingRole.save();
-        console.log(`Role '${roleData.name}' updated with latest configuration constants.`);
+        console.log(
+          `Role '${roleData.name}' updated with latest configuration constants.`,
+        );
       }
     }
 

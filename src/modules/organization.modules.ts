@@ -72,6 +72,26 @@ const OrganisationSchema = new mongoose.Schema(
       ref: "Role",
       required: true,
     },
+    website: {
+      type: String,
+      required: false,
+      trim: true,
+    },
+    facebook: {
+      type: String,
+      required: false,
+      trim: true,
+    },
+    instagram: {
+      type: String,
+      required: false,
+      trim: true,
+    },
+    tiktok: {
+      type: String,
+      required: false,
+      trim: true,
+    },
   },
   { timestamps: true },
 );

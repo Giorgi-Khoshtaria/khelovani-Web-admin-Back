@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import { ROLES } from "../../middleware/role/permissions.js";
 
 dotenv.config();
 
@@ -11,8 +12,8 @@ mongoose
 
     const email = "[EMAIL_USER]";
 
-    // 1. Find the super_admin role
-    const adminRole = await Role.findOne({ name: "super_admin" });
+    // 1. Find the admin role
+    const adminRole = await Role.findOne({ name: ROLES.ADMIN });
     if (!adminRole) {
       console.log("super_admin role not found! Run your seed script first.");
       process.exit(1);

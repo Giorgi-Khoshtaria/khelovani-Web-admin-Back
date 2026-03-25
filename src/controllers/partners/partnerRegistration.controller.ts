@@ -2,12 +2,12 @@ import { Request, Response } from "express";
 import Organisation from "../../modules/organization.modules.js";
 import Admin from "../../modules/admin.modules.js";
 import Role from "../../modules/role.modules.js";
+import { ROLES } from "../../middleware/role/permissions.js";
 import { PartnerRegisterData } from "../../types/partnerTypes.js";
 import { PartnerStatusEnum } from "../../types/partnerStatus.js";
 import { validatePartnerRegistration } from "../../validations/forms/partnerValidation.js";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
-import { sendPartnerPasswordEmail } from "../../utils/email/sendPartnerEmail.js";
 
 export const registerPartner = async (
   req: Request,
@@ -24,17 +24,13 @@ export const registerPartner = async (
       return;
     }
 
-    // ── Get or Create Partner Role ─────────────────────────────────────────
-    let partnerRole = await Role.findOne({ name: "organization" });
+    // ── Get Partner Role (must be seeded) ──────────────────────────────────
+    const partnerRole = await Role.findOne({ name: ROLES.ORGANISATION });
     if (!partnerRole) {
-      partnerRole = await Role.create({
-        name: "organization",
-        allowedPanels: ["admin"],
-        permissions: ["org_management"],
-        description:
-          "Organization account with access to the admin panel and website",
-        isActive: true,
+      res.status(500).json({
+        message: "Organisation role not found. Run seed:roles first.",
       });
+      return;
     }
 
     // ── Generate Random Password ───────────────────────────────────────────

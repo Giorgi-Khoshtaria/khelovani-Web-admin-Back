@@ -3,6 +3,8 @@ import {
   getAllPartners,
   getPartnerById,
   updatePartnerStatus,
+  updatePartner,
+  deletePartner,
 } from "../../controllers/partners/getPartner.controller.js";
 import { authenticate } from "../../middleware/auth/authenticate.js";
 
@@ -14,8 +16,10 @@ const router = Router();
 // ✅ Admin Partner management routes
 router.use(authenticate);
 
-router.get("/", requirePermission(PERMISSIONS.ORGS.READ), getAllPartners);
-router.get("/:id", requirePermission(PERMISSIONS.ORGS.READ), getPartnerById);
-router.patch("/:id/status", requirePermission(PERMISSIONS.ORGS.VERIFY, PERMISSIONS.ORGS.REJECT), updatePartnerStatus);
+router.get("/", requirePermission(PERMISSIONS.ADMIN.USER_LIST), getAllPartners);
+router.get("/:id", getPartnerById); // Access check handled in controller
+router.patch("/:id/status", requirePermission(PERMISSIONS.ADMIN.ORG_APPROVE, PERMISSIONS.ADMIN.ORG_REJECT), updatePartnerStatus);
+router.patch("/:id", updatePartner); // Access check handled in controller
+router.delete("/:id", deletePartner); // Access check handled in controller
 
 export default router;

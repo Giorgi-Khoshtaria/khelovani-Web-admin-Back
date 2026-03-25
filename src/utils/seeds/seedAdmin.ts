@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import { ROLES } from "../../middleware/role/permissions.js";
 
 dotenv.config();
 
@@ -10,18 +11,22 @@ mongoose
     const Role = (await import("../../modules/role.modules.js")).default;
     const Admin = (await import("../../modules/admin.modules.js")).default;
 
-    // 1. Find the super_admin role
-    const adminRole = await Role.findOne({ name: "super_admin" });
+    // 1. Find the admin role
+    // Role names are seeded from `src/middleware/role/permissions.ts`.
+    const adminRole = await Role.findOne({ name: ROLES.ADMIN });
     if (!adminRole) {
-      console.log("super_admin role not found! Run your seed script first.");
+      console.log("admin role not found! Run `npm run seed:roles` first.");
       process.exit(1);
     }
 
     // 2. Check if admin already exists
     const existingAdmin = await Admin.findOne({ email: "admin@example.com" });
     if (existingAdmin) {
+      // If the admin exists but has an old/bad role ref, fix it.
+      existingAdmin.role = adminRole._id;
+      await existingAdmin.save();
       console.log(
-        "Admin already exists! You can log in with admin@example.com / admin123",
+        "✅ Admin already existed, but role was updated to `admin`.",
       );
       process.exit(0);
     }

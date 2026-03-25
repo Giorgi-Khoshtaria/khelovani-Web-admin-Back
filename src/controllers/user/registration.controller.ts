@@ -1,8 +1,6 @@
 import bcrypt from "bcrypt";
 import type { Request, Response } from "express";
-import { ROLES } from "../../middleware/role/permissions.js";
 import { sendUserRegistrationVerificationEmail } from "../../utils/email/sendUserEmails.js";
-import Role from "../../modules/role.modules.js";
 import User from "../../modules/user.modules.js";
 import { UserTypes } from "../../types/userTypes.js";
 import { validateRegistration } from "../../validations/forms/registerValidation.js";
@@ -67,19 +65,8 @@ export const registerUser = async (
       return;
     }
 
-    // ── Default role ───────────────────────────────────────────────────────
-    const defaultRole = await Role.findOne({ name: ROLES.USER });
-    if (!defaultRole) {
-      res.status(500).json({
-        message: "Default role not found. Run seedRoles first.",
-      });
-      return;
-    }
-
     // ── Hash + create ──────────────────────────────────────────────────────
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    // phone comes as "5XX XXX XXX" from frontend — prepend +995
 
     await User.create({
       idNumber: trimmedIdNumber,
@@ -91,7 +78,6 @@ export const registerUser = async (
       email: trimmedEmail,
       phone: phone.trim(),
       password: hashedPassword,
-      role: defaultRole._id,
       isVerified: false,
     });
 

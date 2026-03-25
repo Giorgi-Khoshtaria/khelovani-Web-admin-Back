@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import Role from "../../../modules/role.modules.js";
+import { ROLES } from "../../../middleware/role/permissions.js";
 
 // @desc    Get all roles
 // @route   GET /api/admin/roles
@@ -82,10 +83,10 @@ export const updateRole = async (req: Request, res: Response): Promise<void> => 
     }
 
     // Optional: Prevent renaming system critical roles if any
-    // if (role.name === "super_admin" && name && name !== "super_admin") {
-    //   res.status(400).json({ message: "super_admin-ის სახელის შეცვლა აკრძალულია" });
-    //   return;
-    // }
+    if (role.name === ROLES.ADMIN && name && name !== ROLES.ADMIN) {
+      res.status(400).json({ message: "admin-ის სახელის შეცვლა აკრძალულია" });
+      return;
+    }
 
     if (name) role.name = name;
     if (description) role.description = description;
@@ -117,9 +118,9 @@ export const deleteRole = async (req: Request, res: Response): Promise<void> => 
       return;
     }
 
-    // Prevent deleting super_admin or items that are locked
-    if (role.name === "super_admin") {
-      res.status(400).json({ message: "super_admin-ის წაშლა აკრძალულია" });
+    // Prevent deleting admin or items that are locked
+    if (role.name === ROLES.ADMIN) {
+      res.status(400).json({ message: "admin-ის წაშლა აკრძალულია" });
       return;
     }
 

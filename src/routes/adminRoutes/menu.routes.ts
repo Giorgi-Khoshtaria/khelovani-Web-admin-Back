@@ -13,9 +13,9 @@ const router = Router();
 
 router.use(authenticate);
 
-router.get("/", requirePermission(PERMISSIONS.SETTINGS.READ), getMenuItems);
-router.post("/", requirePermission(PERMISSIONS.SETTINGS.EDIT), createMenuItem);
-router.put("/:id", requirePermission(PERMISSIONS.SETTINGS.EDIT), updateMenuItem);
-router.delete("/:id", requirePermission(PERMISSIONS.SETTINGS.EDIT), deleteMenuItem);
+router.get("/", requirePermission(PERMISSIONS.ADMIN.MENU_MANAGE), getMenuItems);
+router.post("/", requirePermission(PERMISSIONS.ADMIN.MENU_MANAGE), createMenuItem);
+router.put("/:id", requirePermission(PERMISSIONS.ADMIN.MENU_MANAGE), updateMenuItem);
+router.delete("/:id", requirePermission(PERMISSIONS.ADMIN.MENU_MANAGE), deleteMenuItem);
 
 export default router;

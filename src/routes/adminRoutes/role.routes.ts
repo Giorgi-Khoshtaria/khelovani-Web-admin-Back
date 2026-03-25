@@ -17,10 +17,10 @@ const router = Router();
 router.use(authenticate);
 
 // Role CRUD
-router.get("/", requirePermission(PERMISSIONS.ROLES.READ), getRoles);
-router.get("/:id", requirePermission(PERMISSIONS.ROLES.READ), getRoleById);
-router.post("/", requirePermission(PERMISSIONS.ROLES.CREATE), createRole);
-router.put("/:id", requirePermission(PERMISSIONS.ROLES.EDIT), updateRole);
-router.delete("/:id", requirePermission(PERMISSIONS.ROLES.DELETE), deleteRole);
+router.get("/", requirePermission(PERMISSIONS.ADMIN.ROLE_READ), getRoles);
+router.get("/:id", requirePermission(PERMISSIONS.ADMIN.ROLE_READ), getRoleById);
+router.post("/", requirePermission(PERMISSIONS.ADMIN.ROLE_CREATE), createRole);
+router.put("/:id", requirePermission(PERMISSIONS.ADMIN.ROLE_EDIT), updateRole);
+router.delete("/:id", requirePermission(PERMISSIONS.ADMIN.ROLE_DELETE), deleteRole);
 
 export default router;

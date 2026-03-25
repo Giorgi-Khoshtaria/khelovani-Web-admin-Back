@@ -6,6 +6,8 @@ import { PartnerStatusEnum } from "../../../types/partnerStatus.js";
 import { generateJWTToken } from "../../../utils/token/genereateJWT-token.js";
 import Organisation from "../../../modules/organization.modules.js";
 import Admin from "../../../modules/admin.modules.js";
+import Role from "../../../modules/role.modules.js";
+import { ROLES } from "../../../middleware/role/permissions.js";
 
 interface PopulatedPermission {
   _id: Types.ObjectId;
@@ -20,7 +22,6 @@ interface PopulatedRole {
   description: string;
   isActive: boolean;
 }
-``;
 
 // ── Login Partner ─────────────────────────────────────────────────────────────
 export const loginAdmin = async (
@@ -39,17 +40,16 @@ export const loginAdmin = async (
 
     // ── Find admin + populate role ──────────────────────────────────────────
     const admin = await Admin.findOne({ email }).populate<{
-      role: PopulatedRole;
+      role: PopulatedRole | null;
     }>({
       path: "role",
       populate: { path: "permissions" },
     });
 
     if (admin) {
-      if (!admin.role || !admin.role.isActive) {
-        res
-          .status(403)
-          .json({ message: "admin_role_not_active" });
+      // Guard: role must exist (admins don't need isActive check)
+      if (!admin.role) {
+        res.status(403).json({ message: "role_not_found" });
         return;
       }
 
@@ -62,7 +62,9 @@ export const loginAdmin = async (
       const token = generateJWTToken({
         id: admin._id.toString(),
         role: admin.role.name,
-        permissions: admin.role.permissions?.map((p) => p.name) || [],
+        permissions: (admin.role.permissions ?? [])
+          .map((p) => p?.name)
+          .filter((n): n is string => typeof n === "string"),
         allowedPanels: admin.role.allowedPanels || [],
       });
 
@@ -71,15 +73,14 @@ export const loginAdmin = async (
       res.status(200).json({
         message: "admin_login_success",
         token,
-        // admin: adminWithoutPassword,
-        // userType: "admin",
+        id: admin._id,
       });
       return;
     }
 
     // ── Find organisation + populate role ────────────────────────────────────
     const partner = await Organisation.findOne({ email }).populate<{
-      role: PopulatedRole;
+      role: PopulatedRole | null;
     }>({
       path: "role",
       populate: { path: "permissions" },
@@ -90,17 +91,21 @@ export const loginAdmin = async (
       return;
     }
 
-    // ── Guard: role must exist and be active ─────────────────────────────────
-    if (!partner.role || !partner.role.isActive) {
+    // ── Guard: role must exist ─────────────────────────────────
+    if (!partner.role) {
+      res.status(403).json({ message: "role_not_found" });
+      return;
+    }
+
+    // ── Guard: role must be active ─────────────────────────────────
+    if (!partner.role.isActive) {
       res.status(403).json({ message: "org_not_active" });
       return;
     }
 
     // ── Guard: organisation must be approved ─────────────────────────────────
     if (partner.status !== PartnerStatusEnum.APPROVED) {
-      res
-        .status(403)
-        .json({ message: "org_not_verified" });
+      res.status(403).json({ message: "org_not_verified" });
       return;
     }
 
@@ -115,7 +120,9 @@ export const loginAdmin = async (
     const token = generateJWTToken({
       id: partner._id.toString(),
       role: partner.role.name,
-      permissions: partner.role.permissions?.map((p) => p.name) || [],
+      permissions: (partner.role.permissions ?? [])
+        .map((p) => p?.name)
+        .filter((n): n is string => typeof n === "string"),
       allowedPanels: partner.role.allowedPanels || [],
     });
 
@@ -125,8 +132,7 @@ export const loginAdmin = async (
     res.status(200).json({
       message: "org_login_success",
       token,
-      // partner: partnerWithoutPassword,
-      // userType: "partner",
+      id: partner._id,
     });
   } catch (error) {
     res.status(500).json({ message: (error as Error).message });

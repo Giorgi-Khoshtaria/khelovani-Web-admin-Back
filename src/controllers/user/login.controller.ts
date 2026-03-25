@@ -23,18 +23,26 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 
     const user = await User.findOne({
       email: email.trim().toLowerCase(),
-    }).populate<{ role: PopulatedRole }>("role");
+    }).populate<{ role: PopulatedRole | null }>("role");
 
     if (!user) {
-      res
-        .status(422)
-        .json({ message: getTranslation(TranslationNamespace.Auth, "user_not_found", lang) });
+      res.status(422).json({
+        message: getTranslation(
+          TranslationNamespace.Auth,
+          "user_not_found",
+          lang,
+        ),
+      });
       return;
     }
 
     if (!user.isVerified) {
       res.status(403).json({
-        message: getTranslation(TranslationNamespace.Auth, "email_not_verified", lang),
+        message: getTranslation(
+          TranslationNamespace.Auth,
+          "email_not_verified",
+          lang,
+        ),
         code: "EMAIL_NOT_VERIFIED",
       });
       return;
@@ -42,19 +50,21 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      res
-        .status(422)
-        .json({
-          message: getTranslation(TranslationNamespace.Auth, "invalid_email_password", lang),
-        });
+      res.status(422).json({
+        message: getTranslation(
+          TranslationNamespace.Auth,
+          "invalid_email_password",
+          lang,
+        ),
+      });
       return;
     }
 
     const token = generateJWTToken({
       id: user._id.toString(),
-      role: user.role.name,
-      permissions: user.role.permissions,
-      allowedPanels: user.role.allowedPanels,
+      role: user.role?.name || "user",
+      permissions: user.role?.permissions || [],
+      allowedPanels: user.role?.allowedPanels || [],
     });
 
     const { password: _, ...userWithoutPassword } = user.toObject();
