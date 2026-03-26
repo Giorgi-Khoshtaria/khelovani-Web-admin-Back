@@ -12,17 +12,24 @@ const getNotificationContent = (
   switch (emailType) {
     case "notify-partner-password":
       return {
-        title: "რეგისტრაცია წარმატებით დასრულდა",
-        greeting: `გამარჯობა <strong>${recipientName}</strong>,`,
-        message:
+        titleGeo: "რეგისტრაცია წარმატებით დასრულდა",
+        titleEng: "Registration Successful",
+        greetingGeo: `გამარჯობა ${recipientName},`,
+        greetingEng: `Hello ${recipientName},`,
+        messageGeo:
           "თქვენი ორგანიზაცია წარმატებით დარეგისტრირდა. სისტემაში შესასვლელად გამოიყენეთ ქვემოთ მოცემული პაროლი:",
+        messageEng:
+          "Your organization has been successfully registered. Please use the password below to log in to the system:",
         highlightedText,
-        footerText: "გთხოვთ, შეცვალოთ პაროლი სისტემაში შესვლის შემდეგ.",
+        footerTextGeo: "გთხოვთ, შეცვალოთ პაროლი სისტემაში შესვლის შემდეგ.",
+        footerTextEng: "Please change your password after logging in.",
       };
     default:
       return {
-        title: "შეტყობინება",
-        message: "თქვენ გაქვთ ახალი შეტყობინება",
+        titleGeo: "შეტყობინება",
+        titleEng: "Notification",
+        messageGeo: "თქვენ გაქვთ ახალი შეტყობინება",
+        messageEng: "You have a new notification",
         highlightedText,
       };
   }
@@ -35,10 +42,15 @@ export const sendNotificationEmail = async (
   recipientName: string = "",
   highlightedText: string = "",
 ): Promise<void> => {
+  const bilingualSubject =
+    emailType === "notify-partner-password"
+      ? "თქვენი პაროლი / Your Password"
+      : subject;
+
   await transporter.sendMail({
     from: process.env.EMAIL_USER,
     to: email,
-    subject,
+    subject: bilingualSubject,
     html: notifyEmailHtml(
       getNotificationContent(emailType, recipientName, highlightedText),
     ),

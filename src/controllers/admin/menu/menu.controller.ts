@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import MenuItem from "../../../modules/menu.modules.js";
 import { validateMenuItem } from "../../../validations/forms/menuValidation.js";
+import { useTranslation } from "../../../types/translate.util.js";
+import { Lang } from "../../../types/lang.types.js";
+import { TranslationNamespace } from "../../../types/translation.enum.js";
 
 // ── GET all menu items (Admin - includes inactive) ──────────────────────────
 export const getMenuItems = async (
@@ -22,8 +25,9 @@ export const createMenuItem = async (
 ): Promise<void> => {
   try {
     const { label, href, order, isActive } = req.body;
+    const lang = (req.query.lang as Lang) || "ge";
 
-    const validationErrors = validateMenuItem(req.body);
+    const validationErrors = validateMenuItem(req.body, lang);
     if (Object.keys(validationErrors).length > 0) {
       res.status(422).json({ errors: validationErrors });
       return;
@@ -49,8 +53,10 @@ export const updateMenuItem = async (
   try {
     const { id } = req.params;
     const { label, href, order, isActive } = req.body;
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
 
-    const validationErrors = validateMenuItem(req.body);
+    const validationErrors = validateMenuItem(req.body, lang);
     if (Object.keys(validationErrors).length > 0) {
       res.status(422).json({ errors: validationErrors });
       return;
@@ -63,7 +69,9 @@ export const updateMenuItem = async (
     );
 
     if (!item) {
-      res.status(404).json({ message: "Menu item not found" });
+      res.status(404).json({
+        message: tAlerts("menu_item_not_found"),
+      });
       return;
     }
 
@@ -80,15 +88,24 @@ export const deleteMenuItem = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
+
     const item = await MenuItem.findByIdAndDelete(id);
 
     if (!item) {
-      res.status(404).json({ message: "Menu item not found" });
+      res.status(404).json({
+        message: tAlerts("menu_item_not_found"),
+      });
       return;
     }
 
-    res.status(200).json({ message: "menu_item_deleted" });
+    res.status(200).json({
+      message: tAlerts("menu_item_deleted_success"),
+    });
   } catch (error) {
     res.status(500).json({ message: (error as Error).message });
   }
 };
+
+

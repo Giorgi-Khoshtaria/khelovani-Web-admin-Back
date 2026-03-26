@@ -7,7 +7,7 @@ import {
   validateResetPassword,
 } from "../../validations/forms/forgotPasswordValidations.js";
 import { sendUserForgotPasswordEmail } from "../../utils/email/sendUserEmails.js";
-import { getTranslation } from "../../types/translate.util.js";
+import { useTranslation } from "../../types/translate.util.js";
 import { Lang } from "../../types/lang.types.js";
 import { TranslationNamespace } from "../../types/translation.enum.js";
 
@@ -20,6 +20,7 @@ export const forgotPassword = async (
   try {
     const { email } = req.body;
     const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAuth } = useTranslation(lang, TranslationNamespace.Auth);
 
     // Validate input
     const errors = validateForgotPassword({ email }, lang);
@@ -35,7 +36,7 @@ export const forgotPassword = async (
     // Always respond with 200 to prevent email enumeration
     if (!user || !user.isVerified) {
       res.status(200).json({
-        message: getTranslation(TranslationNamespace.Auth, "forgot_password_success", lang),
+        message: tAuth("forgot_password_success"),
       });
       return;
     }
@@ -43,7 +44,7 @@ export const forgotPassword = async (
     await sendUserForgotPasswordEmail(trimmedEmail, lang);
 
     res.status(200).json({
-      message: getTranslation(TranslationNamespace.Auth, "forgot_password_success", lang),
+      message: tAuth("forgot_password_success"),
     });
   } catch (error) {
     res.status(500).json({ message: (error as Error).message });
@@ -59,11 +60,12 @@ export const resetPassword = async (
   try {
     const { token, password } = req.body;
     const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAuth } = useTranslation(lang, TranslationNamespace.Auth);
 
     if (!token) {
       res
         .status(422)
-        .json({ message: getTranslation(TranslationNamespace.Auth, "token_required", lang) });
+        .json({ message: tAuth("token_required") });
       return;
     }
 
@@ -81,7 +83,7 @@ export const resetPassword = async (
     } catch {
       res
         .status(400)
-        .json({ message: getTranslation(TranslationNamespace.Auth, "token_invalid", lang) });
+        .json({ message: tAuth("token_invalid") });
       return;
     }
 
@@ -89,7 +91,7 @@ export const resetPassword = async (
     if (!user) {
       res
         .status(404)
-        .json({ message: getTranslation(TranslationNamespace.Auth, "user_not_found", lang) });
+        .json({ message: tAuth("user_not_found") });
       return;
     }
 
@@ -99,9 +101,10 @@ export const resetPassword = async (
     res
       .status(200)
       .json({
-        message: getTranslation(TranslationNamespace.Auth, "password_reset_success", lang),
+        message: tAuth("password_reset_success"),
       });
   } catch (error) {
     res.status(500).json({ message: (error as Error).message });
   }
 };
+

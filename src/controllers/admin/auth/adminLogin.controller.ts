@@ -6,8 +6,9 @@ import { PartnerStatusEnum } from "../../../types/partnerStatus.js";
 import { generateJWTToken } from "../../../utils/token/genereateJWT-token.js";
 import Organisation from "../../../modules/organization.modules.js";
 import Admin from "../../../modules/admin.modules.js";
-import Role from "../../../modules/role.modules.js";
-import { ROLES } from "../../../middleware/role/permissions.js";
+import { useTranslation } from "../../../types/translate.util.js";
+import { Lang } from "../../../types/lang.types.js";
+import { TranslationNamespace } from "../../../types/translation.enum.js";
 
 interface PopulatedPermission {
   _id: Types.ObjectId;
@@ -30,9 +31,11 @@ export const loginAdmin = async (
 ): Promise<void> => {
   try {
     const { email, password } = req.body;
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAuth } = useTranslation(lang, TranslationNamespace.Auth);
 
     // ── Validate fields ──────────────────────────────────────────────────────
-    const validationErrors = validateLoginForm({ email, password });
+    const validationErrors = validateLoginForm({ email, password }, lang);
     if (Object.keys(validationErrors).length > 0) {
       res.status(422).json({ errors: validationErrors });
       return;
@@ -49,13 +52,17 @@ export const loginAdmin = async (
     if (admin) {
       // Guard: role must exist (admins don't need isActive check)
       if (!admin.role) {
-        res.status(403).json({ message: "role_not_found" });
+        res.status(403).json({
+          message: tAuth("role_not_found"),
+        });
         return;
       }
 
       const isPasswordValid = await bcrypt.compare(password, admin.password);
       if (!isPasswordValid) {
-        res.status(422).json({ message: "invalid_email_or_password" });
+        res.status(422).json({
+          message: tAuth("invalid_email_or_password"),
+        });
         return;
       }
 
@@ -71,7 +78,7 @@ export const loginAdmin = async (
       const { password: _, ...adminWithoutPassword } = admin.toObject();
 
       res.status(200).json({
-        message: "admin_login_success",
+        message: tAuth("admin_login_success"),
         token,
         id: admin._id,
       });
@@ -87,32 +94,42 @@ export const loginAdmin = async (
     });
 
     if (!partner) {
-      res.status(422).json({ message: "user_not_found" });
+      res.status(422).json({
+        message: tAuth("user_not_found"),
+      });
       return;
     }
 
     // ── Guard: role must exist ─────────────────────────────────
     if (!partner.role) {
-      res.status(403).json({ message: "role_not_found" });
+      res.status(403).json({
+        message: tAuth("role_not_found"),
+      });
       return;
     }
 
     // ── Guard: role must be active ─────────────────────────────────
     if (!partner.role.isActive) {
-      res.status(403).json({ message: "org_not_active" });
+      res.status(403).json({
+        message: tAuth("org_not_active"),
+      });
       return;
     }
 
     // ── Guard: organisation must be approved ─────────────────────────────────
     if (partner.status !== PartnerStatusEnum.APPROVED) {
-      res.status(403).json({ message: "org_not_verified" });
+      res.status(403).json({
+        message: tAuth("org_not_verified"),
+      });
       return;
     }
 
     // ── Check password ───────────────────────────────────────────────────────
     const isPasswordValid = await bcrypt.compare(password, partner.password);
     if (!isPasswordValid) {
-      res.status(422).json({ message: "invalid_email_or_password" });
+      res.status(422).json({
+        message: tAuth("invalid_email_or_password"),
+      });
       return;
     }
 
@@ -130,7 +147,7 @@ export const loginAdmin = async (
     const { password: _, ...partnerWithoutPassword } = partner.toObject();
 
     res.status(200).json({
-      message: "org_login_success",
+      message: tAuth("org_login_success"),
       token,
       id: partner._id,
     });
@@ -138,3 +155,4 @@ export const loginAdmin = async (
     res.status(500).json({ message: (error as Error).message });
   }
 };
+

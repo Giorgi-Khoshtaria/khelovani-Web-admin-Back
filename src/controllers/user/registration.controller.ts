@@ -4,7 +4,7 @@ import { sendUserRegistrationVerificationEmail } from "../../utils/email/sendUse
 import User from "../../modules/user.modules.js";
 import { UserTypes } from "../../types/userTypes.js";
 import { validateRegistration } from "../../validations/forms/registerValidation.js";
-import { getTranslation } from "../../types/translate.util.js";
+import { useTranslation } from "../../types/translate.util.js";
 import { Lang } from "../../types/lang.types.js";
 import { TranslationNamespace } from "../../types/translation.enum.js";
 
@@ -25,6 +25,7 @@ export const registerUser = async (
       password,
     }: UserTypes = req.body;
     const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAuth } = useTranslation(lang, TranslationNamespace.Auth);
 
     // ── Validate ───────────────────────────────────────────────────────────
     const validationErrors = validateRegistration(req.body, lang);
@@ -43,12 +44,12 @@ export const registerUser = async (
       if (!existingByEmail.isVerified) {
         await sendUserRegistrationVerificationEmail(trimmedEmail, lang);
         res.status(200).json({
-          message: getTranslation(TranslationNamespace.Auth, "verification_email_resent", lang),
+          message: tAuth("verification_email_resent"),
         });
         return;
       }
       res.status(409).json({
-        message: getTranslation(TranslationNamespace.Auth, "email_already_exists", lang),
+        message: tAuth("email_already_exists"),
       });
       return;
     }
@@ -60,7 +61,7 @@ export const registerUser = async (
 
     if (existingByIdNumber) {
       res.status(409).json({
-        message: getTranslation(TranslationNamespace.Auth, "id_number_already_exists", lang),
+        message: tAuth("id_number_already_exists"),
       });
       return;
     }
@@ -84,8 +85,9 @@ export const registerUser = async (
     await sendUserRegistrationVerificationEmail(trimmedEmail, lang);
 
     res.status(201).json({
-      message: getTranslation(TranslationNamespace.Auth, "register_success_verify_email", lang),
+      message: tAuth("register_success_verify_email"),
     });
+
   } catch (error) {
     res.status(500).json({ message: (error as Error).message });
   }

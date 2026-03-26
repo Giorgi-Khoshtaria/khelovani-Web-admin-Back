@@ -5,7 +5,7 @@ import { validateCity } from "../shared/city.validation.js";
 import { validateNameGe, validateNameEn } from "../shared/name.validation.js";
 import { validatePhone } from "../shared/phone.validation.js";
 import { Lang } from "../../types/lang.types.js";
-import { getTranslation } from "../../types/translate.util.js";
+import { useTranslation } from "../../types/translate.util.js";
 import { TranslationNamespace } from "../../types/translation.enum.js";
 
 export interface ValidationError {
@@ -17,18 +17,19 @@ export const validateRegistration = (
   data: Partial<UserTypes>,
   lang: Lang = "ge",
 ): ValidationError[] => {
+  const { t: tValidation } = useTranslation(lang, TranslationNamespace.Validation);
   const errors: ValidationError[] = [];
 
   // ── idNumber ───────────────────────────────────────────────────────────
   if (!data.idNumber || data.idNumber.trim() === "") {
     errors.push({
       field: "idNumber",
-      message: getTranslation(TranslationNamespace.Validation, "idNumber_required", lang),
+      message: tValidation("idNumber_required"),
     });
   } else if (!/^\d{11}$/.test(data.idNumber.trim())) {
     errors.push({
       field: "idNumber",
-      message: getTranslation(TranslationNamespace.Validation, "idNumber_invalid", lang),
+      message: tValidation("idNumber_invalid"),
     });
   }
 
@@ -43,14 +44,14 @@ export const validateRegistration = (
   if (!data.dateOfBirth) {
     errors.push({
       field: "dateOfBirth",
-      message: getTranslation(TranslationNamespace.Validation, "dob_required", lang),
+      message: tValidation("dob_required"),
     });
   } else {
     const dob = new Date(data.dateOfBirth);
     if (isNaN(dob.getTime())) {
       errors.push({
         field: "dateOfBirth",
-        message: getTranslation(TranslationNamespace.Validation, "dob_invalid", lang),
+        message: tValidation("dob_invalid"),
       });
     } else {
       const today = new Date();
@@ -61,12 +62,12 @@ export const validateRegistration = (
       if (age < 16)
         errors.push({
           field: "dateOfBirth",
-          message: getTranslation(TranslationNamespace.Validation, "age_limit_16", lang),
+          message: tValidation("age_limit_16"),
         });
       if (age > 120)
         errors.push({
           field: "dateOfBirth",
-          message: getTranslation(TranslationNamespace.Validation, "age_limit_120", lang),
+          message: tValidation("age_limit_120"),
         });
     }
   }
@@ -79,17 +80,17 @@ export const validateRegistration = (
   if (!data.address || data.address.trim() === "") {
     errors.push({
       field: "address",
-      message: getTranslation(TranslationNamespace.Validation, "address_required", lang),
+      message: tValidation("address_required"),
     });
   } else if (data.address.trim().length < 5) {
     errors.push({
       field: "address",
-      message: getTranslation(TranslationNamespace.Validation, "address_min_length", lang),
+      message: tValidation("address_min_length"),
     });
   } else if (data.address.trim().length > 200) {
     errors.push({
       field: "address",
-      message: getTranslation(TranslationNamespace.Validation, "address_max_length", lang),
+      message: tValidation("address_max_length"),
     });
   }
 
@@ -109,3 +110,4 @@ export const validateRegistration = (
 
   return errors;
 };
+

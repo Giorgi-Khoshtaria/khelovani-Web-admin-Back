@@ -6,7 +6,7 @@ import { PartnerRegisterData } from "../../types/partnerTypes.js";
 import Admin from "../../modules/admin.modules.js";
 import Organisation from "../../modules/organization.modules.js";
 import { Lang } from "../../types/lang.types.js";
-import { getTranslation } from "../../types/translate.util.js";
+import { useTranslation } from "../../types/translate.util.js";
 import { TranslationNamespace } from "../../types/translation.enum.js";
 
 export interface ValidationError {
@@ -18,38 +18,40 @@ export const validatePartnerRegistration = async (
   data: Partial<PartnerRegisterData>,
   lang: Lang = "ge",
 ): Promise<ValidationError[]> => {
+  const { t: tValidation } = useTranslation(lang, TranslationNamespace.Validation);
+  const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
   const errors: ValidationError[] = [];
 
   if (!data.companyNameGe || data.companyNameGe.trim() === "") {
     errors.push({
       field: "companyNameGe",
-      message: getTranslation(TranslationNamespace.Validation, "companyNameGe_required", lang),
+      message: tValidation("companyNameGe_required"),
     });
   }
 
   if (!data.companyNameEn || data.companyNameEn.trim() === "") {
     errors.push({
       field: "companyNameEn",
-      message: getTranslation(TranslationNamespace.Validation, "companyNameEn_required", lang),
+      message: tValidation("companyNameEn_required"),
     });
   }
 
   if (!data.identificationCode || data.identificationCode.trim() === "") {
     errors.push({
       field: "identificationCode",
-      message: getTranslation(TranslationNamespace.Validation, "id_code_required", lang),
+      message: tValidation("id_code_required"),
     });
   } else if (!/^\d{9}$/.test(data.identificationCode.trim())) {
     errors.push({
       field: "identificationCode",
-      message: getTranslation(TranslationNamespace.Validation, "id_code_invalid", lang),
+      message: tValidation("id_code_invalid"),
     });
   }
 
   if (!data.contactPerson || data.contactPerson.trim() === "") {
     errors.push({
       field: "contactPerson",
-      message: getTranslation(TranslationNamespace.Validation, "contact_person_required", lang),
+      message: tValidation("contactPerson_required"),
     });
   }
 
@@ -65,31 +67,31 @@ export const validatePartnerRegistration = async (
   if (!data.address || data.address.trim() === "") {
     errors.push({
       field: "address",
-      message: getTranslation(TranslationNamespace.Validation, "address_required", lang),
+      message: tValidation("address_required"),
     });
   } else if (!/^[ა-ჰ0-9\s.,/\\\-()]+$/.test(data.address.trim())) {
     errors.push({
       field: "address",
-      message: getTranslation(TranslationNamespace.Validation, "address_needs_georgian", lang),
+      message: tValidation("address_needs_georgian"),
     });
   }
 
   if (!data.addressEn || data.addressEn.trim() === "") {
     errors.push({
       field: "addressEn",
-      message: getTranslation(TranslationNamespace.Validation, "addressEn_required", lang),
+      message: tValidation("addressEn_required"),
     });
   } else if (!/^[a-zA-Z0-9\s.,/\\\-()]+$/.test(data.addressEn.trim())) {
     errors.push({
       field: "addressEn",
-      message: getTranslation(TranslationNamespace.Validation, "addressEn_needs_english", lang),
+      message: tValidation("addressEn_needs_english"),
     });
   }
 
   if (!data.terms) {
     errors.push({
       field: "terms",
-      message: getTranslation(TranslationNamespace.Validation, "terms_required", lang),
+      message: tValidation("terms_required"),
     });
   }
 
@@ -102,7 +104,7 @@ export const validatePartnerRegistration = async (
     if (emailExists) {
       errors.push({
         field: "email",
-        message: getTranslation(TranslationNamespace.Validation, "email_taken", lang),
+        message: tAlerts("org_email_exists"),
       });
     }
   }
@@ -115,10 +117,11 @@ export const validatePartnerRegistration = async (
     if (existingOrgByCode) {
       errors.push({
         field: "identificationCode",
-        message: getTranslation(TranslationNamespace.Validation, "id_code_taken", lang),
+        message: tAlerts("org_code_exists"),
       });
     }
   }
 
   return errors;
 };
+

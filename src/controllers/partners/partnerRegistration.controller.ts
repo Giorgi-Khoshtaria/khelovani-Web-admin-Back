@@ -1,11 +1,13 @@
 import { Request, Response } from "express";
 import Organisation from "../../modules/organization.modules.js";
-import Admin from "../../modules/admin.modules.js";
 import Role from "../../modules/role.modules.js";
 import { ROLES } from "../../middleware/role/permissions.js";
 import { PartnerRegisterData } from "../../types/partnerTypes.js";
 import { PartnerStatusEnum } from "../../types/partnerStatus.js";
 import { validatePartnerRegistration } from "../../validations/forms/partnerValidation.js";
+import { useTranslation } from "../../types/translate.util.js";
+import { Lang } from "../../types/lang.types.js";
+import { TranslationNamespace } from "../../types/translation.enum.js";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 
@@ -14,7 +16,8 @@ export const registerPartner = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const lang = (req.query.lang as string) === "en" ? "en" : "ge";
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAuth } = useTranslation(lang, TranslationNamespace.Auth);
     const data: PartnerRegisterData = req.body;
 
     // ── Validate all fields ────────────────────────────────────────────────
@@ -28,7 +31,7 @@ export const registerPartner = async (
     const partnerRole = await Role.findOne({ name: ROLES.ORGANISATION });
     if (!partnerRole) {
       res.status(500).json({
-        message: "Organisation role not found. Run seed:roles first.",
+        message: tAuth("org_role_not_found"),
       });
       return;
     }
@@ -56,8 +59,12 @@ export const registerPartner = async (
 
     // Password email will be sent upon Admin Approval in updatePartnerStatus
 
-    res.status(201).json({ message: "partner_registered" });
+    res.status(201).json({
+      message: tAuth("partner_registered"),
+    });
+
   } catch (error) {
     res.status(500).json({ message: (error as Error).message });
   }
 };
+

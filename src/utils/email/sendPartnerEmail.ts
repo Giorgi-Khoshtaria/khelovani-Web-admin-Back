@@ -7,7 +7,7 @@ export const sendPartnerPasswordEmail = async (
 ): Promise<void> => {
   await sendNotificationEmail(
     email,
-    "თქვენი პაროლი პარტნიორის სისტემისთვის",
+    "", // Subject is handled bilingually in sendNotificationEmail for this type
     "notify-partner-password",
     companyName,
     plainPassword,

@@ -1,5 +1,8 @@
 import type { Request, Response } from "express";
 import Permission from "../../../modules/permission.modules.js";
+import { useTranslation } from "../../../types/translate.util.js";
+import { Lang } from "../../../types/lang.types.js";
+import { TranslationNamespace } from "../../../types/translation.enum.js";
 
 // @desc    Get all permissions
 // @route   GET /api/admin/permissions
@@ -51,15 +54,22 @@ export const createPermission = async (
 ): Promise<void> => {
   try {
     const { name, description, category } = req.body;
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tValidation } = useTranslation(lang, TranslationNamespace.Validation);
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
 
     if (!name || !description) {
-      res.status(400).json({ message: "სახელი და აღწერა სავალდებულოა" });
+      res.status(400).json({
+        message: tValidation("name_description_required"),
+      });
       return;
     }
 
     const existing = await Permission.findOne({ name });
     if (existing) {
-      res.status(400).json({ message: "უფლება ამ სახელით უკვე არსებობს" });
+      res.status(400).json({
+        message: tAlerts("permission_already_exists"),
+      });
       return;
     }
 
@@ -70,7 +80,7 @@ export const createPermission = async (
     });
 
     res.status(201).json({
-      message: "უფლება წარმატებით შეიქმნა",
+      message: tAlerts("permission_created_success"),
       permission: newPermission,
     });
   } catch (error) {
@@ -88,10 +98,14 @@ export const updatePermission = async (
   try {
     const { id } = req.params;
     const { name, description, category } = req.body;
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
 
     const permission = await Permission.findById(id);
     if (!permission) {
-      res.status(404).json({ message: "უფლება ვერ მოიძებნა" });
+      res.status(404).json({
+        message: tAlerts("permission_not_found"),
+      });
       return;
     }
 
@@ -102,7 +116,7 @@ export const updatePermission = async (
     const updated = await permission.save();
 
     res.status(200).json({
-      message: "უფლება წარმატებით განახლდა",
+      message: tAlerts("permission_updated_success"),
       permission: updated,
     });
   } catch (error) {
@@ -119,17 +133,25 @@ export const deletePermission = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
 
     const permission = await Permission.findById(id);
     if (!permission) {
-      res.status(404).json({ message: "უფლება ვერ მოიძებნა" });
+      res.status(404).json({
+        message: tAlerts("permission_not_found"),
+      });
       return;
     }
 
     await Permission.findByIdAndDelete(id);
 
-    res.status(200).json({ message: "უფლება წარმატებით წაიშალა" });
+    res.status(200).json({
+      message: tAlerts("permission_deleted_success"),
+    });
   } catch (error) {
     res.status(500).json({ message: (error as Error).message });
   }
 };
+
+

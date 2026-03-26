@@ -1,4 +1,4 @@
-import { getTranslation } from "../../types/translate.util.js";
+import { useTranslation } from "../../types/translate.util.js";
 import { Lang } from "../../types/lang.types.js";
 import { TranslationNamespace } from "../../types/translation.enum.js";
 
@@ -15,9 +15,10 @@ export const validateCity = (
   city?: string,
   lang: Lang = "ge",
 ): string | null => {
-  if (!city || city.trim() === "")
-    return getTranslation(TranslationNamespace.Validation, "city_required", lang);
-  if (!VALID_CITIES.includes(city.trim().toLowerCase()))
-    return getTranslation(TranslationNamespace.Validation, "city_invalid", lang);
+  const { t: tValidation } = useTranslation(lang, TranslationNamespace.Validation);
+
+  if (!city || city.trim() === "") return tValidation("city_required");
+  if (!VALID_CITIES.includes(city.trim().toLowerCase())) return tValidation("city_invalid");
   return null;
 };
+

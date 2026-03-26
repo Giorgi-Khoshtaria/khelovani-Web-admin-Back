@@ -5,6 +5,9 @@ import crypto from "crypto";
 import bcrypt from "bcrypt";
 import { sendPartnerPasswordEmail } from "../../utils/email/sendPartnerEmail.js";
 import { ROLES } from "../../middleware/role/permissions.js";
+import { useTranslation } from "../../types/translate.util.js";
+import { Lang } from "../../types/lang.types.js";
+import { TranslationNamespace } from "../../types/translation.enum.js";
 
 import mongoose from "mongoose";
 
@@ -14,22 +17,31 @@ export const getPartnerById = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
+    const { t: tAuth } = useTranslation(lang, TranslationNamespace.Auth);
 
     if (!mongoose.Types.ObjectId.isValid(id as string)) {
-      res.status(400).json({ message: "არასწორი პარტნიორის ID" });
+      res.status(400).json({
+        message: tAlerts("invalid_partner_id"),
+      });
       return;
     }
 
     // Check if user is admin or is viewing their own profile
     if (req.user?.role !== ROLES.ADMIN && req.user?.id !== id) {
-      res.status(403).json({ message: "წვდომა აკრძალულია" });
+      res.status(403).json({
+        message: tAuth("access_denied"),
+      });
       return;
     }
 
     const partner = await Organisation.findById(id).select("-password");
 
     if (!partner) {
-      res.status(404).json({ message: "პარტნიორი ვერ მოიძებნა" });
+      res.status(404).json({
+        message: tAuth("partner_not_found"),
+      });
       return;
     }
 
@@ -75,21 +87,30 @@ export const updatePartnerStatus = async (
   try {
     const { id } = req.params;
     const { status } = req.body;
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
+    const { t: tAuth } = useTranslation(lang, TranslationNamespace.Auth);
 
     if (!mongoose.Types.ObjectId.isValid(id as string)) {
-      res.status(400).json({ message: "არასწორი პარტნიორის ID" });
+      res.status(400).json({
+        message: tAlerts("invalid_partner_id"),
+      });
       return;
     }
 
     const partner = await Organisation.findById(id);
 
     if (!partner) {
-      res.status(404).json({ message: "პარტნიორი ვერ მოიძებნა" });
+      res.status(404).json({
+        message: tAuth("partner_not_found"),
+      });
       return;
     }
 
     if (!Object.values(PartnerStatusEnum).includes(status as any)) {
-      res.status(400).json({ message: "არასწორი სტატუსი" });
+      res.status(400).json({
+        message: tAlerts("invalid_status"),
+      });
       return;
     }
 
@@ -102,9 +123,9 @@ export const updatePartnerStatus = async (
         companyNameEn: partner.companyNameEn,
         role: partner.role,
       });
-      res
-        .status(200)
-        .json({ message: "პარტნიორი უარყოფილია და წაიშალა ბაზიდან" });
+      res.status(200).json({
+        message: tAlerts("partner_rejected_deleted"),
+      });
       return;
     }
 
@@ -120,9 +141,9 @@ export const updatePartnerStatus = async (
           plainPassword,
         );
       } catch (emailError) {
-        res
-          .status(500)
-          .json({ message: "მეილის გაგზავნა ჩაიშალა, სტატუსი არ განახლებულა" });
+        res.status(500).json({
+          message: tAlerts("email_send_failed_status_not_updated"),
+        });
         return;
       }
     }
@@ -130,7 +151,9 @@ export const updatePartnerStatus = async (
     partner.status = status;
     await partner.save();
 
-    res.status(200).json({ message: "პარტნიორის სტატუსი განახლდა" });
+    res.status(200).json({
+      message: tAlerts("partner_status_updated"),
+    });
   } catch (error) {
     res.status(500).json({ message: (error as Error).message });
   }
@@ -143,22 +166,31 @@ export const updatePartner = async (
   try {
     const { id } = req.params;
     const updateData = req.body;
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
+    const { t: tAuth } = useTranslation(lang, TranslationNamespace.Auth);
 
     if (!mongoose.Types.ObjectId.isValid(id as string)) {
-      res.status(400).json({ message: "არასწორი პარტნიორის ID" });
+      res.status(400).json({
+        message: tAlerts("invalid_partner_id"),
+      });
       return;
     }
 
     // Check if user is admin or is updating their own profile
     if (req.user?.role !== ROLES.ADMIN && req.user?.id !== id) {
-      res.status(403).json({ message: "წვდომა აკრძალულია" });
+      res.status(403).json({
+        message: tAuth("access_denied"),
+      });
       return;
     }
 
     const partner = await Organisation.findById(id);
 
     if (!partner) {
-      res.status(404).json({ message: "პარტნიორი ვერ მოიძებნა" });
+      res.status(404).json({
+        message: tAuth("partner_not_found"),
+      });
       return;
     }
 
@@ -187,29 +219,41 @@ export const deletePartner = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
+    const { t: tAuth } = useTranslation(lang, TranslationNamespace.Auth);
 
     if (!mongoose.Types.ObjectId.isValid(id as string)) {
-      res.status(400).json({ message: "არასწორი პარტნიორის ID" });
+      res.status(400).json({
+        message: tAlerts("invalid_partner_id"),
+      });
       return;
     }
 
     // Only the partner themselves can delete their account (admins don't need this on their side)
     if (req.user?.id !== id) {
-      res.status(403).json({ message: "წვდომა აკრძალულია - მხოლოდ მფლობელს შეუძლია წაშლა" });
+      res.status(403).json({
+        message: tAuth("access_denied_only_owner_can_delete"),
+      });
       return;
     }
 
     const partner = await Organisation.findById(id);
 
     if (!partner) {
-      res.status(404).json({ message: "პარტნიორი ვერ მოიძებნა" });
+      res.status(404).json({
+        message: tAuth("partner_not_found"),
+      });
       return;
     }
 
     await partner.deleteOne();
 
-    res.status(200).json({ message: "პარტნიორი წაიშალა" });
+    res.status(200).json({
+      message: tAlerts("partner_deleted"),
+    });
   } catch (error) {
     res.status(500).json({ message: (error as Error).message });
   }
 };
+

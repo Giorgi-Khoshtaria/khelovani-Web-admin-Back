@@ -1,6 +1,9 @@
 import type { Request, Response } from "express";
 import Role from "../../../modules/role.modules.js";
 import { ROLES } from "../../../middleware/role/permissions.js";
+import { useTranslation } from "../../../types/translate.util.js";
+import { Lang } from "../../../types/lang.types.js";
+import { TranslationNamespace } from "../../../types/translation.enum.js";
 
 // @desc    Get all roles
 // @route   GET /api/admin/roles
@@ -20,9 +23,13 @@ export const getRoles = async (req: Request, res: Response): Promise<void> => {
 export const getRoleById = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
     const role = await Role.findById(id).populate("permissions");
     if (!role) {
-      res.status(404).json({ message: "როლი ვერ მოიძებნა" });
+      res.status(404).json({
+        message: tAlerts("role_not_found"),
+      });
       return;
     }
     res.status(200).json(role);
@@ -39,15 +46,22 @@ export const getRoleById = async (req: Request, res: Response): Promise<void> =>
 export const createRole = async (req: Request, res: Response): Promise<void> => {
   try {
     const { name, allowedPanels, permissions, description, isActive } = req.body;
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tValidation } = useTranslation(lang, TranslationNamespace.Validation);
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
 
     if (!name || !description) {
-      res.status(400).json({ message: "სახელი და აღწერა სავალდებულოა" });
+      res.status(400).json({
+        message: tValidation("name_description_required"),
+      });
       return;
     }
 
     const existingRole = await Role.findOne({ name });
     if (existingRole) {
-      res.status(400).json({ message: "როლი ამ სახელით უკვე არსებობს" });
+      res.status(400).json({
+        message: tAlerts("role_already_exists"),
+      });
       return;
     }
 
@@ -60,7 +74,7 @@ export const createRole = async (req: Request, res: Response): Promise<void> => 
     });
 
     res.status(201).json({
-      message: "როლი წარმატებით შეიქმნა",
+      message: tAlerts("role_created_success"),
       role: newRole,
     });
   } catch (error) {
@@ -75,16 +89,22 @@ export const updateRole = async (req: Request, res: Response): Promise<void> => 
   try {
     const { id } = req.params;
     const { name, allowedPanels, permissions, description, isActive } = req.body;
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
 
     const role = await Role.findById(id);
     if (!role) {
-      res.status(404).json({ message: "როლი ვერ მოიძებნა" });
+      res.status(404).json({
+        message: tAlerts("role_not_found"),
+      });
       return;
     }
 
     // Optional: Prevent renaming system critical roles if any
     if (role.name === ROLES.ADMIN && name && name !== ROLES.ADMIN) {
-      res.status(400).json({ message: "admin-ის სახელის შეცვლა აკრძალულია" });
+      res.status(400).json({
+        message: tAlerts("admin_rename_forbidden"),
+      });
       return;
     }
 
@@ -97,7 +117,7 @@ export const updateRole = async (req: Request, res: Response): Promise<void> => 
     const updatedRole = await role.save();
 
     res.status(200).json({
-      message: "როლი წარმატებით განახლდა",
+      message: tAlerts("role_updated_success"),
       role: updatedRole,
     });
   } catch (error) {
@@ -111,23 +131,33 @@ export const updateRole = async (req: Request, res: Response): Promise<void> => 
 export const deleteRole = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
 
     const role = await Role.findById(id);
     if (!role) {
-      res.status(404).json({ message: "როლი ვერ მოიძებნა" });
+      res.status(404).json({
+        message: tAlerts("role_not_found"),
+      });
       return;
     }
 
     // Prevent deleting admin or items that are locked
     if (role.name === ROLES.ADMIN) {
-      res.status(400).json({ message: "admin-ის წაშლა აკრძალულია" });
+      res.status(400).json({
+        message: tAlerts("admin_delete_forbidden"),
+      });
       return;
     }
 
     await Role.findByIdAndDelete(id);
 
-    res.status(200).json({ message: "როლი წარმატებით წაიშალა" });
+    res.status(200).json({
+      message: tAlerts("role_deleted_success"),
+    });
   } catch (error) {
     res.status(500).json({ message: (error as Error).message });
   }
 };
+
+

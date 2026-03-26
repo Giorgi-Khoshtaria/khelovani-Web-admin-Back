@@ -53,3 +53,23 @@ export const getTranslation = (
 
   return item[lang] || item["ge"] || key;
 };
+
+/**
+ * A hook-style utility for backend translations.
+ * Usage: const { t: tValidation } = useTranslation(lang, TranslationNamespace.Validation);
+ *        tValidation("email_required")
+ */
+export const useTranslation = (lang: Lang, namespace: TranslationNamespace) => {
+  return {
+    t: (key: string) => getTranslation(namespace, key, lang),
+  };
+};
+
+/**
+ * Creates a dedicated translator for a specific namespace (direct function).
+ */
+export const createTranslator = (namespace: TranslationNamespace, lang: Lang) => {
+  return (key: string) => getTranslation(namespace, key, lang);
+};
+
+
