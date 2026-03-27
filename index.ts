@@ -13,6 +13,7 @@ import roleRoutes from "./src/routes/adminRoutes/role.routes.js";
 import permissionRoutes from "./src/routes/adminRoutes/permission.routes.js";
 import adminMenuRoutes from "./src/routes/adminRoutes/menu.routes.js";
 import publicMenuRoutes from "./src/routes/menu.routes.js";
+import uploadRoutes from "./src/routes/adminRoutes/upload.routes.js";
 import { seedPermissions } from "./src/utils/seeds/seedPermissions.js";
 
 const app = express();
@@ -48,6 +49,7 @@ app.use("/api/admin/translations", translationRoutes);
 app.use("/api/admin/roles", roleRoutes);
 app.use("/api/admin/permissions", permissionRoutes);
 app.use("/api/admin/menu", adminMenuRoutes);
+app.use("/api/admin/upload", uploadRoutes);
 app.use("/api/menu", publicMenuRoutes);
 mongoose
   .connect(process.env.MONGODB_URI!)

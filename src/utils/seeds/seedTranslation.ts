@@ -176,22 +176,34 @@ const translationsToSeed = [
   {
     namespace: "validation",
     key: "label_ka_required",
-    translations: { ge: "ქართული სახელი სავალდებულოა", en: "Georgian label is required" },
+    translations: {
+      ge: "ქართული სახელი სავალდებულოა",
+      en: "Georgian label is required",
+    },
   },
   {
     namespace: "validation",
     key: "label_ka_min_length",
-    translations: { ge: "ქართული სახელი მინიმუმ 2 სიმბოლო უნდა იყოს", en: "Georgian label must be at least 2 characters" },
+    translations: {
+      ge: "ქართული სახელი მინიმუმ 2 სიმბოლო უნდა იყოს",
+      en: "Georgian label must be at least 2 characters",
+    },
   },
   {
     namespace: "validation",
     key: "label_en_required",
-    translations: { ge: "ინგლისური სახელი სავალდებულოა", en: "English label is required" },
+    translations: {
+      ge: "ინგლისური სახელი სავალდებულოა",
+      en: "English label is required",
+    },
   },
   {
     namespace: "validation",
     key: "label_en_invalid",
-    translations: { ge: "ინგლისური სახელი მხოლოდ ლათინური ასოებით უნდა იყოს", en: "English label must only contain Latin characters" },
+    translations: {
+      ge: "ინგლისური სახელი მხოლოდ ლათინური ასოებით უნდა იყოს",
+      en: "English label must only contain Latin characters",
+    },
   },
   {
     namespace: "validation",
@@ -201,7 +213,10 @@ const translationsToSeed = [
   {
     namespace: "validation",
     key: "href_invalid",
-    translations: { ge: "ლინკი უნდა იწყებოდეს '/' სიმბოლოთი", en: "Link must start with '/'" },
+    translations: {
+      ge: "ლინკი უნდა იწყებოდეს '/' სიმბოლოთი",
+      en: "Link must start with '/'",
+    },
   },
   {
     namespace: "validation",
@@ -211,42 +226,66 @@ const translationsToSeed = [
   {
     namespace: "validation",
     key: "order_invalid",
-    translations: { ge: "რიგითობა უნდა იყოს 0 ან მეტი", en: "Order must be 0 or more" },
+    translations: {
+      ge: "რიგითობა უნდა იყოს 0 ან მეტი",
+      en: "Order must be 0 or more",
+    },
   },
   {
     namespace: "validation",
     key: "at_least_one_translation_required",
-    translations: { ge: "ერთი თარგმანი მაინც სავალდებულოა", en: "At least one translation is required" },
+    translations: {
+      ge: "ერთი თარგმანი მაინც სავალდებულოა",
+      en: "At least one translation is required",
+    },
   },
   {
     namespace: "validation",
     key: "email_taken",
-    translations: { ge: "ეს ელ. ფოსტა უკვე გამოყენებულია", en: "Email already taken" },
+    translations: {
+      ge: "ეს ელ. ფოსტა უკვე გამოყენებულია",
+      en: "Email already taken",
+    },
   },
   {
     namespace: "validation",
     key: "id_code_taken",
-    translations: { ge: "ეს საიდენტიფიკაციო კოდი უკვე გამოყენებულია", en: "ID code already taken" },
+    translations: {
+      ge: "ეს საიდენტიფიკაციო კოდი უკვე გამოყენებულია",
+      en: "ID code already taken",
+    },
   },
   {
     namespace: "validation",
     key: "companyNameEn_invalid",
-    translations: { ge: "კომპანიის სახელი მხოლოდ ლათინურ სიმბოლოებს უნდა შეიცავდეს", en: "Company name must contain only Latin characters" },
+    translations: {
+      ge: "კომპანიის სახელი მხოლოდ ლათინურ სიმბოლოებს უნდა შეიცავდეს",
+      en: "Company name must contain only Latin characters",
+    },
   },
   {
     namespace: "validation",
     key: "contactPerson_min_length",
-    translations: { ge: "საკონტაქტო პირი მინიმუმ 2 სიმბოლო უნდა იყოს", en: "Contact person must be at least 2 characters" },
+    translations: {
+      ge: "საკონტაქტო პირი მინიმუმ 2 სიმბოლო უნდა იყოს",
+      en: "Contact person must be at least 2 characters",
+    },
   },
   {
     namespace: "validation",
     key: "description_max_length",
-    translations: { ge: "აღწერა არ უნდა აღემატებოდეს 500 სიმბოლოს", en: "Description must not exceed 500 characters" },
+    translations: {
+      ge: "აღწერა არ უნდა აღემატებოდეს 500 სიმბოლოს",
+      en: "Description must not exceed 500 characters",
+    },
   },
   {
     namespace: "validation",
     key: "namespace_required",
-    translations: { ge: "ნეიმსპეისი სავალდებულოა", en: "Namespace is required" },
+    translations: {
+      ge: "ნეიმსპეისი სავალდებულოა",
+      en: "Namespace is required",
+    },
   },
   {
     namespace: "validation",
@@ -256,14 +295,19 @@ const translationsToSeed = [
   {
     namespace: "validation",
     key: "ge_translation_required",
-    translations: { ge: "ქართული თარგმანი სავალდებულოა", en: "Georgian translation is required" },
+    translations: {
+      ge: "ქართული თარგმანი სავალდებულოა",
+      en: "Georgian translation is required",
+    },
   },
   {
     namespace: "validation",
     key: "en_translation_required",
-    translations: { ge: "ინგლისური თარგმანი სავალდებულოა", en: "English translation is required" },
+    translations: {
+      ge: "ინგლისური თარგმანი სავალდებულოა",
+      en: "English translation is required",
+    },
   },
-
 
   // ── Auth Responses ─────────────────────────────────────────────────────────
 
@@ -362,22 +406,39 @@ const translationsToSeed = [
   {
     namespace: "auth",
     key: "already_verified",
-    translations: { ge: "მეილი უკვე დადასტურებულია", en: "Email already verified" },
+    translations: {
+      ge: "მეილი უკვე დადასტურებულია",
+      en: "Email already verified",
+    },
   },
   {
     namespace: "auth",
     key: "email_verified_success",
-    translations: { ge: "მეილი წარმატებით დადასტურდა", en: "Email verified successfully" },
+    translations: {
+      ge: "მეილი წარმატებით დადასტურდა",
+      en: "Email verified successfully",
+    },
   },
   {
     namespace: "auth",
     key: "verification_link_expired",
-    translations: { ge: "ვერიფიკაციის ლინკს ვადა გაუვიდა", en: "Verification link expired" },
+    translations: {
+      ge: "ვერიფიკაციის ლინკს ვადა გაუვიდა",
+      en: "Verification link expired",
+    },
   },
   {
     namespace: "auth",
     key: "link_invalid",
     translations: { ge: "ბმული არასწორია", en: "Link is invalid" },
+  },
+  {
+    namespace: "auth",
+    key: "partner_registered",
+    translations: {
+      ge: "ორგანიზაცია წარმატებით დარეგისტრირდა. ადმინისტრატორი განიხილავს თქვენს განაცხადს",
+      en: "Organization registered successfully. Administrator will review your application",
+    },
   },
 
   // ── Alerts & Feedbacks ─────────────────────────────────────────────────────
@@ -394,32 +455,50 @@ const translationsToSeed = [
   {
     namespace: "alerts",
     key: "permission_created_success",
-    translations: { ge: "უფლება წარმატებით შეიქმნა", en: "Permission created successfully" },
+    translations: {
+      ge: "უფლება წარმატებით შეიქმნა",
+      en: "Permission created successfully",
+    },
   },
   {
     namespace: "alerts",
     key: "permission_updated_success",
-    translations: { ge: "უფლება წარმატებით განახლდა", en: "Permission updated successfully" },
+    translations: {
+      ge: "უფლება წარმატებით განახლდა",
+      en: "Permission updated successfully",
+    },
   },
   {
     namespace: "alerts",
     key: "permission_deleted_success",
-    translations: { ge: "უფლება წარმატებით წაიშალა", en: "Permission deleted successfully" },
+    translations: {
+      ge: "უფლება წარმატებით წაიშალა",
+      en: "Permission deleted successfully",
+    },
   },
   {
     namespace: "alerts",
     key: "permission_already_exists",
-    translations: { ge: "უფლება ამ სახელით უკვე არსებობს", en: "Permission with this name already exists" },
+    translations: {
+      ge: "უფლება ამ სახელით უკვე არსებობს",
+      en: "Permission with this name already exists",
+    },
   },
   {
     namespace: "alerts",
     key: "menu_item_not_found",
-    translations: { ge: "მენიუს ელემენტი ვერ მოიძებნა", en: "Menu item not found" },
+    translations: {
+      ge: "მენიუს ელემენტი ვერ მოიძებნა",
+      en: "Menu item not found",
+    },
   },
   {
     namespace: "alerts",
     key: "menu_item_deleted_success",
-    translations: { ge: "მენიუს ელემენტი წარმატებით წაიშალა", en: "Menu item deleted successfully" },
+    translations: {
+      ge: "მენიუს ელემენტი წარმატებით წაიშალა",
+      en: "Menu item deleted successfully",
+    },
   },
   {
     namespace: "alerts",
@@ -429,12 +508,18 @@ const translationsToSeed = [
   {
     namespace: "alerts",
     key: "org_email_exists",
-    translations: { ge: "ამ ელ. ფოსტით ორგანიზაცია უკვე არსებობს", en: "Organization with this email already exists" },
+    translations: {
+      ge: "ამ ელ. ფოსტით ორგანიზაცია უკვე არსებობს",
+      en: "Organization with this email already exists",
+    },
   },
   {
     namespace: "alerts",
     key: "org_code_exists",
-    translations: { ge: "ამ საიდენტიფიკაციო კოდით ორგანიზაცია უკვე არსებობს", en: "Organization with this ID code already exists" },
+    translations: {
+      ge: "ამ საიდენტიფიკაციო კოდით ორგანიზაცია უკვე არსებობს",
+      en: "Organization with this ID code already exists",
+    },
   },
   {
     namespace: "alerts",
@@ -444,7 +529,10 @@ const translationsToSeed = [
   {
     namespace: "alerts",
     key: "translation_key_exists",
-    translations: { ge: "თარგმანის ქეი ამ ნეიმსპეისში უკვე არსებობს", en: "Translation key already exists in this namespace" },
+    translations: {
+      ge: "თარგმანის ქეი ამ ნეიმსპეისში უკვე არსებობს",
+      en: "Translation key already exists in this namespace",
+    },
   },
   {
     namespace: "alerts",
@@ -454,45 +542,68 @@ const translationsToSeed = [
   {
     namespace: "alerts",
     key: "translation_updated_success",
-    translations: { ge: "თარგმანი წარმატებით განახლდა", en: "Translation updated successfully" },
+    translations: {
+      ge: "თარგმანი წარმატებით განახლდა",
+      en: "Translation updated successfully",
+    },
   },
   {
     namespace: "alerts",
     key: "translation_deleted_success",
-    translations: { ge: "თარგმანი წარმატებით წაიშალა", en: "Translation deleted successfully" },
+    translations: {
+      ge: "თარგმანი წარმატებით წაიშალა",
+      en: "Translation deleted successfully",
+    },
   },
   {
     namespace: "alerts",
     key: "invalid_payload_items_array",
-    translations: { ge: "არასწორი მონაცემები: items უნდა იყოს მასივი", en: "Invalid payload: items must be an array" },
+    translations: {
+      ge: "არასწორი მონაცემები: items უნდა იყოს მასივი",
+      en: "Invalid payload: items must be an array",
+    },
   },
   {
     namespace: "alerts",
     key: "no_items_to_import",
-    translations: { ge: "იმპორტისთვის მონაცემები არ არის", en: "No items to import" },
+    translations: {
+      ge: "იმპორტისთვის მონაცემები არ არის",
+      en: "No items to import",
+    },
   },
   {
     namespace: "alerts",
     key: "import_failed_namespaces_not_found",
-    translations: { ge: "იმპორტი ჩაიშალა: ნეიმსპეისები არ მოიძებნა", en: "Import failed: Namespaces not found" },
+    translations: {
+      ge: "იმპორტი ჩაიშალა: ნეიმსპეისები არ მოიძებნა",
+      en: "Import failed: Namespaces not found",
+    },
   },
   {
     namespace: "alerts",
     key: "translations_bulk_import_success",
-    translations: { ge: "თარგმანების იმპორტი წარმატებით დასრულდა", en: "Translations imported successfully" },
+    translations: {
+      ge: "თარგმანების იმპორტი წარმატებით დასრულდა",
+      en: "Translations imported successfully",
+    },
   },
   {
     namespace: "alerts",
     key: "no_items_to_delete",
-    translations: { ge: "წასაშლელი მონაცემები არ არის", en: "No items to delete" },
+    translations: {
+      ge: "წასაშლელი მონაცემები არ არის",
+      en: "No items to delete",
+    },
   },
   {
     namespace: "alerts",
     key: "translations_bulk_delete_success",
-    translations: { ge: "თარგმანები წარმატებით წაიშალა", en: "Translations deleted successfully" },
+    translations: {
+      ge: "თარგმანები წარმატებით წაიშალა",
+      en: "Translations deleted successfully",
+    },
   },
 ];
-
 
 const seedTranslation = async () => {
   try {

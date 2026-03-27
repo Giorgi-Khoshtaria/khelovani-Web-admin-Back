@@ -22,10 +22,35 @@ router.get("/", getTranslations);
 router.get("/namespaces", getNamespaces);
 
 // 🔒 Protected Routes (Admin only to manage translations)
-router.post("/", authenticate, requirePermission(PERMISSIONS.ADMIN.TRANSLATION_EDIT), addTranslation);
-router.post("/bulk", authenticate, requirePermission(PERMISSIONS.ADMIN.TRANSLATION_EDIT), bulkTranslation);
-router.post("/bulk-delete", authenticate, requirePermission(PERMISSIONS.ADMIN.TRANSLATION_DELETE), bulkDeleteTranslations);
-router.put("/:id", authenticate, requirePermission(PERMISSIONS.ADMIN.TRANSLATION_EDIT), updateTranslation);
-router.delete("/:id", authenticate, requirePermission(PERMISSIONS.ADMIN.TRANSLATION_DELETE), deleteTranslation);
+router.post(
+  "/",
+  authenticate,
+  requirePermission(PERMISSIONS.ADMIN.TRANSLATION_EDIT),
+  addTranslation,
+);
+router.post(
+  "/bulk",
+  authenticate,
+  requirePermission(PERMISSIONS.ADMIN.TRANSLATION_EDIT),
+  bulkTranslation,
+);
+router.post(
+  "/bulk-delete",
+  authenticate,
+  requirePermission(PERMISSIONS.ADMIN.TRANSLATION_DELETE),
+  bulkDeleteTranslations,
+);
+router.put(
+  "/:id",
+  authenticate,
+  requirePermission(PERMISSIONS.ADMIN.TRANSLATION_EDIT),
+  updateTranslation,
+);
+router.delete(
+  "/:id",
+  authenticate,
+  requirePermission(PERMISSIONS.ADMIN.TRANSLATION_DELETE),
+  deleteTranslation,
+);
 
 export default router;
