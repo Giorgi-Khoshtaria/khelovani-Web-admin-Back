@@ -52,6 +52,7 @@ export const registerPartner = async (
       address: data.address.trim(),
       addressEn: data.addressEn.trim(),
       description: data.description?.trim(),
+      descriptionEn: data.descriptionEn?.trim(),
       status: PartnerStatusEnum.PENDING,
       password: hashedPassword,
       role: partnerRole._id,

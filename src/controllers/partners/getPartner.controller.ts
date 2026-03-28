@@ -47,7 +47,9 @@ export const getPartnerById = async (
 
     res.status(200).json(partner);
   } catch (error) {
-    res.status(500).json({ message: (error as Error).message });
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
+    res.status(500).json({ message: tAlerts("server_error") || (error as Error).message });
   }
 };
 
@@ -77,6 +79,90 @@ export const getAllPartners = async (
       .sort({ createdAt: -1 });
 
     res.status(200).json(partners);
+  } catch (error) {
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
+    res.status(500).json({ message: tAlerts("server_error") || (error as Error).message });
+  }
+};
+
+export const getPublicPartners = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { search, page = "1", limit = "12" } = req.query;
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
+
+    const query: any = {
+      status: PartnerStatusEnum.APPROVED,
+    };
+
+    if (search) {
+      query.$or = [
+        { companyNameGe: { $regex: search, $options: "i" } },
+        { companyNameEn: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    const pageNum = parseInt(page as string, 10);
+    const limitNum = parseInt(limit as string, 10);
+    const skip = (pageNum - 1) * limitNum;
+
+    const [partners, totalPartners] = await Promise.all([
+      Organisation.find(query)
+        .select("-password")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limitNum),
+      Organisation.countDocuments(query),
+    ]);
+
+    const totalPages = Math.ceil(totalPartners / limitNum);
+
+    res.status(200).json({
+      data: partners,
+      currentPage: pageNum,
+      totalPages,
+      totalPartners,
+    });
+  } catch (error) {
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
+    res.status(500).json({ message: tAlerts("server_error") || (error as Error).message });
+  }
+};
+
+export const getPublicPartnerById = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
+
+    if (!mongoose.Types.ObjectId.isValid(id as string)) {
+      res.status(400).json({
+        message: tAlerts("invalid_partner_id"),
+      });
+      return;
+    }
+
+    const partner = await Organisation.findOne({
+      _id: id,
+      status: PartnerStatusEnum.APPROVED,
+    }).select("-password");
+
+    if (!partner) {
+      res.status(404).json({
+        message: tAlerts("partner_not_found") || "Partner not found",
+      });
+      return;
+    }
+
+    res.status(200).json(partner);
   } catch (error) {
     const lang = (req.query.lang as Lang) || "ge";
     const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
@@ -318,6 +404,8 @@ export const updatePartnerPhoto = async (
 
     res.status(200).json(partner);
   } catch (error) {
-    res.status(500).json({ message: (error as Error).message });
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
+    res.status(500).json({ message: tAlerts("server_error") || (error as Error).message });
   }
 };

@@ -57,6 +57,11 @@ const OrganisationSchema = new mongoose.Schema(
       required: false,
       trim: true,
     },
+    descriptionEn: {
+      type: String,
+      required: false,
+      trim: true,
+    },
     password: {
       type: String,
       required: true,

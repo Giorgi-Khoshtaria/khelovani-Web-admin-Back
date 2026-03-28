@@ -9,5 +9,6 @@ export interface PartnerRegisterData {
   address: string;
   addressEn: string;
   description: string;
+  descriptionEn?: string;
   terms: boolean;
 }
