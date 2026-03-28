@@ -64,7 +64,9 @@ export const registerPartner = async (
     });
 
   } catch (error) {
-    res.status(500).json({ message: (error as Error).message });
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
+    res.status(500).json({ message: tAlerts("server_error") || (error as Error).message });
   }
 };
 

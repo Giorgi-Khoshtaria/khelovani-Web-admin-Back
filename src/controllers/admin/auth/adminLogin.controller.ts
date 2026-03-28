@@ -61,7 +61,7 @@ export const loginAdmin = async (
       const isPasswordValid = await bcrypt.compare(password, admin.password);
       if (!isPasswordValid) {
         res.status(422).json({
-          message: tAuth("invalid_email_or_password"),
+          message: tAuth("invalid_email_password"),
         });
         return;
       }
@@ -128,7 +128,7 @@ export const loginAdmin = async (
     const isPasswordValid = await bcrypt.compare(password, partner.password);
     if (!isPasswordValid) {
       res.status(422).json({
-        message: tAuth("invalid_email_or_password"),
+        message: tAuth("invalid_email_password"),
       });
       return;
     }
@@ -152,7 +152,10 @@ export const loginAdmin = async (
       id: partner._id,
     });
   } catch (error) {
-    res.status(500).json({ message: (error as Error).message });
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
+    res
+      .status(500)
+      .json({ message: tAlerts("server_error") || (error as Error).message });
   }
 };
-

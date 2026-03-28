@@ -13,6 +13,10 @@ export const getTranslations = async (
 ): Promise<void> => {
   try {
     const { namespace, search } = req.query;
+    const page = parseInt(req.query.page as string) || 1;
+    const limitQuery = req.query.limit as string;
+    const limit = limitQuery !== undefined ? parseInt(limitQuery) : 15;
+    const skip = (page - 1) * (limit > 0 ? limit : 0);
     
     let filter: any = {};
     if (namespace) filter.namespace = namespace;
@@ -24,7 +28,13 @@ export const getTranslations = async (
       ];
     }
 
-    const translations = await Translation.find(filter).lean();
+    const [translations, totalCount] = await Promise.all([
+      Translation.find(filter)
+        .skip(skip)
+        .limit(limit > 0 ? limit : 0) // MongoDB: limit(0) returns all
+        .lean(),
+      Translation.countDocuments(filter),
+    ]);
     
     // Group by namespace for easy consumption
     const grouped: Record<string, Record<string, { ge: string; en: string }>> = {};
@@ -42,10 +52,14 @@ export const getTranslations = async (
       data: {
         grouped,
         raw: translations,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limit),
       },
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: (error as Error).message });
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
+    res.status(500).json({ success: false, message: tAlerts("server_error") || (error as Error).message });
   }
 };
 
@@ -58,7 +72,9 @@ export const getNamespaces = async (
     const namespaces = await Namespace.find().lean();
     res.status(200).json({ success: true, data: namespaces });
   } catch (error) {
-    res.status(500).json({ success: false, message: (error as Error).message });
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
+    res.status(500).json({ success: false, message: tAlerts("server_error") || (error as Error).message });
   }
 };
 
@@ -108,7 +124,9 @@ export const addTranslation = async (
 
     res.status(201).json({ success: true, data: newTranslation });
   } catch (error) {
-    res.status(500).json({ success: false, message: (error as Error).message });
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
+    res.status(500).json({ success: false, message: tAlerts("server_error") || (error as Error).message });
   }
 };
 
@@ -161,7 +179,9 @@ export const updateTranslation = async (
       data: translation,
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: (error as Error).message });
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
+    res.status(500).json({ success: false, message: tAlerts("server_error") || (error as Error).message });
   }
 };
 
@@ -191,7 +211,9 @@ export const deleteTranslation = async (
       message: tAlerts("translation_deleted_success"),
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: (error as Error).message });
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
+    res.status(500).json({ success: false, message: tAlerts("server_error") || (error as Error).message });
   }
 };
 

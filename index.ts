@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import multer from "multer";
 import { loadTranslationCache } from "./src/types/translate.util.js";
 import mongoose from "mongoose";
 import userRoutes from "./src/routes/user.routes.js";
@@ -51,6 +52,34 @@ app.use("/api/admin/permissions", permissionRoutes);
 app.use("/api/admin/menu", adminMenuRoutes);
 app.use("/api/admin/upload", uploadRoutes);
 app.use("/api/menu", publicMenuRoutes);
+
+// Global Error Handler
+app.use(
+  (
+    err: any,
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction,
+  ) => {
+    console.error("Global Error:", err);
+
+    // Handle Multer errors explicitly
+    if (err instanceof multer.MulterError) {
+      return res.status(400).json({
+        success: false,
+        message:
+          err.code === "LIMIT_FILE_SIZE"
+            ? "ფაილის ზომა აღემატება 5MB-ს"
+            : err.message,
+      });
+    }
+
+    const status = err.status || 500;
+    const message = err.message || "Internal Server Error";
+    res.status(status).json({ success: false, message });
+  },
+);
+
 mongoose
   .connect(process.env.MONGODB_URI!)
   .then(() => {

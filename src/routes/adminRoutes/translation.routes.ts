@@ -14,6 +14,7 @@ import { authenticate } from "../../middleware/auth/authenticate.js";
 
 import { requirePermission } from "../../middleware/role/requirePermission.js";
 import { PERMISSIONS } from "../../middleware/role/permissions.js";
+import { twoMinutesLimiter } from "../../utils/limiters/rate-limit.js";
 
 const router = Router();
 
@@ -25,30 +26,35 @@ router.get("/namespaces", getNamespaces);
 router.post(
   "/",
   authenticate,
+  twoMinutesLimiter,
   requirePermission(PERMISSIONS.ADMIN.TRANSLATION_EDIT),
   addTranslation,
 );
 router.post(
   "/bulk",
   authenticate,
+  twoMinutesLimiter,
   requirePermission(PERMISSIONS.ADMIN.TRANSLATION_EDIT),
   bulkTranslation,
 );
 router.post(
   "/bulk-delete",
   authenticate,
+  twoMinutesLimiter,
   requirePermission(PERMISSIONS.ADMIN.TRANSLATION_DELETE),
   bulkDeleteTranslations,
 );
 router.put(
   "/:id",
   authenticate,
+  twoMinutesLimiter,
   requirePermission(PERMISSIONS.ADMIN.TRANSLATION_EDIT),
   updateTranslation,
 );
 router.delete(
   "/:id",
   authenticate,
+  twoMinutesLimiter,
   requirePermission(PERMISSIONS.ADMIN.TRANSLATION_DELETE),
   deleteTranslation,
 );

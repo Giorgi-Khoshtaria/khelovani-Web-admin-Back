@@ -57,6 +57,8 @@ export const getAllPartners = async (
 ): Promise<void> => {
   try {
     const { search, status } = req.query;
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
     const query: any = {};
 
     if (search) {
@@ -76,7 +78,9 @@ export const getAllPartners = async (
 
     res.status(200).json(partners);
   } catch (error) {
-    res.status(500).json({ message: (error as Error).message });
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
+    res.status(500).json({ message: tAlerts("server_error") || (error as Error).message });
   }
 };
 
@@ -155,7 +159,9 @@ export const updatePartnerStatus = async (
       message: tAlerts("partner_status_updated"),
     });
   } catch (error) {
-    res.status(500).json({ message: (error as Error).message });
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
+    res.status(500).json({ message: tAlerts("server_error") || (error as Error).message });
   }
 };
 
@@ -209,7 +215,9 @@ export const updatePartner = async (
 
     res.status(200).json(updatedPartner);
   } catch (error) {
-    res.status(500).json({ message: (error as Error).message });
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
+    res.status(500).json({ message: tAlerts("server_error") || (error as Error).message });
   }
 };
 
@@ -253,7 +261,63 @@ export const deletePartner = async (
       message: tAlerts("partner_deleted"),
     });
   } catch (error) {
-    res.status(500).json({ message: (error as Error).message });
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
+    res.status(500).json({ message: tAlerts("server_error") || (error as Error).message });
   }
 };
 
+export const updatePartnerPhoto = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
+    const { t: tAuth } = useTranslation(lang, TranslationNamespace.Auth);
+ 
+    console.log("Photo update request for ID:", id);
+    console.log("User in request:", req.user);
+
+    if (!mongoose.Types.ObjectId.isValid(id as string)) {
+      res.status(400).json({
+        message: tAlerts("invalid_partner_id"),
+      });
+      return;
+    }
+
+    // Check if user is admin or is updating their own profile
+    if (req.user?.role !== ROLES.ADMIN && req.user?.id !== id) {
+      res.status(403).json({
+        message: tAuth("access_denied"),
+      });
+      return;
+    }
+
+    if (!req.file) {
+      res.status(400).json({ message: tAlerts("no_file_uploaded") });
+      return;
+    }
+
+    const imageUrl = req.file.path;
+    console.log("Uploaded to Cloudinary:", imageUrl);
+
+    const partner = await Organisation.findByIdAndUpdate(
+      id,
+      { $set: { profilePhoto: imageUrl } },
+      { new: true },
+    ).select("-password");
+
+    if (!partner) {
+      res.status(404).json({
+        message: tAuth("partner_not_found"),
+      });
+      return;
+    }
+
+    res.status(200).json(partner);
+  } catch (error) {
+    res.status(500).json({ message: (error as Error).message });
+  }
+};

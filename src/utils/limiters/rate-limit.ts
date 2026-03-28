@@ -8,7 +8,7 @@ export const twoMinutesLimiter = rateLimit({
   legacyHeaders: false,
   handler: (req, res) => {
     res.status(429).json({
-      message: "Too many failed login attempts. Please try again in 2 minutes.",
+      message: "Too many failed attempts. Please try again in 2 minutes.",
     });
   },
 });
@@ -28,7 +28,7 @@ export const oneHourLimiter = rateLimit({
 // ====================== GLOBAL LIMITER ======================
 export const globalLimiter = rateLimit({
   windowMs: 2 * 60 * 1000, // 2 minutes (as you requested)
-  max: 1000, // ← 1000 requests per IP every 2 minutes
+  max: 300, // ← 300 requests per IP every 2 minutes (tightened for max security)
   standardHeaders: true,
   legacyHeaders: false,
   handler: (req, res) => {

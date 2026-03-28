@@ -92,6 +92,10 @@ const OrganisationSchema = new mongoose.Schema(
       required: false,
       trim: true,
     },
+    profilePhoto: {
+      type: String,
+      default: "",
+    },
   },
   { timestamps: true },
 );
