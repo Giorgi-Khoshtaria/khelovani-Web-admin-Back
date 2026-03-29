@@ -63,11 +63,11 @@ export const registerPartner = async (
     res.status(201).json({
       message: tAuth("partner_registered"),
     });
-
   } catch (error) {
     const lang = (req.query.lang as Lang) || "ge";
     const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
-    res.status(500).json({ message: tAlerts("server_error") || (error as Error).message });
+    res
+      .status(500)
+      .json({ message: tAlerts("server_error") || (error as Error).message });
   }
 };
-

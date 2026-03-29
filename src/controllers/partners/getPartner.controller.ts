@@ -219,6 +219,15 @@ export const updatePartnerStatus = async (
       return;
     }
 
+    if (status === PartnerStatusEnum.BANNED) {
+      partner.status = PartnerStatusEnum.BANNED;
+      await partner.save();
+      res.status(200).json({
+        message: tAlerts("partner_status_updated"), // can add specific translation if needed
+      });
+      return;
+    }
+
     if (status === PartnerStatusEnum.APPROVED) {
       try {
         const plainPassword = crypto.randomBytes(6).toString("hex");
@@ -324,8 +333,8 @@ export const deletePartner = async (
       return;
     }
 
-    // Only the partner themselves can delete their account (admins don't need this on their side)
-    if (req.user?.id !== id) {
+    // Only the partner themselves or an admin can delete their account
+    if (req.user?.id !== id && req.user?.role !== ROLES.ADMIN) {
       res.status(403).json({
         message: tAuth("access_denied_only_owner_can_delete"),
       });

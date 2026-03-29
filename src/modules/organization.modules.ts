@@ -67,16 +67,7 @@ const OrganisationSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    status: {
-      type: String,
-      enum: Object.values(PartnerStatusEnum),
-      default: PartnerStatusEnum.PENDING,
-    },
-    role: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Role",
-      required: true,
-    },
+
     website: {
       type: String,
       required: false,
@@ -100,6 +91,16 @@ const OrganisationSchema = new mongoose.Schema(
     profilePhoto: {
       type: String,
       default: "",
+    },
+    status: {
+      type: String,
+      enum: Object.values(PartnerStatusEnum),
+      default: PartnerStatusEnum.PENDING,
+    },
+    role: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Role",
+      required: true,
     },
   },
   { timestamps: true },
