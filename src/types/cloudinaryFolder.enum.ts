@@ -3,6 +3,5 @@ export enum CloudinaryFolder {
   Products = "products",
   Pages = "pages",
   Users = "users",
-  Items = "items",
   General = "general",
 }
