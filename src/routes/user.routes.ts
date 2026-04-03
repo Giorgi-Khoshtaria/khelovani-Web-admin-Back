@@ -12,10 +12,7 @@ import {
 import { authenticate } from "../middleware/auth/authenticate.js";
 import { requirePermission } from "../middleware/role/requirePermission.js";
 import { requirePanel } from "../middleware/role/requirePanel.js";
-import {
-  PERMISSIONS,
-  PANELS,
-} from "../middleware/role/permissions.js";
+import { PERMISSIONS, PANELS } from "../middleware/role/permissions.js";
 import { verifyEmailCallback } from "../controllers/verification/verifyEmail.controller.js";
 
 const router = Router();

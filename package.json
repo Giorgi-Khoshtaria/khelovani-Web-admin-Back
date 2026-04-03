@@ -6,10 +6,12 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon --exec tsx index.ts",
+    "start": "tsx src/utils/seeds/seedRoles.ts && tsx index.ts",
     "seed:roles": "tsx src/utils/seeds/seedRoles.ts",
     "seed:admin": "tsx src/utils/seeds/seedAdmin.ts",
     "seed:translation": "tsx src/utils/seeds/seedTranslation.ts",
-    "start": "tsx src/utils/seeds/seedRoles.ts && tsx index.ts"
+    "seed:menu": "tsx src/utils/seeds/seedMenuItems.ts",
+    "test:registration": "npx playwright test tests/registration/registration.api.spec.ts"
   },
   "keywords": [],
   "author": "",
@@ -30,6 +32,7 @@
     "sharp": "^0.34.5"
   },
   "devDependencies": {
+    "@playwright/test": "^1.59.1",
     "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",

@@ -15,7 +15,6 @@ import permissionRoutes from "./src/routes/adminRoutes/permission.routes.js";
 import adminMenuRoutes from "./src/routes/adminRoutes/menu.routes.js";
 import publicMenuRoutes from "./src/routes/menu.routes.js";
 import uploadRoutes from "./src/routes/adminRoutes/upload.routes.js";
-import { seedPermissions } from "./src/utils/seeds/seedPermissions.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -37,6 +36,25 @@ app.use(
 
 // ✅ 2. body parser მეორე
 app.use(express.json());
+
+// ✅ 2.1 JSON Validation Middleware (400 Bad Request)
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  if (err instanceof SyntaxError && "body" in err) {
+    return res.status(400).json({ success: false, message: "Invalid JSON format" });
+  }
+  next();
+});
+
+// Middleware to catch empty bodies for non-GET requests
+app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+  if (["POST", "PUT", "PATCH"].includes(req.method) && (!req.body || Object.keys(req.body).length === 0)) {
+    // Only apply this to registration if you want, or globally as a better REST practice
+    if (req.path === "/api/user/register") {
+       return res.status(400).json({ success: false, message: "Empty request body" });
+    }
+  }
+  next();
+});
 
 // ✅ 3. rate limiter მესამე
 app.use(globalLimiter);
@@ -81,14 +99,26 @@ app.use(
 );
 
 mongoose
-  .connect(process.env.MONGODB_URI!)
+  .connect(process.env.MONGODB_URL_TEST!)
   .then(() => {
-    console.log("MongoDB connected");
+    console.log("MongoDB-test connected");
     loadTranslationCache();
-    seedPermissions();
   })
   .catch(console.error);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+// mongoose
+//   .connect(process.env.MONGODB_URL!)
+//   .then(() => {
+//     console.log("MongoDB connected");
+//     loadTranslationCache();
+//     seedPermissions();
+//   })
+//   .catch(console.error);
+
+// app.listen(PORT, () => {
+//   console.log(`Server running on port ${PORT}`);
+// });

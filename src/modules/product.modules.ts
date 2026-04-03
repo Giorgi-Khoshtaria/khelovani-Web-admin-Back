@@ -24,7 +24,6 @@ export interface IProduct extends Document {
   materialsEn?: string[];
   dimensions?: string;
   weight?: number;
-  customizable: boolean;
   isShown: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -69,7 +68,6 @@ const ProductSchema = new Schema<IProduct>(
     materialsEn: { type: [String], default: [] },
     dimensions: { type: String },
     weight: { type: Number, min: 0 },
-    customizable: { type: Boolean, default: false },
     isShown: { type: Boolean, default: false },
   },
   { timestamps: true }

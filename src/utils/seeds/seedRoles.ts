@@ -32,11 +32,11 @@ const rolesToSeed = [
 
 const seedRoles = async () => {
   try {
-    if (!process.env.MONGODB_URI) {
-      throw new Error("MONGODB_URI is not defined in .env file");
+    if (!process.env.MONGODB_URL_TEST) {
+      throw new Error("MONGODB_URL_TEST is not defined in .env file");
     }
 
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect(process.env.MONGODB_URL_TEST);
     console.log("Connected to MongoDB");
 
     // ── Seed Permissions first ─────────────────────────────────────────────

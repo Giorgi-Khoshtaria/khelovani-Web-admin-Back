@@ -5,7 +5,7 @@ import { ROLES } from "../../middleware/role/permissions.js";
 dotenv.config();
 
 mongoose
-  .connect(process.env.MONGODB_URI as string)
+  .connect(process.env.MONGODB_URL_TEST as string)
   .then(async () => {
     const Role = (await import("../../modules/role.modules.js")).default;
     const Admin = (await import("../../modules/admin.modules.js")).default;

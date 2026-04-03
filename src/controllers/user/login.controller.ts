@@ -28,7 +28,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 
     if (!user) {
       res.status(422).json({
-        message: tAuth("user_not_found"),
+        message: tAuth("invalid_email_password"),
       });
       return;
     }

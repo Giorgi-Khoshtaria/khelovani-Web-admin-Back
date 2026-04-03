@@ -91,7 +91,7 @@ export const getPublicPartners = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const { search, page = "1", limit = "12" } = req.query;
+    const { search, page = "1", limit = "12", city, category, minRating } = req.query;
     const lang = (req.query.lang as Lang) || "ge";
     const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
 
@@ -104,6 +104,18 @@ export const getPublicPartners = async (
         { companyNameGe: { $regex: search, $options: "i" } },
         { companyNameEn: { $regex: search, $options: "i" } },
       ];
+    }
+
+    if (city) {
+      query.city = city;
+    }
+
+    if (category) {
+      query.category = category;
+    }
+
+    if (minRating) {
+      query.rating = { $gte: Number(minRating) };
     }
 
     const pageNum = parseInt(page as string, 10);

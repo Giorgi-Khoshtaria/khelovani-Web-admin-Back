@@ -61,6 +61,13 @@ export const validatePartnerRegistration = async (
   const cityError = validateCity(data.city, lang);
   if (cityError) errors.push({ field: "city", message: cityError });
 
+  if (!data.category || data.category.trim() === "") {
+    errors.push({
+      field: "category",
+      message: tValidation("category_required") || "კატეგორია სავალდებულოა",
+    });
+  }
+
   const emailError = validateEmail(data.email, lang);
   if (emailError) errors.push({ field: "email", message: emailError });
 

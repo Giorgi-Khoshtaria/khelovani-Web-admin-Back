@@ -10,5 +10,12 @@ export interface PartnerRegisterData {
   addressEn: string;
   description: string;
   descriptionEn?: string;
+  website?: string;
+  facebook?: string;
+  instagram?: string;
+  tiktok?: string;
+  linkedin?: string;
+  youtube?: string;
   terms: boolean;
+  category?: string;
 }

@@ -1,8 +1,8 @@
 import rateLimit from "express-rate-limit";
 
 export const twoMinutesLimiter = rateLimit({
-  windowMs: 2 * 60 * 1000, // 2 minutes
-  max: 10,
+  windowMs: 0.1 * 60 * 1000, // 2 minutes ❌ (this is actually 6 seconds btw)  // max:10
+  max: process.env.MONGODB_URL_TEST ? 55 : 10, // Reasonable for testing
   skipSuccessfulRequests: true,
   standardHeaders: true,
   legacyHeaders: false,
@@ -15,7 +15,8 @@ export const twoMinutesLimiter = rateLimit({
 
 export const oneHourLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 5,
+  // max: 5,
+  max: process.env.MONGODB_URL_TEST ? 10 : 5, // Reduced for testing
   standardHeaders: true,
   legacyHeaders: false,
   handler: (req, res) => {

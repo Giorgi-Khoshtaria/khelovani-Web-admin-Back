@@ -11,6 +11,7 @@ export const validateNameGe = (
 
   if (!name || name.trim() === "") return null; // optional
   if (name.trim().length < 2) return tValidation("name_ge_min_length");
+  if (name.trim().length > 50) return tValidation("name_ge_max_length");
   if (!/^[\u10D0-\u10FF\s'-]+$/.test(name.trim())) return tValidation("name_ge_letters_only");
   return null;
 };
@@ -24,7 +25,9 @@ export const validateNameEn = (
 
   if (!name || name.trim() === "") return tValidation("name_en_required");
   if (name.trim().length < 2) return tValidation("name_en_min_length");
-  if (!/^[A-Za-z\s'-]+$/.test(name.trim())) return tValidation("name_en_letters_only");
+  if (name.trim().length > 50) return tValidation("name_en_max_length");
+  // Supports letters, spaces, hyphens, and apostrophes (both straight and curly)
+  if (!/^[A-Za-z\s'\-’]+$/.test(name.trim())) return tValidation("name_en_letters_only");
   return null;
 };
 

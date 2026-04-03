@@ -6,7 +6,7 @@ dotenv.config();
 
 console.log("Connecting to MongoDB...");
 mongoose
-  .connect(process.env.MONGODB_URI as string)
+  .connect(process.env.MONGODB_URL_TEST as string)
   .then(async () => {
     const Role = (await import("../../modules/role.modules.js")).default;
     const Admin = (await import("../../modules/admin.modules.js")).default;
@@ -25,9 +25,7 @@ mongoose
       // If the admin exists but has an old/bad role ref, fix it.
       existingAdmin.role = adminRole._id;
       await existingAdmin.save();
-      console.log(
-        "✅ Admin already existed, but role was updated to `admin`.",
-      );
+      console.log("✅ Admin already existed, but role was updated to `admin`.");
       process.exit(0);
     }
 

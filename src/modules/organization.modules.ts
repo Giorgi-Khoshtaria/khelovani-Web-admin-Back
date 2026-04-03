@@ -88,6 +88,32 @@ const OrganisationSchema = new mongoose.Schema(
       required: false,
       trim: true,
     },
+    category: {
+      type: String,
+      required: false,
+      trim: true,
+      enum: [
+        "handcraft",
+        "jewelry",
+        "ceramics",
+        "textile",
+        "wood",
+        "food",
+        "art",
+        "leather",
+        "enamel",
+      ],
+    },
+    rating: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 5,
+    },
+    reviewCount: {
+      type: Number,
+      default: 0,
+    },
     profilePhoto: {
       type: String,
       default: "",
