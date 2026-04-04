@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { registerUser } from "../controllers/user/registration.controller.js";
-import { loginUser } from "../controllers/user/login.controller.js";
 import {
+  registerUser,
+  loginUser,
   forgotPassword,
   resetPassword,
-} from "../controllers/user/forgot-password.controller.js";
+} from "../controllers/user/index.js";
 import {
   twoMinutesLimiter,
   oneHourLimiter,
@@ -13,7 +13,7 @@ import { authenticate } from "../middleware/auth/authenticate.js";
 import { requirePermission } from "../middleware/role/requirePermission.js";
 import { requirePanel } from "../middleware/role/requirePanel.js";
 import { PERMISSIONS, PANELS } from "../middleware/role/permissions.js";
-import { verifyEmailCallback } from "../controllers/verification/verifyEmail.controller.js";
+import { verifyEmailCallback } from "../controllers/verification/index.js";
 
 const router = Router();
 

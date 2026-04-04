@@ -6,14 +6,14 @@ import {
   updatePartner,
   deletePartner,
   updatePartnerPhoto,
-} from "../../controllers/partners/getPartner.controller.js";
+} from "../../controllers/partners/index.js";
 import {
   addProduct,
-  deleteProduct,
-  getProductById,
   getProducts,
+  getProductById,
   updateProduct,
-} from "../../controllers/partners/product.controller.js";
+  deleteProduct,
+} from "../../controllers/products/index.js";
 import upload from "../../utils/config/multer.js";
 import { authenticate } from "../../middleware/auth/authenticate.js";
 
@@ -30,25 +30,37 @@ router.use(authenticate);
 router.get("/", requirePermission(PERMISSIONS.ADMIN.USER_LIST), getAllPartners);
 router.get(
   "/:id",
-  requirePermission(PERMISSIONS.ADMIN.USER_LIST, PERMISSIONS.PARTNER.PROFILE_EDIT),
+  requirePermission(
+    PERMISSIONS.ADMIN.USER_LIST,
+    PERMISSIONS.PARTNER.PROFILE_EDIT,
+  ),
   getPartnerById,
 ); // Access check also handled in controller
 router.patch(
   "/:id/status",
   twoMinutesLimiter,
-  requirePermission(PERMISSIONS.ADMIN.ORG_APPROVE, PERMISSIONS.ADMIN.ORG_REJECT),
+  requirePermission(
+    PERMISSIONS.ADMIN.ORG_APPROVE,
+    PERMISSIONS.ADMIN.ORG_REJECT,
+  ),
   updatePartnerStatus,
 );
 router.patch(
   "/:id",
   twoMinutesLimiter,
-  requirePermission(PERMISSIONS.ADMIN.USER_LIST, PERMISSIONS.PARTNER.PROFILE_EDIT),
+  requirePermission(
+    PERMISSIONS.ADMIN.USER_LIST,
+    PERMISSIONS.PARTNER.PROFILE_EDIT,
+  ),
   updatePartner,
 ); // Access check also handled in controller
 router.patch(
   "/:id/photo",
   twoMinutesLimiter,
-  requirePermission(PERMISSIONS.ADMIN.USER_LIST, PERMISSIONS.PARTNER.PROFILE_EDIT),
+  requirePermission(
+    PERMISSIONS.ADMIN.USER_LIST,
+    PERMISSIONS.PARTNER.PROFILE_EDIT,
+  ),
   (req: any, res, next) => {
     req.cloudinaryFolder = CloudinaryFolder.Organizations;
     next();
@@ -59,29 +71,44 @@ router.patch(
 router.get(
   "/:id/products",
   twoMinutesLimiter,
-  requirePermission(PERMISSIONS.ADMIN.PRODUCT_VIEW_ALL, PERMISSIONS.PARTNER.ORDER_VIEW), // Using order view as a proxy for generic partner access if needed, or better define a PRODUCT_VIEW for partners
+  requirePermission(
+    PERMISSIONS.ADMIN.PRODUCT_VIEW_ALL,
+    PERMISSIONS.PARTNER.ORDER_VIEW,
+  ), // Using order view as a proxy for generic partner access if needed, or better define a PRODUCT_VIEW for partners
   getProducts,
 );
 router.get(
   "/:id/products/:productId",
-  requirePermission(PERMISSIONS.ADMIN.PRODUCT_VIEW_ALL, PERMISSIONS.PARTNER.PRODUCT_EDIT),
+  requirePermission(
+    PERMISSIONS.ADMIN.PRODUCT_VIEW_ALL,
+    PERMISSIONS.PARTNER.PRODUCT_EDIT,
+  ),
   getProductById,
 );
 router.delete(
   "/:id/products/:productId",
-  requirePermission(PERMISSIONS.ADMIN.PRODUCT_DELETE, PERMISSIONS.PARTNER.PRODUCT_DELETE),
+  requirePermission(
+    PERMISSIONS.ADMIN.PRODUCT_DELETE,
+    PERMISSIONS.PARTNER.PRODUCT_DELETE,
+  ),
   deleteProduct,
 );
 router.put(
   "/:id/products/:productId",
-  requirePermission(PERMISSIONS.ADMIN.PRODUCT_EDIT, PERMISSIONS.PARTNER.PRODUCT_EDIT),
+  requirePermission(
+    PERMISSIONS.ADMIN.PRODUCT_EDIT,
+    PERMISSIONS.PARTNER.PRODUCT_EDIT,
+  ),
   upload.fields([{ name: "images", maxCount: 5 }]),
   updateProduct,
 );
 router.post(
   "/:id/products",
   twoMinutesLimiter,
-  requirePermission(PERMISSIONS.ADMIN.PRODUCT_CREATE, PERMISSIONS.PARTNER.PRODUCT_CREATE),
+  requirePermission(
+    PERMISSIONS.ADMIN.PRODUCT_CREATE,
+    PERMISSIONS.PARTNER.PRODUCT_CREATE,
+  ),
   (req: any, res, next) => {
     req.cloudinaryFolder = CloudinaryFolder.Products;
     next();

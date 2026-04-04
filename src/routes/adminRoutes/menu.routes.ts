@@ -4,7 +4,7 @@ import {
   createMenuItem,
   updateMenuItem,
   deleteMenuItem,
-} from "../../controllers/admin/menu/menu.controller.js";
+} from "../../controllers/admin/menu/index.js";
 import { authenticate } from "../../middleware/auth/authenticate.js";
 import { requirePermission } from "../../middleware/role/requirePermission.js";
 import { PERMISSIONS } from "../../middleware/role/permissions.js";

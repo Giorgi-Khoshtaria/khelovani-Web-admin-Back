@@ -1,6 +1,9 @@
 import { Router } from "express";
-import { registerPartner } from "../controllers/partners/partnerRegistration.controller.js";
-import { getPublicPartners, getPublicPartnerById } from "../controllers/partners/getPartner.controller.js";
+import {
+  registerPartner,
+  getPublicPartners,
+  getPublicPartnerById,
+} from "../controllers/partners/index.js";
 import { twoMinutesLimiter } from "../utils/limiters/rate-limit.js";
 
 const router = Router();

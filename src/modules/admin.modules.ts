@@ -10,7 +10,6 @@ const AdminSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    trim: true,
   },
   role: {
     type: mongoose.Schema.Types.ObjectId,

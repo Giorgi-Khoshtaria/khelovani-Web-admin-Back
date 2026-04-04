@@ -17,6 +17,7 @@ import publicMenuRoutes from "./src/routes/menu.routes.js";
 import uploadRoutes from "./src/routes/adminRoutes/upload.routes.js";
 
 const app = express();
+app.disable("x-powered-by");
 const PORT = process.env.PORT || 3001;
 
 // ✅ 1. cors პირველი
@@ -35,7 +36,7 @@ app.use(
 );
 
 // ✅ 2. body parser მეორე
-app.use(express.json());
+app.use(express.json({ limit: "5mb" }));
 
 // ✅ 2.1 JSON Validation Middleware (400 Bad Request)
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

@@ -5,11 +5,9 @@ import {
   addTranslation,
   updateTranslation,
   deleteTranslation,
-} from "../../controllers/admin/translation/translation.controller.js";
-import {
   bulkTranslation,
   bulkDeleteTranslations,
-} from "../../controllers/admin/translation/bulkTranslation.controller.js";
+} from "../../controllers/admin/translation/index.js";
 import { authenticate } from "../../middleware/auth/authenticate.js";
 
 import { requirePermission } from "../../middleware/role/requirePermission.js";

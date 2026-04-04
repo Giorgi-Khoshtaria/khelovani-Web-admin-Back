@@ -14,8 +14,13 @@ export const validateEmail = (
     TranslationNamespace.Validation,
   );
 
-  if (!email || email.trim() === "") return tValidation("email_required");
+  if (typeof email !== "string") {
+    return tValidation("email_required");
+  }
+
   const trimmedEmail = email.trim();
+  if (trimmedEmail === "") return tValidation("email_required");
+
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail))
     return tValidation("email_invalid");
   const localPart = trimmedEmail.split("@")[0];

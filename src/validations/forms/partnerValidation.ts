@@ -18,7 +18,10 @@ export const validatePartnerRegistration = async (
   data: Partial<PartnerRegisterData>,
   lang: Lang = "ge",
 ): Promise<ValidationError[]> => {
-  const { t: tValidation } = useTranslation(lang, TranslationNamespace.Validation);
+  const { t: tValidation } = useTranslation(
+    lang,
+    TranslationNamespace.Validation,
+  );
   const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
   const errors: ValidationError[] = [];
 
@@ -103,32 +106,7 @@ export const validatePartnerRegistration = async (
   }
 
   // ── Database Uniqueness Checks ──────────────────────────────────────────
-  if (data.email) {
-    const emailExists =
-      (await Admin.findOne({ email: data.email.trim().toLowerCase() })) ||
-      (await Organisation.findOne({ email: data.email.trim().toLowerCase() }));
-
-    if (emailExists) {
-      errors.push({
-        field: "email",
-        message: tAlerts("org_email_exists"),
-      });
-    }
-  }
-
-  if (data.identificationCode) {
-    const existingOrgByCode = await Organisation.findOne({
-      identificationCode: data.identificationCode.trim(),
-    });
-
-    if (existingOrgByCode) {
-      errors.push({
-        field: "identificationCode",
-        message: tAlerts("org_code_exists"),
-      });
-    }
-  }
+  // Moved to controller to return 409 instead of 422
 
   return errors;
 };
-

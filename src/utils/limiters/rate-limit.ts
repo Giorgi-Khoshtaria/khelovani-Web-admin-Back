@@ -2,7 +2,7 @@ import rateLimit from "express-rate-limit";
 
 export const twoMinutesLimiter = rateLimit({
   windowMs: 0.1 * 60 * 1000, // 2 minutes ❌ (this is actually 6 seconds btw)  // max:10
-  max: process.env.MONGODB_URL_TEST ? 55 : 10, // Reasonable for testing
+  max: process.env.MONGODB_URL_TEST ? 500 : 10, // Reasonable for testing
   skipSuccessfulRequests: true,
   standardHeaders: true,
   legacyHeaders: false,
@@ -29,7 +29,7 @@ export const oneHourLimiter = rateLimit({
 // ====================== GLOBAL LIMITER ======================
 export const globalLimiter = rateLimit({
   windowMs: 2 * 60 * 1000, // 2 minutes (as you requested)
-  max: 300, // ← 300 requests per IP every 2 minutes (tightened for max security)
+  max: process.env.MONGODB_URL_TEST ? 2000 : 300, // ← 300 requests per IP every 2 minutes (tightened for max security)
   standardHeaders: true,
   legacyHeaders: false,
   handler: (req, res) => {

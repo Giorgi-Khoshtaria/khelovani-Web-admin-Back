@@ -7,6 +7,8 @@ const RoleSchema = new mongoose.Schema(
       required: true,
       unique: true,
       trim: true,
+      minlength: 2,
+      maxlength: 100,
     },
     allowedPanels: [
       {
@@ -22,8 +24,9 @@ const RoleSchema = new mongoose.Schema(
     ],
     description: {
       type: String,
-      required: true,
+      required: false,
       trim: true,
+      maxlength: 500,
     },
     isActive: {
       type: Boolean,

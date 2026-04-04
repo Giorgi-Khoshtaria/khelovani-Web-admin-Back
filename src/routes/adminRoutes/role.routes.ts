@@ -5,7 +5,7 @@ import {
   createRole,
   updateRole,
   deleteRole,
-} from "../../controllers/admin/role/role.controller.js";
+} from "../../controllers/admin/role/index.js";
 import { authenticate } from "../../middleware/auth/authenticate.js";
 import { requirePermission } from "../../middleware/role/requirePermission.js";
 
