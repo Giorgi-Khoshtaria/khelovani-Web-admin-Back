@@ -2,8 +2,6 @@ import bcrypt from "bcrypt";
 import type { Request, Response } from "express";
 import User from "../../modules/user.modules.js";
 import { generateJWTToken } from "../../utils/token/genereateJWT-token.js";
-import { validateLoginForm } from "../../validations/forms/loginValidation.js";
-import { PopulatedRole } from "../../types/userTypes.js";
 import { useTranslation } from "../../types/translate.util.js";
 import { Lang } from "../../types/lang.types.js";
 import { TranslationNamespace } from "../../types/translation.enum.js";
@@ -17,16 +15,11 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     const lang = (req.query.lang as Lang) || "ge";
     const { t: tAuth } = useTranslation(lang, TranslationNamespace.Auth);
 
-    // ── Validate fields ──────────────────────────────────────────────────────
-    const validationErrors = validateLoginForm({ email, password }, lang);
-    if (Object.keys(validationErrors).length > 0) {
-      res.status(422).json({ errors: validationErrors });
-      return;
-    }
+    // ── Find user ──────────────────────────────────────────────────────────
 
     const user = await User.findOne({
       email: email.trim().toLowerCase(),
-    }).populate<{ role: PopulatedRole | null }>("role");
+    });
 
     if (!user) {
       res.status(422).json({
@@ -53,9 +46,6 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 
     const token = generateJWTToken({
       id: user._id.toString(),
-      role: user.role?.name || "user",
-      permissions: user.role?.permissions || [],
-      allowedPanels: user.role?.allowedPanels || [],
     });
 
     const { password: _, ...userWithoutPassword } = user.toObject();

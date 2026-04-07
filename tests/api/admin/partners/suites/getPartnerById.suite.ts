@@ -1,4 +1,5 @@
-import { test, expect } from "../../../../fixtures/auth.fixture.js";
+import { test } from "../../../../fixtures/admin.fixture.js";
+import { expect } from "@playwright/test";
 import { ENDPOINTS } from "../../../../constants/endpoints.js";
 import { PartnerStatusEnum } from "../../../../../src/types/partnerStatus.js";
 import { createPendingPartner } from "../partners.helpers.js";
@@ -44,14 +45,14 @@ export const getPartnerByIdSuites = () => {
       adminApi,
     }) => {
       const res = await adminApi.get(`${ENDPOINTS.ADMIN_PARTNERS}/invalid-id`);
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
     test("AA-024: 400 — invalid ObjectId: all letters", async ({
       adminApi,
     }) => {
       const res = await adminApi.get(`${ENDPOINTS.ADMIN_PARTNERS}/abcdefghij`);
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
     test("AA-025: 400 — ObjectId with special characters", async ({
@@ -60,7 +61,7 @@ export const getPartnerByIdSuites = () => {
       const res = await adminApi.get(
         `${ENDPOINTS.ADMIN_PARTNERS}/../../etc/passwd`,
       );
-      expect([400, 404]).toContain(res.status());
+      expect([404, 422]).toContain(res.status());
       expect(res.status()).not.toBe(500);
     });
 
@@ -109,7 +110,7 @@ export const getPartnerByIdSuites = () => {
       adminApi,
     }) => {
       const res = await adminApi.get(`${ENDPOINTS.ADMIN_PARTNERS}/' OR '1'='1`);
-      expect([400, 404]).toContain(res.status());
+      expect(res.status()).toBe(422);
       expect(res.status()).not.toBe(500);
     });
   });

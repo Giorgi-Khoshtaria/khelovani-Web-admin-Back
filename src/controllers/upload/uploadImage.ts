@@ -3,7 +3,7 @@ import type { Request, Response } from "express";
 export const uploadImage = async (req: Request, res: Response): Promise<void> => {
   try {
     if (!req.file) {
-      res.status(400).json({ message: "ფაილი არ არის ატვირთული" });
+      res.status(422).json({ message: "ფაილი არ არის ატვირთული" });
       return;
     }
 

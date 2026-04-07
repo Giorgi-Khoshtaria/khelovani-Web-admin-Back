@@ -1,4 +1,5 @@
-import { test, expect } from "../../../../fixtures/auth.fixture.js";
+import { test } from "../../../../fixtures/admin.fixture.js";
+import { expect } from "@playwright/test";
 import { ENDPOINTS } from "../../../../constants/endpoints.js";
 import { createRole, deleteRole } from "../roles.helpers.js";
 
@@ -59,9 +60,9 @@ export const getRoleByIdSuites = () => {
       expect(res.status()).toBe(404);
     });
 
-    test("ROL-054: 400 — invalid ObjectId format", async ({ adminApi }) => {
+    test("ROL-054: 422 — invalid ObjectId format", async ({ adminApi }) => {
       const res = await adminApi.get(`${ENDPOINTS.ADMIN_ROLES}/not-a-valid-id`);
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
     test("ROL-055: 404 — deleted role returns 404 (no stale data)", async ({
@@ -99,13 +100,13 @@ export const getRoleByIdSuites = () => {
       }
     });
 
-    test("ROL-058: 400 — path traversal in id — 400 or 404, never 500", async ({
+    test("ROL-058: 422 — path traversal in id — 422 or 404, never 500", async ({
       adminApi,
     }) => {
       const res = await adminApi.get(
         `${ENDPOINTS.ADMIN_ROLES}/../../etc/passwd`,
       );
-      expect([400, 404]).toContain(res.status());
+      expect([422, 404]).toContain(res.status());
       expect(res.status()).not.toBe(500);
     });
   });

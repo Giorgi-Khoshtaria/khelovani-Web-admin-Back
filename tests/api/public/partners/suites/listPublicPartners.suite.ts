@@ -1,4 +1,5 @@
-import { test, expect } from "../../../../fixtures/auth.fixture.js";
+import { test } from "../../../../fixtures/admin.fixture.js";
+import { expect } from "@playwright/test";
 import { ENDPOINTS, DEFAULT_PARTNER } from "../../../../constants/endpoints.js";
 
 export const listPublicPartnersSuites = (
@@ -74,13 +75,13 @@ export const listPublicPartnersSuites = (
       expect(Array.isArray(body.data)).toBe(true);
     });
 
-    test("PP-013: 400 — invalid query parameters (negative page)", async ({
+    test("PP-013: 422 — invalid query parameters (negative page)", async ({
       api,
     }) => {
       const res = await api.get(ENDPOINTS.PARTNER_PUBLIC, {
         params: { page: -1 },
       });
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
   });
 };

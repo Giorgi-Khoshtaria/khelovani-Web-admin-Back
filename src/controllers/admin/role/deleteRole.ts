@@ -18,7 +18,7 @@ export const deleteRole = async (req: Request, res: Response): Promise<void> => 
     const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
 
     if (!mongoose.Types.ObjectId.isValid(id as string)) {
-      res.status(400).json({ message: "Invalid ID format" });
+      res.status(422).json({ message: "Invalid ID format" });
       return;
     }
 
@@ -30,7 +30,7 @@ export const deleteRole = async (req: Request, res: Response): Promise<void> => 
 
     // 1. System Role Protection
     if (SYSTEM_ROLES.includes(role.name)) {
-      res.status(400).json({ message: tAlerts("admin_delete_forbidden") });
+      res.status(422).json({ message: tAlerts("admin_delete_forbidden") });
       return;
     }
 
@@ -55,7 +55,11 @@ export const deleteRole = async (req: Request, res: Response): Promise<void> => 
       message: tAlerts("role_deleted_success"),
       _id: id
     });
-  } catch (error) {
-    res.status(500).json({ message: (error as Error).message });
+  } catch (error: any) {
+    if (error.name === "ValidationError" || error.name === "CastError") {
+      res.status(422).json({ message: error.message });
+      return;
+    }
+    res.status(500).json({ message: error.message });
   }
 };

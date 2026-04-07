@@ -4,7 +4,6 @@ import Role from "../../modules/role.modules.js";
 import { ROLES } from "../../middleware/role/permissions.js";
 import { PartnerRegisterData } from "../../types/partnerTypes.js";
 import { PartnerStatusEnum } from "../../types/partnerStatus.js";
-import { validatePartnerRegistration } from "../../validations/forms/partnerValidation.js";
 import { useTranslation } from "../../types/translate.util.js";
 import { Lang } from "../../types/lang.types.js";
 import { TranslationNamespace } from "../../types/translation.enum.js";
@@ -23,15 +22,8 @@ export const registerPartner = async (
     const { t: tAuth } = useTranslation(lang, TranslationNamespace.Auth);
     const data: PartnerRegisterData = req.body;
 
-    // ── Validate all fields ────────────────────────────────────────────────
-    const validationErrors = await validatePartnerRegistration(data, lang);
-    if (validationErrors.length > 0) {
-      res.status(422).json({ errors: validationErrors });
-      return;
-    }
-
-    const trimmedEmail = data.email.trim().toLowerCase();
-    const trimmedIdCode = data.identificationCode.trim();
+    const trimmedEmail = data.email.toLowerCase();
+    const trimmedIdCode = data.identificationCode;
 
     // ── Check email duplicate ──────────────────────────────────────────────
     const existingByEmail = await Organisation.findOne({ email: trimmedEmail });

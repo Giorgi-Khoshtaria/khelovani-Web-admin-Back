@@ -1,4 +1,5 @@
-import { test, expect } from "../../../../fixtures/auth.fixture.js";
+import { test } from "../../../../fixtures/admin.fixture.js";
+import { expect } from "@playwright/test";
 import { ENDPOINTS } from "../../../../constants/endpoints.js";
 import { adminLogin } from "../auth.helpers.js";
 
@@ -76,7 +77,9 @@ export const loginSecuritySuites = () => {
         email: "admin+test@company.com",
         password: "ValidPass123!",
       });
-      expect([200, 422]).toContain(res.status());
+      expect(res.status()).toBe(422);
+      const body = await res.json();
+      expect(body.message).toMatch(/not found|user not found|invalid email or password/i);
     });
 
     test("AL-051: prototype pollution attempt", async ({ api }) => {

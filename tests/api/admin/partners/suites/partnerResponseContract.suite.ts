@@ -1,4 +1,5 @@
-import { test, expect } from "../../../../fixtures/auth.fixture.js";
+import { test } from "../../../../fixtures/admin.fixture.js";
+import { expect } from "@playwright/test";
 import { ENDPOINTS } from "../../../../constants/endpoints.js";
 import { PartnerStatusEnum } from "../../../../../src/types/partnerStatus.js";
 import { createPendingPartner } from "../partners.helpers.js";
@@ -46,14 +47,13 @@ export const partnerResponseContractSuites = () => {
       const { id } = await createPendingPartner(api);
       const res = await adminApi.patch(
         `${ENDPOINTS.ADMIN_PARTNERS}/${id}/status`,
-        {
-          data: { status: "BAD_VALUE" },
-        },
+        { data: { status: "INVALID" } },
       );
-      const body = await res.json().catch(() => null);
-      expect(body).not.toBeNull();
-      expect(typeof body).toBe("object");
-      expect(body).toHaveProperty("message");
+      
+      expect(res.status()).toBe(422);
+      const body = await res.json();
+      expect(body).toHaveProperty("errors");
+      expect(Array.isArray(body.errors)).toBe(true);
     });
 
     test("AA-094: 404 error response is JSON object with message", async ({

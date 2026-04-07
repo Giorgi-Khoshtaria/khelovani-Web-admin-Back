@@ -1,13 +1,14 @@
-import { test, expect } from "../../../../fixtures/auth.fixture.js";
+import { test } from "../../../../fixtures/admin.fixture.js";
+import { expect } from "@playwright/test";
 import { ENDPOINTS } from "../../../../constants/endpoints.js";
 
 export const getPublicPartnerByIdSuites = (
   sharedState: { approvedPartnerId: string; approvedPartnerEmail: string; pendingPartnerId: string }
 ) => {
   test.describe("2. GET /api/partner/:id - Get by ID", () => {
-    test("PP-007: 400 — invalid ObjectId format", async ({ api }) => {
+    test("PP-007: 422 — invalid ObjectId format", async ({ api }) => {
       const res = await api.get(`${ENDPOINTS.PARTNER_PUBLIC}/invalid-id`);
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
     test("PP-008: 404 — partner does not exist", async ({ api }) => {
@@ -35,7 +36,7 @@ export const getPublicPartnerByIdSuites = (
 
       const body = await res.json();
       expect(body.email).toBe(sharedState.approvedPartnerEmail);
-      expect(body).toHaveProperty("name");
+      expect(body).toHaveProperty("companyNameEn");
       expect(body).toHaveProperty("city");
       expect(body).not.toHaveProperty("internalField"); // example of sensitive data hiding
     });

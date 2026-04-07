@@ -1,4 +1,5 @@
-import { test, expect, UserFixtures } from "../../../../fixtures/auth.fixture.js";
+import { test, PartnerFixtures } from "../../../../fixtures/partner.fixture.js";
+import { expect } from "@playwright/test";
 import { ENDPOINTS, DEFAULT_PARTNER } from "../../../../constants/endpoints.js";
 import { randomId, randomEmail } from "../../../../helpers/utils/generators.js";
 import { registerPartnerAndTrack } from "../registration.helpers.js";
@@ -8,7 +9,7 @@ export const partnerRegistrationHappyPathSuites = () => {
     test("PRT-001: 201 — new partner registration", async ({
       api,
       createdPartners,
-    }: UserFixtures) => {
+    }: PartnerFixtures) => {
       const { res } = await registerPartnerAndTrack(api, createdPartners);
       expect(res.status()).toBe(201);
     });
@@ -16,7 +17,7 @@ export const partnerRegistrationHappyPathSuites = () => {
     test("PRT-002: 201 — response contains success message", async ({
       api,
       createdPartners,
-    }: UserFixtures) => {
+    }: PartnerFixtures) => {
       const { res } = await registerPartnerAndTrack(api, createdPartners);
       expect(res.status()).toBe(201);
 
@@ -29,7 +30,7 @@ export const partnerRegistrationHappyPathSuites = () => {
     test("PRT-003: 201 — lang=ge returns Georgian message", async ({
       api,
       createdPartners,
-    }: UserFixtures) => {
+    }: PartnerFixtures) => {
       const email = randomEmail();
       const identificationCode = randomId().slice(0, 9);
 

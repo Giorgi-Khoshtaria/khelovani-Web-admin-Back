@@ -4,7 +4,6 @@ export const PERMISSIONS = {
     USER_BLOCK: "users.block",
     USER_DELETE: "users.delete",
     ORG_APPROVE: "organizations.approve",
-    ORG_REJECT: "organizations.reject",
     ORG_DELETE: "organizations.delete",
     ORDER_VIEW_ALL: "orders.viewAll",
     PRODUCT_VIEW_ALL: "products.viewAll",

@@ -12,6 +12,7 @@ import { defineConfig, devices } from "@playwright/test";
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
+  globalSetup: "./tests/global-setup.ts",
   testDir: "./tests",
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -30,6 +31,11 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
+    
+    /* Extra headers to bypass rate limiting in tests */
+    extraHTTPHeaders: {
+      "x-test-bypass": "khelovani-test-2026",
+    },
   },
 
   /* Configure projects for major browsers */

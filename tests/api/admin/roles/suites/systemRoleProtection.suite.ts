@@ -1,5 +1,6 @@
 import { APIRequestContext } from "@playwright/test";
-import { test, expect } from "../../../../fixtures/auth.fixture.js";
+import { test } from "../../../../fixtures/admin.fixture.js";
+import { expect } from "@playwright/test";
 import { ENDPOINTS } from "../../../../constants/endpoints.js";
 import { randomId } from "../../../../helpers/utils/generators.js";
 import {
@@ -20,7 +21,7 @@ export const systemRoleProtectionSuites = () => {
     }
 
     for (const systemRoleName of SYSTEM_ROLES) {
-      test(`ROL-130: 400 — cannot rename '${systemRoleName}' role`, async ({
+      test(`ROL-130: 422 — cannot rename '${systemRoleName}' role`, async ({
         adminApi,
       }) => {
         const role = await getSystemRole(adminApi, systemRoleName);
@@ -30,10 +31,10 @@ export const systemRoleProtectionSuites = () => {
         const res = await adminApi.put(`${ENDPOINTS.ADMIN_ROLES}/${role._id}`, {
           data: { name: `Hacked_${randomId()}` },
         });
-        expect(res.status()).toBe(400);
+        expect(res.status()).toBe(422);
       });
 
-      test(`ROL-131: 400 — cannot delete '${systemRoleName}' role`, async ({
+      test(`ROL-131: 422 — cannot delete '${systemRoleName}' role`, async ({
         adminApi,
       }) => {
         const role = await getSystemRole(adminApi, systemRoleName);
@@ -43,10 +44,10 @@ export const systemRoleProtectionSuites = () => {
         const res = await adminApi.delete(
           `${ENDPOINTS.ADMIN_ROLES}/${role._id}`,
         );
-        expect(res.status()).toBe(400);
+        expect(res.status()).toBe(422);
       });
 
-      test(`ROL-132: 400 — cannot clear allowedPanels on '${systemRoleName}'`, async ({
+      test(`ROL-132: 422 — cannot clear allowedPanels on '${systemRoleName}'`, async ({
         adminApi,
       }) => {
         const role = await getSystemRole(adminApi, systemRoleName);
@@ -56,7 +57,7 @@ export const systemRoleProtectionSuites = () => {
         const res = await adminApi.put(`${ENDPOINTS.ADMIN_ROLES}/${role._id}`, {
           data: { allowedPanels: [] },
         });
-        expect(res.status()).toBe(400);
+        expect(res.status()).toBe(422);
       });
 
       test(`ROL-133: 200 — CAN update description of '${systemRoleName}' role`, async ({
@@ -111,7 +112,7 @@ export const systemRoleProtectionSuites = () => {
           data: { permissions: [] },
         },
       );
-      expect([200, 400]).toContain(res.status());
+      expect([200, 422]).toContain(res.status());
     });
   });
 };

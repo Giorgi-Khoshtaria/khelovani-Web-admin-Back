@@ -41,8 +41,16 @@ export const getPublicPartners = async (
       query.rating = { $gte: Number(minRating) };
     }
 
-    const pageNum = parseInt(page as string, 10);
-    const limitNum = parseInt(limit as string, 10);
+    const pageNum = parseInt(page as string, 10) || 1;
+    const limitNum = parseInt(limit as string, 10) || 12;
+
+    if (pageNum < 1 || limitNum < 1) {
+      res.status(422).json({
+        message: tAlerts("invalid_pagination") || "Invalid page or limit",
+      });
+      return;
+    }
+
     const skip = (pageNum - 1) * limitNum;
 
     const [partners, totalPartners] = await Promise.all([

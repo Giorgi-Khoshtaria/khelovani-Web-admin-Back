@@ -1,4 +1,4 @@
-import { test } from "../../../fixtures/auth.fixture.js";
+import { test } from "../../../fixtures/admin.fixture.js";
 import { setupTestPartners, cleanupTestPartners } from "./publicPartners.helpers.js";
 import { listPublicPartnersSuites } from "./suites/listPublicPartners.suite.js";
 import { getPublicPartnerByIdSuites } from "./suites/getPublicPartnerById.suite.js";

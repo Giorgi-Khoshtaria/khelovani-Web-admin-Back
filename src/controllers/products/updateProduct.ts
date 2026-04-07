@@ -5,6 +5,8 @@ import { Lang } from "../../types/lang.types.js";
 import { TranslationNamespace } from "../../types/translation.enum.js";
 import { customParse } from "./product.utils.js";
 
+import mongoose from "mongoose";
+
 // @desc    Update a product
 // @route   PUT /api/products/:productId
 export const updateProduct = async (
@@ -19,7 +21,12 @@ export const updateProduct = async (
     const userRole = req.user?.role?.toLowerCase();
     const userId = req.user?.id;
 
-    const product = await Product.findById(productId);
+    if (!mongoose.Types.ObjectId.isValid(productId as string)) {
+      res.status(400).json({ message: "Invalid product ID format" });
+      return;
+    }
+
+    const product = await Product.findById(productId as string);
 
     if (!product) {
       res.status(404).json({ message: "Product not found" });
@@ -38,47 +45,8 @@ export const updateProduct = async (
       return;
     }
 
-    // If role is admin, they can ONLY update isShown
-    if (userRole === "admin") {
-      const isShown = customParse(req.body.isShown);
-      if (isShown === undefined) {
-        res.status(400).json({ message: "isShown field is required" });
-        return;
-      }
-
-      const updatedProduct = await Product.findByIdAndUpdate(
-        productId,
-        { isShown },
-        { new: true },
-      );
-      res.status(200).json({
-        message:
-          tAlerts("product_updated_successfully") ||
-          "Product updated successfully",
-        product: updatedProduct,
-      });
-      return;
-    }
-
+    // Authorization check passed above (Admin or Owner)
     const data = req.body;
-    const fieldsToParse = [
-      "tagsGe",
-      "tagsEn",
-      "materialsGe",
-      "materialsEn",
-      "isOneOfAKind",
-      "shippingAvailable",
-      "isShown",
-    ];
-    const numericFields = ["price", "stockQuantity", "shippingPrice", "weight"];
-
-    fieldsToParse.forEach((field) => {
-      if (data[field] !== undefined) data[field] = customParse(data[field]);
-    });
-
-    numericFields.forEach((field) => {
-      if (data[field] !== undefined) data[field] = Number(data[field]);
-    });
 
     let updatedImages = product.images;
     if (
@@ -113,7 +81,7 @@ export const updateProduct = async (
       productId,
       { ...data, images: updatedImages },
       { new: true, runValidators: true },
-    );
+    ).select("-__v");
 
     res.status(200).json({
       message:
@@ -123,6 +91,17 @@ export const updateProduct = async (
     });
   } catch (error) {
     console.error("UPDATE_PRODUCT_ERROR:", error);
+    if ((error as any).name === "ValidationError" || (error as any).name === "CastError") {
+      const errorMsg = (error as Error).message;
+      res.status(422).json({ 
+        message: "Validation Error",
+        errors: (error as any).errors ? Object.values((error as any).errors).map((err: any) => ({
+          field: err.path,
+          message: err.message,
+        })) : [{ field: (error as any).path, message: errorMsg }]
+      });
+      return;
+    }
     res.status(500).json({ message: (error as Error).message });
   }
 };

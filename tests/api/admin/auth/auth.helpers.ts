@@ -1,28 +1,43 @@
-import { APIRequestContext, expect } from "@playwright/test";
+import { APIRequestContext } from "@playwright/test";
 import * as jwt from "jsonwebtoken";
+import type { JwtPayload } from "jsonwebtoken";
 import { ENDPOINTS } from "../../../constants/endpoints.js";
 
-/**
- * Admin Login helper
- */
-export const adminLogin = (api: APIRequestContext, payload: { email: string; password: string }) =>
-  api.post(`${ENDPOINTS.ADMIN_LOGIN}?lang=en`, { data: payload });
+export interface AdminTokenPayload extends JwtPayload {
+  id: string;
+  role: string;
+  permissions: string[];
+  allowedPanels: string[];
+}
 
-/**
- * Validates JWT token contents for admin
- */
-export const validateAdminToken = (token: string) => {
-  try {
-    const decoded = jwt.decode(token) as any;
-    expect(decoded).toHaveProperty("id");
-    expect(decoded).toHaveProperty("role");
-    expect(decoded).toHaveProperty("permissions");
-    expect(decoded).toHaveProperty("allowedPanels");
-    expect(Array.isArray(decoded.permissions)).toBe(true);
-    expect(Array.isArray(decoded.allowedPanels)).toBe(true);
-    expect(decoded.role).toBe("admin");
-    return decoded;
-  } catch (error) {
-    throw new Error("Invalid JWT token");
+export const adminLogin = (
+  api: APIRequestContext,
+  payload: { email: string; password: string },
+) => api.post(`${ENDPOINTS.ADMIN_LOGIN}?lang=en`, { data: payload });
+
+export const validateAdminToken = (token: string): AdminTokenPayload => {
+  const decoded = jwt.decode(token) as AdminTokenPayload | null;
+
+  if (!decoded || typeof decoded !== "object") {
+    throw new Error(`Token could not be decoded: ${token}`);
   }
+
+  const required = ["id", "role", "permissions", "allowedPanels"] as const;
+  for (const field of required) {
+    if (!(field in decoded)) {
+      throw new Error(`Token missing field: "${field}"`);
+    }
+  }
+
+  if (!Array.isArray(decoded.permissions)) {
+    throw new Error("Token field 'permissions' is not an array");
+  }
+  if (!Array.isArray(decoded.allowedPanels)) {
+    throw new Error("Token field 'allowedPanels' is not an array");
+  }
+  if (decoded.role !== "admin") {
+    throw new Error(`Expected role "admin", got "${decoded.role}"`);
+  }
+
+  return decoded;
 };

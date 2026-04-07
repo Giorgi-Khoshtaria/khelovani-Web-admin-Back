@@ -1,9 +1,7 @@
-import { test, expect } from "../../../../fixtures/auth.fixture.js";
+import { test } from "../../../../fixtures/admin.fixture.js";
+import { expect } from "@playwright/test";
 import { ENDPOINTS } from "../../../../constants/endpoints.js";
-import {
-  createPermission,
-  deletePermission,
-} from "../permissions.helpers.js";
+import { createPermission, deletePermission } from "../permissions.helpers.js";
 import { randomId } from "../../../../helpers/utils/generators.js";
 
 export const listPermissionsSuites = () => {

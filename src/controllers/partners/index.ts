@@ -7,3 +7,4 @@ export * from "./updatePartnerStatus.js";
 export * from "./updatePartner.js";
 export * from "./deletePartner.js";
 export * from "./updatePartnerPhoto.js";
+export * from "./bulkDeletePartners.js";

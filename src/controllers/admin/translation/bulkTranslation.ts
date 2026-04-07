@@ -12,17 +12,9 @@ export const bulkTranslation = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const { items } = req.body; // Array of { namespace, key, ge, en }
+    const { items } = req.body;
     const lang = (req.query.lang as Lang) || "ge";
     const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
-
-    if (!items || !Array.isArray(items)) {
-      res.status(400).json({
-        success: false,
-        message: tAlerts("invalid_payload_items_array"),
-      });
-      return;
-    }
 
     const bulkOps = items.map((item: any) => ({
       updateOne: {
@@ -39,14 +31,6 @@ export const bulkTranslation = async (
       },
     }));
 
-    if (bulkOps.length === 0) {
-      res.status(400).json({
-        success: false,
-        message: tAlerts("no_items_to_import"),
-      });
-      return;
-    }
-
     // 1. Verify all namespaces exist before proceeding
     const existingNamespaces = await Namespace.find().lean();
     const existingIds = existingNamespaces.map((ns: any) => ns._id.toString());
@@ -55,7 +39,7 @@ export const bulkTranslation = async (
     
     if (invalidItems.length > 0) {
       const uniqueInvalids = [...new Set(invalidItems.map((i: any) => i.namespace))];
-      res.status(400).json({ 
+      res.status(422).json({ 
         success: false, 
         message: `${tAlerts("import_failed_namespaces_not_found")}: ${uniqueInvalids.join(", ")}` 
       });

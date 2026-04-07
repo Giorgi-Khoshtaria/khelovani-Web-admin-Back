@@ -1,4 +1,4 @@
-import { test } from "../../../fixtures/auth.fixture.js";
+import { test } from "../../../fixtures/admin.fixture.js";
 import { createRoleSuites } from "./suites/createRole.suite.js";
 import { listRolesSuites } from "./suites/listRoles.suite.js";
 import { getRoleByIdSuites } from "./suites/getRoleById.suite.js";

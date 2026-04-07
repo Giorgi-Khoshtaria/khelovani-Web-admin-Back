@@ -3,7 +3,10 @@ import Organisation from "../../modules/organization.modules.js";
 import { PartnerStatusEnum } from "../../types/partnerStatus.js";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
-import { sendPartnerPasswordEmail } from "../../utils/email/sendPartnerEmail.js";
+import { 
+  sendPartnerPasswordEmail, 
+  sendPartnerStatusEmail 
+} from "../../utils/email/sendPartnerEmail.js";
 import { useTranslation } from "../../types/translate.util.js";
 import { Lang } from "../../types/lang.types.js";
 import { TranslationNamespace } from "../../types/translation.enum.js";
@@ -18,43 +21,16 @@ export const updatePartnerStatus = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
+    const { status } = req.body;
     const lang = (req.query.lang as Lang) || "ge";
     const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
     const { t: tAuth } = useTranslation(lang, TranslationNamespace.Auth);
-
-    if (!req.body || Object.keys(req.body).length === 0) {
-      res.status(400).json({ message: tAlerts("empty_body") });
-      return;
-    }
-    const { status } = req.body;
-
-    if (!mongoose.Types.ObjectId.isValid(id as string)) {
-      res.status(400).json({
-        message: tAlerts("invalid_partner_id"),
-      });
-      return;
-    }
 
     const partner = await Organisation.findById(id);
 
     if (!partner) {
       res.status(404).json({
         message: tAuth("partner_not_found"),
-      });
-      return;
-    }
-
-    if (!Object.values(PartnerStatusEnum).includes(status as any)) {
-      res.status(400).json({
-        message: tAlerts("invalid_status"),
-      });
-      return;
-    }
-
-    if (status === PartnerStatusEnum.REJECTED) {
-      await partner.deleteOne();
-      res.status(200).json({
-        message: tAlerts("partner_rejected_deleted"),
       });
       return;
     }
@@ -87,8 +63,11 @@ export const updatePartnerStatus = async (
       }
     }
 
-    if (partner.status === PartnerStatusEnum.APPROVED && status === PartnerStatusEnum.PENDING) {
-      res.status(400).json({
+    if (
+      partner.status === PartnerStatusEnum.APPROVED &&
+      status === PartnerStatusEnum.PENDING
+    ) {
+      res.status(422).json({
         message: tAlerts("status_transition_not_allowed"),
       });
       return;
@@ -96,6 +75,15 @@ export const updatePartnerStatus = async (
 
     partner.status = status;
     await partner.save();
+
+    // 📧 Notification handling (Non-blocking for the API response)
+    try {
+      await sendPartnerStatusEmail(partner.email, status, partner.companyNameGe);
+    } catch (emailError) {
+      console.error("Failed to send partner status email:", emailError);
+      // In test mode we don't want to fail if email fails, but in prod we still proceed 
+      // as the partner status IS already updated in DB.
+    }
 
     res.status(200).json({
       message: tAlerts("partner_status_updated"),
@@ -108,6 +96,8 @@ export const updatePartnerStatus = async (
   } catch (error) {
     const lang = (req.query.lang as Lang) || "ge";
     const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
-    res.status(500).json({ message: tAlerts("server_error") || (error as Error).message });
+    res
+      .status(500)
+      .json({ message: tAlerts("server_error") || (error as Error).message });
   }
 };

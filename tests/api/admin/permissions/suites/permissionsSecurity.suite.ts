@@ -1,4 +1,5 @@
-import { test, expect } from "../../../../fixtures/auth.fixture.js";
+import { test } from "../../../../fixtures/admin.fixture.js";
+import { expect } from "@playwright/test";
 import { ENDPOINTS } from "../../../../constants/endpoints.js";
 import {
   createPermission,
@@ -113,13 +114,13 @@ export const permissionsSecuritySuites = () => {
       }
     });
 
-    test("PRM-101: XSS in name field on create → 400 (rejected by validation)", async ({
+    test("PRM-101: XSS in name field on create → 422 (rejected by validation)", async ({
       adminApi,
     }) => {
       const res = await adminApi.post(ENDPOINTS.ADMIN_PERMISSIONS, {
         data: { ...VALID_PERMISSION, name: "<script>alert(1)</script>" },
       });
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
     test("PRM-102: XSS in description — stored safely or rejected", async ({
@@ -143,7 +144,7 @@ export const permissionsSecuritySuites = () => {
 
         await deletePermission(adminApi, id);
       } else {
-        expect([400, 422]).toContain(res.status());
+        expect(res.status()).toBe(422);
       }
     });
 
@@ -181,7 +182,7 @@ export const permissionsSecuritySuites = () => {
         expect(body.permission.isSystem).not.toBe(true);
         await deletePermission(adminApi, body.permission._id);
       } else {
-        expect([400, 422]).toContain(res.status());
+        expect(res.status()).toBe(422);
       }
     });
 
@@ -195,7 +196,7 @@ export const permissionsSecuritySuites = () => {
           category: "General",
         },
       });
-      expect([400, 413, 422]).toContain(res.status());
+      expect([413, 422]).toContain(res.status());
       expect(res.status()).not.toBe(500);
     });
 
@@ -206,11 +207,11 @@ export const permissionsSecuritySuites = () => {
       expect(res.headers()["x-powered-by"]).toBeUndefined();
     });
 
-    test("PRM-107: SQL injection in name field → 400", async ({ adminApi }) => {
+    test("PRM-107: SQL injection in name field → 422", async ({ adminApi }) => {
       const res = await adminApi.post(ENDPOINTS.ADMIN_PERMISSIONS, {
         data: { ...VALID_PERMISSION, name: "'; DROP TABLE permissions; --" },
       });
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
   });
 
@@ -261,7 +262,7 @@ export const permissionsSecuritySuites = () => {
       }
     });
 
-    test("PRM-113: 400 error response is JSON object with message", async ({
+    test("PRM-113: 422 error response is JSON object with errors array", async ({
       adminApi,
     }) => {
       const res = await adminApi.post(ENDPOINTS.ADMIN_PERMISSIONS, {
@@ -270,7 +271,7 @@ export const permissionsSecuritySuites = () => {
       const body = await res.json().catch(() => null);
       expect(body).not.toBeNull();
       expect(typeof body).toBe("object");
-      expect(body).toHaveProperty("message");
+      expect(Array.isArray(body.errors)).toBe(true);
     });
 
     test("PRM-114: 404 error response is JSON object with message", async ({

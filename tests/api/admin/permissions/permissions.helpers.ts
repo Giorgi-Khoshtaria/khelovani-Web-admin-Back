@@ -1,4 +1,4 @@
-import { expect } from "../../../fixtures/auth.fixture.js";
+import { expect } from "@playwright/test";
 import { ENDPOINTS } from "../../../constants/endpoints.js";
 import { randomId } from "../../../helpers/utils/generators.js";
 
@@ -44,6 +44,9 @@ export async function createPermission(
 }
 
 /** Delete a permission — used in afterEach cleanup */
-export async function deletePermission(adminApi: any, id: string): Promise<void> {
+export async function deletePermission(
+  adminApi: any,
+  id: string,
+): Promise<void> {
   await adminApi.delete(`${ENDPOINTS.ADMIN_PERMISSIONS}/${id}`).catch(() => {});
 }

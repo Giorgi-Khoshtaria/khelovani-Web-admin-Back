@@ -1,0 +1,259 @@
+
+Running 23 tests using 4 workers
+
+  ✓   3 [chromium] › tests/api/admin/auth/suites/loginHappyPath.suite.ts:61:5 › Admin Login API › 1. Happy Path › AL-004: 200 — admin token contains correct permissions (1.8s)
+  ✓   2 [chromium] › tests/api/admin/auth/suites/loginHappyPath.suite.ts:27:5 › Admin Login API › 1. Happy Path › AL-002: 200 — seeded admin logs in successfully (1.9s)
+  ✘   5 [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:10:7 › Admin Login API › 2. Email Validation › AL-E001: 422 — Email: empty email (31ms)
+  ✓   4 [chromium] › tests/api/admin/auth/suites/loginHappyPath.suite.ts:7:5 › Admin Login API › 1. Happy Path › AL-001: 200 — admin logs in successfully (2.0s)
+  ✓   1 [chromium] › tests/api/admin/auth/suites/loginHappyPath.suite.ts:47:5 › Admin Login API › 1. Happy Path › AL-003: 200 — admin email is case-insensitive (2.0s)
+  ✘   6 [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:10:7 › Admin Login API › 2. Email Validation › AL-E002: 422 — Email: missing @ (117ms)
+  ✘   8 [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:10:7 › Admin Login API › 2. Email Validation › AL-E005: 422 — Email: multiple @ (23ms)
+  ✘   7 [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:10:7 › Admin Login API › 2. Email Validation › AL-E004: 422 — Email: missing local part (35ms)
+  ✘   9 [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:10:7 › Admin Login API › 2. Email Validation › AL-E006: 422 — Email: contains space (54ms)
+  ✘  10 [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:10:7 › Admin Login API › 2. Email Validation › AL-E003: 422 — Email: missing domain (53ms)
+  ✘  11 [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:10:7 › Admin Login API › 2. Email Validation › AL-E008: 422 — Email: no TLD (52ms)
+  ✘  12 [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:10:7 › Admin Login API › 2. Email Validation › AL-E007: 422 — Email: consecutive dots (38ms)
+  ✘  14 [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:49:5 › Admin Login API › 4. Credential & Business Logic Errors › AL-013: 422 — missing password field (40ms)
+  ✘  16 [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:10:7 › Admin Login API › 2. Email Validation › AL-E009: 422 — Email: trailing dot (35ms)
+  ✓  15 [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:25:5 › Admin Login API › 4. Credential & Business Logic Errors › AL-011: 422 — non-existent admin (182ms)
+  ✓  17 [chromium] › tests/api/admin/auth/suites/loginSecurity.suite.ts:28:5 › Admin Login API › 6. Security & Injection Protection › AL-032: 422 — NoSQL injection attempt (12ms)
+  ✓  18 [chromium] › tests/api/admin/auth/suites/loginSecurity.suite.ts:39:5 › Admin Login API › 6. Security & Injection Protection › AL-033: very long email → 422 (22ms)
+  ✓  19 [chromium] › tests/api/admin/auth/suites/loginSecurity.suite.ts:51:5 › Admin Login API › 7. Rate Limiting & Brute Force Protection › AL-040: 429 — rapid failed login attempts trigger rate limiting (180ms)
+  ✘  20 [chromium] › tests/api/admin/auth/suites/loginSecurity.suite.ts:72:5 › Admin Login API › 8. Additional Edge Cases › AL-050: plus addressing in admin email (182ms)
+  ✓  22 [chromium] › tests/api/admin/auth/suites/loginSecurity.suite.ts:19:5 › Admin Login API › 6. Security & Injection Protection › AL-031: 422 — XSS attempt in email (33ms)
+  ✓  21 [chromium] › tests/api/admin/auth/suites/loginSecurity.suite.ts:7:5 › Admin Login API › 6. Security & Injection Protection › AL-030: 422 — SQL injection in email (41ms)
+  ✓  23 [chromium] › tests/api/admin/auth/suites/loginSecurity.suite.ts:81:5 › Admin Login API › 8. Additional Edge Cases › AL-051: prototype pollution attempt (170ms)
+  ✓  13 [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:36:5 › Admin Login API › 4. Credential & Business Logic Errors › AL-012: 422 — wrong password for existing admin (2.2s)
+
+
+  1) [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:10:7 › Admin Login API › 2. Email Validation › AL-E001: 422 — Email: empty email 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoHaveProperty[2m([22m[32mpath[39m[2m)[22m
+
+    Expected path: [32m"email"[39m
+    Received path: [31m[][39m
+
+    Received value: [31m[{"field": "email", "message": "Email is required"}, {"field": "email", "message": "Invalid email format"}][39m
+
+      23 |         const body = await res.json();
+      24 |         expect(body).toHaveProperty("errors");
+    > 25 |         expect(body.errors).toHaveProperty("email");
+         |                             ^
+      26 |       });
+      27 |     });
+      28 |   });
+        at /Users/developer/Desktop/khelovani-Web-admin-Back/tests/api/admin/auth/suites/loginValidation.suite.ts:25:29
+
+    Error Context: test-results/api-admin-auth-login.api-A-6de1e-001-422-—-Email-empty-email-chromium/error-context.md
+
+  2) [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:10:7 › Admin Login API › 2. Email Validation › AL-E002: 422 — Email: missing @ 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoHaveProperty[2m([22m[32mpath[39m[2m)[22m
+
+    Expected path: [32m"email"[39m
+    Received path: [31m[][39m
+
+    Received value: [31m[{"field": "email", "message": "Invalid email format"}][39m
+
+      23 |         const body = await res.json();
+      24 |         expect(body).toHaveProperty("errors");
+    > 25 |         expect(body.errors).toHaveProperty("email");
+         |                             ^
+      26 |       });
+      27 |     });
+      28 |   });
+        at /Users/developer/Desktop/khelovani-Web-admin-Back/tests/api/admin/auth/suites/loginValidation.suite.ts:25:29
+
+    Error Context: test-results/api-admin-auth-login.api-A-198e8-L-E002-422-—-Email-missing--chromium/error-context.md
+
+  3) [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:10:7 › Admin Login API › 2. Email Validation › AL-E003: 422 — Email: missing domain 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoHaveProperty[2m([22m[32mpath[39m[2m)[22m
+
+    Expected path: [32m"email"[39m
+    Received path: [31m[][39m
+
+    Received value: [31m[{"field": "email", "message": "Invalid email format"}][39m
+
+      23 |         const body = await res.json();
+      24 |         expect(body).toHaveProperty("errors");
+    > 25 |         expect(body.errors).toHaveProperty("email");
+         |                             ^
+      26 |       });
+      27 |     });
+      28 |   });
+        at /Users/developer/Desktop/khelovani-Web-admin-Back/tests/api/admin/auth/suites/loginValidation.suite.ts:25:29
+
+    Error Context: test-results/api-admin-auth-login.api-A-10b03--422-—-Email-missing-domain-chromium/error-context.md
+
+  4) [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:10:7 › Admin Login API › 2. Email Validation › AL-E004: 422 — Email: missing local part 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoHaveProperty[2m([22m[32mpath[39m[2m)[22m
+
+    Expected path: [32m"email"[39m
+    Received path: [31m[][39m
+
+    Received value: [31m[{"field": "email", "message": "Invalid email format"}][39m
+
+      23 |         const body = await res.json();
+      24 |         expect(body).toHaveProperty("errors");
+    > 25 |         expect(body.errors).toHaveProperty("email");
+         |                             ^
+      26 |       });
+      27 |     });
+      28 |   });
+        at /Users/developer/Desktop/khelovani-Web-admin-Back/tests/api/admin/auth/suites/loginValidation.suite.ts:25:29
+
+    Error Context: test-results/api-admin-auth-login.api-A-65743--—-Email-missing-local-part-chromium/error-context.md
+
+  5) [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:10:7 › Admin Login API › 2. Email Validation › AL-E005: 422 — Email: multiple @ 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoHaveProperty[2m([22m[32mpath[39m[2m)[22m
+
+    Expected path: [32m"email"[39m
+    Received path: [31m[][39m
+
+    Received value: [31m[{"field": "email", "message": "Invalid email format"}][39m
+
+      23 |         const body = await res.json();
+      24 |         expect(body).toHaveProperty("errors");
+    > 25 |         expect(body.errors).toHaveProperty("email");
+         |                             ^
+      26 |       });
+      27 |     });
+      28 |   });
+        at /Users/developer/Desktop/khelovani-Web-admin-Back/tests/api/admin/auth/suites/loginValidation.suite.ts:25:29
+
+    Error Context: test-results/api-admin-auth-login.api-A-02cd5--E005-422-—-Email-multiple--chromium/error-context.md
+
+  6) [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:10:7 › Admin Login API › 2. Email Validation › AL-E006: 422 — Email: contains space 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoHaveProperty[2m([22m[32mpath[39m[2m)[22m
+
+    Expected path: [32m"email"[39m
+    Received path: [31m[][39m
+
+    Received value: [31m[{"field": "email", "message": "Invalid email format"}][39m
+
+      23 |         const body = await res.json();
+      24 |         expect(body).toHaveProperty("errors");
+    > 25 |         expect(body.errors).toHaveProperty("email");
+         |                             ^
+      26 |       });
+      27 |     });
+      28 |   });
+        at /Users/developer/Desktop/khelovani-Web-admin-Back/tests/api/admin/auth/suites/loginValidation.suite.ts:25:29
+
+    Error Context: test-results/api-admin-auth-login.api-A-a2678--422-—-Email-contains-space-chromium/error-context.md
+
+  7) [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:10:7 › Admin Login API › 2. Email Validation › AL-E007: 422 — Email: consecutive dots 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoHaveProperty[2m([22m[32mpath[39m[2m)[22m
+
+    Expected path: [32m"email"[39m
+    Received path: [31m[][39m
+
+    Received value: [31m[{"field": "email", "message": "Invalid email format"}][39m
+
+      23 |         const body = await res.json();
+      24 |         expect(body).toHaveProperty("errors");
+    > 25 |         expect(body.errors).toHaveProperty("email");
+         |                             ^
+      26 |       });
+      27 |     });
+      28 |   });
+        at /Users/developer/Desktop/khelovani-Web-admin-Back/tests/api/admin/auth/suites/loginValidation.suite.ts:25:29
+
+    Error Context: test-results/api-admin-auth-login.api-A-846ff-22-—-Email-consecutive-dots-chromium/error-context.md
+
+  8) [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:10:7 › Admin Login API › 2. Email Validation › AL-E008: 422 — Email: no TLD 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoHaveProperty[2m([22m[32mpath[39m[2m)[22m
+
+    Expected path: [32m"email"[39m
+    Received path: [31m[][39m
+
+    Received value: [31m[{"field": "email", "message": "Invalid email format"}][39m
+
+      23 |         const body = await res.json();
+      24 |         expect(body).toHaveProperty("errors");
+    > 25 |         expect(body.errors).toHaveProperty("email");
+         |                             ^
+      26 |       });
+      27 |     });
+      28 |   });
+        at /Users/developer/Desktop/khelovani-Web-admin-Back/tests/api/admin/auth/suites/loginValidation.suite.ts:25:29
+
+    Error Context: test-results/api-admin-auth-login.api-A-3ed7a--AL-E008-422-—-Email-no-TLD-chromium/error-context.md
+
+  9) [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:10:7 › Admin Login API › 2. Email Validation › AL-E009: 422 — Email: trailing dot 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoHaveProperty[2m([22m[32mpath[39m[2m)[22m
+
+    Expected path: [32m"email"[39m
+    Received path: [31m[][39m
+
+    Received value: [31m[{"field": "email", "message": "Invalid email format"}][39m
+
+      23 |         const body = await res.json();
+      24 |         expect(body).toHaveProperty("errors");
+    > 25 |         expect(body.errors).toHaveProperty("email");
+         |                             ^
+      26 |       });
+      27 |     });
+      28 |   });
+        at /Users/developer/Desktop/khelovani-Web-admin-Back/tests/api/admin/auth/suites/loginValidation.suite.ts:25:29
+
+    Error Context: test-results/api-admin-auth-login.api-A-e2cf8-09-422-—-Email-trailing-dot-chromium/error-context.md
+
+  10) [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:49:5 › Admin Login API › 4. Credential & Business Logic Errors › AL-013: 422 — missing password field 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoHaveProperty[2m([22m[32mpath[39m[2m)[22m
+
+    Expected path: [32m"password"[39m
+    Received path: [31m[][39m
+
+    Received value: [31m[{"field": "password", "message": "Invalid input: expected string, received undefined"}][39m
+
+      69 |
+      70 |       const body = await res.json();
+    > 71 |       expect(body.errors).toHaveProperty("password");
+         |                           ^
+      72 |     });
+      73 |   });
+      74 | };
+        at /Users/developer/Desktop/khelovani-Web-admin-Back/tests/api/admin/auth/suites/loginValidation.suite.ts:71:27
+
+    Error Context: test-results/api-admin-auth-login.api-A-09b6d-22-—-missing-password-field-chromium/error-context.md
+
+  11) [chromium] › tests/api/admin/auth/suites/loginSecurity.suite.ts:72:5 › Admin Login API › 8. Additional Edge Cases › AL-050: plus addressing in admin email 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m200[39m
+    Received: [31m422[39m
+
+      78 |         password: "ValidPass123!",
+      79 |       });
+    > 80 |       expect(res.status()).toBe(200);
+         |                            ^
+      81 |     });
+      82 |
+      83 |     test("AL-051: prototype pollution attempt", async ({ api }) => {
+        at /Users/developer/Desktop/khelovani-Web-admin-Back/tests/api/admin/auth/suites/loginSecurity.suite.ts:80:28
+
+    Error Context: test-results/api-admin-auth-login.api-A-d720d-s-addressing-in-admin-email-chromium/error-context.md
+
+  11 failed
+    [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:10:7 › Admin Login API › 2. Email Validation › AL-E001: 422 — Email: empty email 
+    [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:10:7 › Admin Login API › 2. Email Validation › AL-E002: 422 — Email: missing @ 
+    [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:10:7 › Admin Login API › 2. Email Validation › AL-E003: 422 — Email: missing domain 
+    [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:10:7 › Admin Login API › 2. Email Validation › AL-E004: 422 — Email: missing local part 
+    [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:10:7 › Admin Login API › 2. Email Validation › AL-E005: 422 — Email: multiple @ 
+    [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:10:7 › Admin Login API › 2. Email Validation › AL-E006: 422 — Email: contains space 
+    [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:10:7 › Admin Login API › 2. Email Validation › AL-E007: 422 — Email: consecutive dots 
+    [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:10:7 › Admin Login API › 2. Email Validation › AL-E008: 422 — Email: no TLD 
+    [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:10:7 › Admin Login API › 2. Email Validation › AL-E009: 422 — Email: trailing dot 
+    [chromium] › tests/api/admin/auth/suites/loginValidation.suite.ts:49:5 › Admin Login API › 4. Credential & Business Logic Errors › AL-013: 422 — missing password field 
+    [chromium] › tests/api/admin/auth/suites/loginSecurity.suite.ts:72:5 › Admin Login API › 8. Additional Edge Cases › AL-050: plus addressing in admin email 
+  12 passed (9.1s)

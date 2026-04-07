@@ -11,6 +11,7 @@ import adminAuthRoutes from "./src/routes/adminRoutes/adminAuth.routes.js";
 import adminPartnersRoutes from "./src/routes/adminRoutes/adminPartners.routes.js";
 import translationRoutes from "./src/routes/adminRoutes/translation.routes.js";
 import roleRoutes from "./src/routes/adminRoutes/role.routes.js";
+import partnerProductsRoutes from "./src/routes/adminRoutes/partnerProducts.routes.js";
 import permissionRoutes from "./src/routes/adminRoutes/permission.routes.js";
 import adminMenuRoutes from "./src/routes/adminRoutes/menu.routes.js";
 import publicMenuRoutes from "./src/routes/menu.routes.js";
@@ -39,23 +40,39 @@ app.use(
 app.use(express.json({ limit: "5mb" }));
 
 // ✅ 2.1 JSON Validation Middleware (400 Bad Request)
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  if (err instanceof SyntaxError && "body" in err) {
-    return res.status(400).json({ success: false, message: "Invalid JSON format" });
-  }
-  next();
-});
+app.use(
+  (
+    err: any,
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction,
+  ) => {
+    if (err instanceof SyntaxError && "body" in err) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid JSON format" });
+    }
+    next();
+  },
+);
 
 // Middleware to catch empty bodies for non-GET requests
-app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
-  if (["POST", "PUT", "PATCH"].includes(req.method) && (!req.body || Object.keys(req.body).length === 0)) {
-    // Only apply this to registration if you want, or globally as a better REST practice
-    if (req.path === "/api/user/register") {
-       return res.status(400).json({ success: false, message: "Empty request body" });
+app.use(
+  (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    if (
+      ["POST", "PUT", "PATCH"].includes(req.method) &&
+      (!req.body || Object.keys(req.body).length === 0)
+    ) {
+      // Only apply this to registration if you want, or globally as a better REST practice
+      if (req.path === "/api/user/register") {
+        return res
+          .status(400)
+          .json({ success: false, message: "Empty request body" });
+      }
     }
-  }
-  next();
-});
+    next();
+  },
+);
 
 // ✅ 3. rate limiter მესამე
 app.use(globalLimiter);
@@ -65,6 +82,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/partner", partnerRoutes);
 app.use("/api/admin/auth", adminAuthRoutes);
 app.use("/api/admin/partners", adminPartnersRoutes);
+app.use("/api/admin/products", partnerProductsRoutes);
 app.use("/api/admin/translations", translationRoutes);
 app.use("/api/admin/roles", roleRoutes);
 app.use("/api/admin/permissions", permissionRoutes);

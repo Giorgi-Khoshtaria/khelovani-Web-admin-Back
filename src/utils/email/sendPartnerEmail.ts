@@ -13,3 +13,17 @@ export const sendPartnerPasswordEmail = async (
     plainPassword,
   );
 };
+
+export const sendPartnerStatusEmail = async (
+  email: string,
+  status: string,
+  companyName: string,
+): Promise<void> => {
+  await sendNotificationEmail(
+    email,
+    `Partner Status: ${status}`,
+    "notify-partner-status",
+    companyName,
+    status,
+  );
+};

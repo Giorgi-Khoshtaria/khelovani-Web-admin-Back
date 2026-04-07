@@ -1,6 +1,5 @@
 import type { Request, Response } from "express";
 import User from "../../modules/user.modules.js";
-import { validateForgotPassword } from "../../validations/forms/forgotPasswordValidations.js";
 import { sendUserForgotPasswordEmail } from "../../utils/email/sendUserEmails.js";
 import { useTranslation } from "../../types/translate.util.js";
 import { Lang } from "../../types/lang.types.js";
@@ -18,12 +17,7 @@ export const forgotPassword = async (
     const lang = (req.query.lang as Lang) || "ge";
     const { t: tAuth } = useTranslation(lang, TranslationNamespace.Auth);
 
-    // Validate input
-    const errors = validateForgotPassword({ email }, lang);
-    if (Object.keys(errors).length > 0) {
-      res.status(422).json({ errors });
-      return;
-    }
+    // Find user
 
     const trimmedEmail = email.trim().toLowerCase();
 

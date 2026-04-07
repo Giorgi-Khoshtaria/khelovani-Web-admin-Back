@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import Translation, { Namespace } from "../../../modules/translation.modules.js";
-import { validateTranslation } from "../../../validations/forms/translationValidation.js";
 import { loadTranslationCache, useTranslation } from "../../../types/translate.util.js";
 import { Lang } from "../../../types/lang.types.js";
 import { TranslationNamespace } from "../../../types/translation.enum.js";
@@ -17,12 +16,6 @@ export const addTranslation = async (
     const lang = (req.query.lang as Lang) || "ge";
     const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
 
-    const validationErrors = validateTranslation({ namespace, key, translations }, lang);
-    if (validationErrors.length > 0) {
-      res.status(400).json({ success: false, errors: validationErrors });
-      return;
-    }
-
     // Verify namespace exists
     const nsExists = await Namespace.findById(namespace);
     if (!nsExists) {
@@ -36,7 +29,7 @@ export const addTranslation = async (
     // Check if key already exists in this namespace
     const existing = await Translation.findOne({ namespace, key });
     if (existing) {
-      res.status(400).json({
+      res.status(422).json({
         success: false,
         message: tAlerts("translation_key_exists"),
       });

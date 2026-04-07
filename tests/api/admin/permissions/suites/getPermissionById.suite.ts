@@ -1,9 +1,7 @@
-import { test, expect } from "../../../../fixtures/auth.fixture.js";
+import { test } from "../../../../fixtures/admin.fixture.js";
+import { expect } from "@playwright/test";
 import { ENDPOINTS } from "../../../../constants/endpoints.js";
-import {
-  createPermission,
-  deletePermission,
-} from "../permissions.helpers.js";
+import { createPermission, deletePermission } from "../permissions.helpers.js";
 
 export const getPermissionByIdSuites = () => {
   test.describe("3. GET /api/admin/permissions/:id — Get by ID", () => {
@@ -66,11 +64,11 @@ export const getPermissionByIdSuites = () => {
       expect(res.status()).toBe(404);
     });
 
-    test("PRM-044: 400 — invalid ObjectId format", async ({ adminApi }) => {
+    test("PRM-044: 422 — invalid ObjectId format", async ({ adminApi }) => {
       const res = await adminApi.get(
         `${ENDPOINTS.ADMIN_PERMISSIONS}/not-a-valid-id`,
       );
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
     test("PRM-045: 404 — deleted permission returns 404 (not stale data)", async ({
@@ -83,13 +81,13 @@ export const getPermissionByIdSuites = () => {
       expect(res.status()).toBe(404);
     });
 
-    test("PRM-048: 400 — path traversal in id → 400 or 404, never 500", async ({
+    test("PRM-048: 422 — path traversal in id → 422 or 404, never 500", async ({
       adminApi,
     }) => {
       const res = await adminApi.get(
         `${ENDPOINTS.ADMIN_PERMISSIONS}/../../etc/passwd`,
       );
-      expect([400, 404]).toContain(res.status());
+      expect([422, 404]).toContain(res.status());
       expect(res.status()).not.toBe(500);
     });
   });

@@ -3,7 +3,6 @@ import type { Request, Response } from "express";
 import { sendUserRegistrationVerificationEmail } from "../../utils/email/sendUserEmails.js";
 import User from "../../modules/user.modules.js";
 import { UserTypes } from "../../types/userTypes.js";
-import { validateRegistration } from "../../validations/forms/registerValidation.js";
 import { useTranslation } from "../../types/translate.util.js";
 import { Lang } from "../../types/lang.types.js";
 import { TranslationNamespace } from "../../types/translation.enum.js";
@@ -30,15 +29,8 @@ export const registerUser = async (
     const lang = (req.query.lang as Lang) || "ge";
     const { t: tAuth } = useTranslation(lang, TranslationNamespace.Auth);
 
-    // ── Validate ───────────────────────────────────────────────────────────
-    const validationErrors = validateRegistration(req.body, lang);
-    if (validationErrors.length > 0) {
-      res.status(422).json({ errors: validationErrors });
-      return;
-    }
-
-    const trimmedEmail = email.trim().toLowerCase();
-    const trimmedIdNumber = idNumber.trim();
+    const trimmedEmail = email.toLowerCase();
+    const trimmedIdNumber = idNumber;
 
     // ── Check email duplicate ──────────────────────────────────────────────
     const existingByEmail = await User.findOne({ email: trimmedEmail });
@@ -90,7 +82,6 @@ export const registerUser = async (
     res.status(201).json({
       message: tAuth("register_success_verify_email"),
     });
-
   } catch (error) {
     res.status(500).json({ message: (error as Error).message });
   }

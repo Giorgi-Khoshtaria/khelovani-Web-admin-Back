@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import Product from "../../modules/product.modules.js";
 
+import mongoose from "mongoose";
+
 // @desc    Delete a product
 // @route   DELETE /api/products/:productId
 export const deleteProduct = async (
@@ -12,7 +14,12 @@ export const deleteProduct = async (
     const userRole = req.user?.role?.toLowerCase();
     const userId = req.user?.id;
 
-    const product = await Product.findById(productId);
+    if (!mongoose.Types.ObjectId.isValid(productId as string)) {
+      res.status(400).json({ message: "Invalid product ID format" });
+      return;
+    }
+
+    const product = await Product.findById(productId as string);
 
     if (!product) {
       res.status(404).json({ message: "Product not found" });

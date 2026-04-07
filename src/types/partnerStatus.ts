@@ -1,9 +1,8 @@
-export type PartnerStatus = "PENDING" | "APPROVED" | "REJECTED" | "BANNED";
+export type PartnerStatus = "PENDING" | "APPROVED" | "BANNED";
 
 export const PartnerStatusEnum = {
   PENDING: "PENDING",
   APPROVED: "APPROVED",
-  REJECTED: "REJECTED",
   BANNED: "BANNED",
 } as const;
 

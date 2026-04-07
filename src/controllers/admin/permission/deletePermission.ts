@@ -18,7 +18,7 @@ export const deletePermission = async (
     const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
 
     if (!mongoose.Types.ObjectId.isValid(id as string)) {
-      res.status(400).json({ message: "Invalid ID" });
+      res.status(422).json({ message: "Invalid ID" });
       return;
     }
 
@@ -40,7 +40,11 @@ export const deletePermission = async (
       message: tAlerts("permission_deleted_success"),
       _id: id,
     });
-  } catch (error) {
-    res.status(500).json({ message: (error as Error).message });
+  } catch (error: any) {
+    if (error.name === "ValidationError" || error.name === "CastError") {
+      res.status(422).json({ message: error.message });
+      return;
+    }
+    res.status(500).json({ message: error.message });
   }
 };

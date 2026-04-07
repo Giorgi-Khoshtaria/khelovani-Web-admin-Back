@@ -2,9 +2,9 @@ import jwt from "jsonwebtoken";
 
 interface JWTPayload {
   id: string;
-  role: string;
-  permissions: string[];
-  allowedPanels: string[];
+  role?: string;
+  permissions?: string[];
+  allowedPanels?: string[];
 }
 
 export const generateJWTToken = (payload: JWTPayload): string => {

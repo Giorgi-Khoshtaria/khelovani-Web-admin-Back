@@ -4,24 +4,47 @@ import {
   loginUser,
   forgotPassword,
   resetPassword,
+  deleteUserByEmail,
 } from "../controllers/user/index.js";
 import {
   twoMinutesLimiter,
   oneHourLimiter,
 } from "../utils/limiters/rate-limit.js";
-import { authenticate } from "../middleware/auth/authenticate.js";
-import { requirePermission } from "../middleware/role/requirePermission.js";
-import { requirePanel } from "../middleware/role/requirePanel.js";
-import { PERMISSIONS, PANELS } from "../middleware/role/permissions.js";
+
 import { verifyEmailCallback } from "../controllers/verification/index.js";
+import { validate } from "../middleware/validate.js";
+import { loginSchema } from "../validations/schemas/login.schema.js";
+import { registerSchema } from "../validations/schemas/register.schema.js";
+import {
+  forgotPasswordSchema,
+  resetPasswordSchema,
+} from "../validations/schemas/forgotPassword.schema.js";
+import { emailOnlySchema } from "../validations/schemas/user.schema.js";
 
 const router = Router();
 
 // ✅ Public
-router.post("/register", twoMinutesLimiter, registerUser);
-router.post("/login", twoMinutesLimiter, loginUser);
-router.post("/forgot-password", twoMinutesLimiter, forgotPassword);
-router.post("/reset-password", twoMinutesLimiter, resetPassword);
+router.post(
+  "/register",
+  twoMinutesLimiter,
+  validate(registerSchema),
+  registerUser,
+);
+// RESTRICTED: Test utility endpoint (only for dev/test environments)
+router.delete("/delete-by-email", validate(emailOnlySchema), deleteUserByEmail);
+router.post("/login", twoMinutesLimiter, validate(loginSchema), loginUser);
+router.post(
+  "/forgot-password",
+  twoMinutesLimiter,
+  validate(forgotPasswordSchema),
+  forgotPassword,
+);
+router.post(
+  "/reset-password",
+  twoMinutesLimiter,
+  validate(resetPasswordSchema),
+  resetPassword,
+);
 
 router.get("/verify", verifyEmailCallback);
 

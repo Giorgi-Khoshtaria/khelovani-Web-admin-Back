@@ -1,4 +1,5 @@
-import { test, expect } from "../../../../fixtures/auth.fixture.js";
+import { test } from "../../../../fixtures/admin.fixture.js";
+import { expect } from "@playwright/test";
 import { ENDPOINTS } from "../../../../constants/endpoints.js";
 import {
   createRole,
@@ -121,20 +122,20 @@ export const rolesSecuritySuites = () => {
       }
     });
 
-    test("ROL-161: SQL injection in role name on create → 400", async ({
+    test("ROL-161: SQL injection in role name on create → 422", async ({
       adminApi,
     }) => {
       const res = await adminApi.post(ENDPOINTS.ADMIN_ROLES, {
         data: { ...VALID_ROLE, name: "'; DROP TABLE roles; --" },
       });
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
-    test("ROL-162: XSS in name field on create → 400", async ({ adminApi }) => {
+    test("ROL-162: XSS in name field on create → 422", async ({ adminApi }) => {
       const res = await adminApi.post(ENDPOINTS.ADMIN_ROLES, {
         data: { ...VALID_ROLE, name: "<script>alert(1)</script>" },
       });
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
     test("ROL-163: XSS in description — stored safely or rejected", async ({
@@ -153,7 +154,7 @@ export const rolesSecuritySuites = () => {
         expect(text).not.toContain("<img src=x onerror=alert(1)>");
         await deleteRole(adminApi, body.role._id);
       } else {
-        expect([400, 422]).toContain(res.status());
+        expect(res.status()).toBe(422);
       }
     });
 
@@ -175,7 +176,7 @@ export const rolesSecuritySuites = () => {
         expect(body.role.isSystem).not.toBe(true);
         await deleteRole(adminApi, body.role._id);
       } else {
-        expect([400, 422]).toContain(res.status());
+        expect(res.status()).toBe(422);
       }
     });
 
@@ -201,7 +202,7 @@ export const rolesSecuritySuites = () => {
           description: "x".repeat(1_000_000),
         },
       });
-      expect([400, 413, 422]).toContain(res.status());
+      expect([413, 422]).toContain(res.status());
       expect(res.status()).not.toBe(500);
     });
 
@@ -234,7 +235,7 @@ export const rolesSecuritySuites = () => {
       const res = await adminApi.get(
         `${ENDPOINTS.ADMIN_ROLES}/../../etc/passwd`,
       );
-      expect([400, 404]).toContain(res.status());
+      expect([422, 404]).toContain(res.status());
       expect(res.status()).not.toBe(500);
     });
 
@@ -248,7 +249,7 @@ export const rolesSecuritySuites = () => {
           permissions: ['{"$where": "return true"}'],
         },
       });
-      expect([400, 422]).toContain(res.status());
+      expect(res.status()).toBe(422);
       expect(res.status()).not.toBe(500);
     });
   });

@@ -16,6 +16,7 @@ export const ENDPOINTS = {
   ADMIN_MENU: "/api/admin/menu",
   ADMIN_TRANSLATION: "/api/admin/translations",
   ADMIN_UPLOAD: "/api/admin/upload",
+  ADMIN_PRODUCTS: "/api/admin/products",
   ADMIN_LOGIN: "/api/admin/auth/login",
   PUBLIC_MENU: "/api/menu",
 } as const;

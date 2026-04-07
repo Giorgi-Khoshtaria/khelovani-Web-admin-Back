@@ -1,4 +1,5 @@
-import { test, expect } from "../../../../fixtures/auth.fixture.js";
+import { test } from "../../../../fixtures/admin.fixture.js";
+import { expect } from "@playwright/test";
 import { ENDPOINTS } from "../../../../constants/endpoints.js";
 import {
   uniqueName,
@@ -63,57 +64,57 @@ export const createRoleSuites = () => {
       }
     });
 
-    test("ROL-005: [N3] 400 — empty name string", async ({ adminApi }) => {
+    test("ROL-005: [N3] 422 — empty name string", async ({ adminApi }) => {
       const res = await adminApi.post(ENDPOINTS.ADMIN_ROLES, {
         data: { ...VALID_ROLE, name: "" },
       });
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
-    test("ROL-006: [N4] 400 — null name", async ({ adminApi }) => {
+    test("ROL-006: [N4] 422 — null name", async ({ adminApi }) => {
       const res = await adminApi.post(ENDPOINTS.ADMIN_ROLES, {
         data: { ...VALID_ROLE, name: null },
       });
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
-    test("ROL-007: [N5] 400 — name field missing entirely", async ({
+    test("ROL-007: [N5] 422 — name field missing entirely", async ({
       adminApi,
     }) => {
       const res = await adminApi.post(ENDPOINTS.ADMIN_ROLES, {
         data: { description: "no name", allowedPanels: ["admin"] },
       });
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
-    test("ROL-008: [N6] 400 — whitespace-only name", async ({ adminApi }) => {
+    test("ROL-008: [N6] 422 — whitespace-only name", async ({ adminApi }) => {
       const res = await adminApi.post(ENDPOINTS.ADMIN_ROLES, {
         data: { ...VALID_ROLE, name: "   " },
       });
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
-    test("ROL-009: [N7] 400 — name is a number", async ({ adminApi }) => {
+    test("ROL-009: [N7] 422 — name is a number", async ({ adminApi }) => {
       const res = await adminApi.post(ENDPOINTS.ADMIN_ROLES, {
         data: { ...VALID_ROLE, name: 123 },
       });
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
-    test("ROL-010: [N8] 400 — name is an array", async ({ adminApi }) => {
+    test("ROL-010: [N8] 422 — name is an array", async ({ adminApi }) => {
       const res = await adminApi.post(ENDPOINTS.ADMIN_ROLES, {
         data: { ...VALID_ROLE, name: ["role"] },
       });
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
-    test("ROL-011: [BVA min-1=1] 400 — name of 1 character", async ({
+    test("ROL-011: [BVA min-1=1] 422 — name of 1 character", async ({
       adminApi,
     }) => {
       const res = await adminApi.post(ENDPOINTS.ADMIN_ROLES, {
         data: { ...VALID_ROLE, name: "A" },
       });
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
     test("ROL-012: [BVA min=2] 201 — name of exactly 2 characters", async ({
@@ -138,30 +139,30 @@ export const createRoleSuites = () => {
       await deleteRole(adminApi, body.role._id);
     });
 
-    test("ROL-014: [BVA max+1=101] 400 — name of 101 characters", async ({
+    test("ROL-014: [BVA max+1=101] 422 — name of 101 characters", async ({
       adminApi,
     }) => {
       const res = await adminApi.post(ENDPOINTS.ADMIN_ROLES, {
         data: { ...VALID_ROLE, name: "A".repeat(101) },
       });
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
-    test("ROL-015: [P2] 201 or 400 — empty allowedPanels array", async ({
+    test("ROL-015: [P2] 201 or 422 — empty allowedPanels array", async ({
       adminApi,
     }) => {
       const name = uniqueName();
       const res = await adminApi.post(ENDPOINTS.ADMIN_ROLES, {
         data: { name, description: "empty panels", allowedPanels: [] },
       });
-      expect([201, 400]).toContain(res.status());
+      expect([201, 422]).toContain(res.status());
       if (res.status() === 201) {
         const body = await res.json();
         await deleteRole(adminApi, body.role._id);
       }
     });
 
-    test("ROL-016: [P3] 400 — invalid panel name in allowedPanels", async ({
+    test("ROL-016: [P3] 422 — invalid panel name in allowedPanels", async ({
       adminApi,
     }) => {
       const res = await adminApi.post(ENDPOINTS.ADMIN_ROLES, {
@@ -171,31 +172,31 @@ export const createRoleSuites = () => {
           allowedPanels: ["invalid-panel-xyz"],
         },
       });
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
-    test("ROL-017: [P4] 400 — null allowedPanels", async ({ adminApi }) => {
+    test("ROL-017: [P4] 422 — null allowedPanels", async ({ adminApi }) => {
       const res = await adminApi.post(ENDPOINTS.ADMIN_ROLES, {
         data: { ...VALID_ROLE, name: uniqueName(), allowedPanels: null },
       });
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
-    test("ROL-018: [P5] 400 — allowedPanels is a string instead of array", async ({
+    test("ROL-018: [P5] 422 — allowedPanels is a string instead of array", async ({
       adminApi,
     }) => {
       const res = await adminApi.post(ENDPOINTS.ADMIN_ROLES, {
         data: { ...VALID_ROLE, name: uniqueName(), allowedPanels: "admin" },
       });
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
-    test("ROL-019: 400 — empty body {}", async ({ adminApi }) => {
+    test("ROL-019: 422 — empty body {}", async ({ adminApi }) => {
       const res = await adminApi.post(ENDPOINTS.ADMIN_ROLES, { data: {} });
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
-    test("ROL-020: 400 — permissions contains invalid ObjectId", async ({
+    test("ROL-020: 422 — permissions contains invalid ObjectId", async ({
       adminApi,
     }) => {
       const res = await adminApi.post(ENDPOINTS.ADMIN_ROLES, {
@@ -205,10 +206,10 @@ export const createRoleSuites = () => {
           permissions: ["not-a-valid-id"],
         },
       });
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
-    test("ROL-021: 400 — permissions contains non-existent valid ObjectId", async ({
+    test("ROL-021: 422 — permissions contains non-existent valid ObjectId", async ({
       adminApi,
     }) => {
       const res = await adminApi.post(ENDPOINTS.ADMIN_ROLES, {
@@ -218,7 +219,7 @@ export const createRoleSuites = () => {
           permissions: ["000000000000000000000000"],
         },
       });
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
     test("ROL-022: 409 — duplicate name check is case-insensitive", async ({

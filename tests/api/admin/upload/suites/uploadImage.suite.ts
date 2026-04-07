@@ -1,21 +1,27 @@
-import { test, expect } from "../../../../fixtures/auth.fixture.js";
+import { test } from "../../../../fixtures/admin.fixture.js";
+import { expect } from "@playwright/test";
 import { ENDPOINTS } from "../../../../constants/endpoints.js";
-import path from "path";
 import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export const uploadImageSuites = () => {
   test.describe("1. POST /api/admin/upload — Upload Image", () => {
     test("UPL-001: 201/200 — successfully upload image", async ({
       adminApi,
     }) => {
-      // Create a dummy file in memory or use a small text string as a buffer
-      const fileBuffer = Buffer.from("dummy image content");
-
+      // Use a real image asset for the upload
+      const assetPath = path.resolve(__dirname, "../../../../helpers/assets/3ADDP.jpg");
+      const fileBuffer = fs.readFileSync(assetPath);
+      
       const res = await adminApi.post(ENDPOINTS.ADMIN_UPLOAD, {
         multipart: {
           image: {
-            name: "test-image.png",
-            mimeType: "image/png",
+            name: "3ADDP.jpg",
+            mimeType: "image/jpeg",
             buffer: fileBuffer,
           },
         },
@@ -33,7 +39,7 @@ export const uploadImageSuites = () => {
           otherField: "test",
         },
       });
-      expect([400, 422]).toContain(res.status());
+      expect(res.status()).toBe(422);
     });
 
     test("UPL-003: 401 — unauthorized upload", async ({ api }) => {

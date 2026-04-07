@@ -20,7 +20,7 @@ export const deletePartner = async (
     const { t: tAuth } = useTranslation(lang, TranslationNamespace.Auth);
 
     if (!mongoose.Types.ObjectId.isValid(id as string)) {
-      res.status(400).json({
+      res.status(422).json({
         message: tAlerts("invalid_partner_id"),
       });
       return;

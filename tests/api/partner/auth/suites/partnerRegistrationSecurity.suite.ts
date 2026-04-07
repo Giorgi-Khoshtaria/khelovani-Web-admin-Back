@@ -1,16 +1,22 @@
-import { test, expect, UserFixtures } from "../../../../fixtures/auth.fixture.js";
+import { test, PartnerFixtures } from "../../../../fixtures/partner.fixture.js";
+import { expect } from "@playwright/test";
 import { ENDPOINTS } from "../../../../constants/endpoints.js";
 import { randomId, randomEmail } from "../../../../helpers/utils/generators.js";
-import { registerPartner, registerPartnerAndTrack } from "../registration.helpers.js";
+import {
+  registerPartner,
+  registerPartnerAndTrack,
+} from "../registration.helpers.js";
 
 export const partnerRegistrationSecuritySuites = () => {
   test.describe("5. Bad Request / Protocol (400)", () => {
-    test("PRT-027: 422 — empty object body {}", async ({ api }: UserFixtures) => {
+    test("PRT-027: 422 — empty object body {}", async ({
+      api,
+    }: PartnerFixtures) => {
       const res = await api.post(ENDPOINTS.PARTNER_REGISTER, { data: {} });
       expect(res.status()).toBe(422);
     });
 
-    test("PRT-028: 400 — malformed JSON", async ({ api }: UserFixtures) => {
+    test("PRT-028: 400 — malformed JSON", async ({ api }: PartnerFixtures) => {
       const res = await api.post(ENDPOINTS.PARTNER_REGISTER, {
         headers: { "Content-Type": "application/json" },
         data: '{ "email": "broken" ', // intentionally malformed
@@ -23,14 +29,14 @@ export const partnerRegistrationSecuritySuites = () => {
     test("PRT-029: 201 response has correct Content-Type", async ({
       api,
       createdPartners,
-    }: UserFixtures) => {
+    }: PartnerFixtures) => {
       const { res } = await registerPartnerAndTrack(api, createdPartners);
       expect(res.headers()["content-type"]).toContain("application/json");
     });
 
     test("PRT-030: 422 response includes errors array with field", async ({
       api,
-    }: UserFixtures) => {
+    }: PartnerFixtures) => {
       const res = await registerPartner(api, { email: "invalid-email" });
       const body = await res.json();
 
@@ -42,9 +48,11 @@ export const partnerRegistrationSecuritySuites = () => {
     test("PRT-031: 409 response has message property", async ({
       api,
       createdPartners,
-    }: UserFixtures) => {
+    }: PartnerFixtures) => {
       const sharedEmail = randomEmail();
-      await registerPartnerAndTrack(api, createdPartners, { email: sharedEmail });
+      await registerPartnerAndTrack(api, createdPartners, {
+        email: sharedEmail,
+      });
 
       const res = await registerPartner(api, { email: sharedEmail });
       const body = await res.json();

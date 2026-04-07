@@ -1,4 +1,4 @@
-import { test } from "../../../fixtures/auth.fixture.js";
+import { test } from "../../../fixtures/admin.fixture.js";
 import { createMenuItemSuites } from "./suites/createMenuItem.suite.js";
 import { getMenuItemsSuites } from "./suites/getMenuItems.suite.js";
 import { updateMenuItemSuites } from "./suites/updateMenuItem.suite.js";

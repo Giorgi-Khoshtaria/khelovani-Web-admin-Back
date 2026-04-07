@@ -1,0 +1,48 @@
+
+Running 3 tests using 3 workers
+
+  ✓  3 [chromium] › tests/api/admin/menu/suites/updateMenuItem.suite.ts:37:5 › Admin Menu API › 3. PUT /api/admin/menu/:id — Update Menu Item › MNU-022: 422 — invalid ID format (2.8s)
+  ✘  2 [chromium] › tests/api/admin/menu/suites/updateMenuItem.suite.ts:7:5 › Admin Menu API › 3. PUT /api/admin/menu/:id — Update Menu Item › MNU-020: 200 — partially update a menu item (3.2s)
+  ✘  1 [chromium] › tests/api/admin/menu/suites/updateMenuItem.suite.ts:27:5 › Admin Menu API › 3. PUT /api/admin/menu/:id — Update Menu Item › MNU-021: 404 — update non-existent menu item (3.4s)
+
+
+  1) [chromium] › tests/api/admin/menu/suites/updateMenuItem.suite.ts:7:5 › Admin Menu API › 3. PUT /api/admin/menu/:id — Update Menu Item › MNU-020: 200 — partially update a menu item 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m200[39m
+    Received: [31m422[39m
+
+      14 |           data: { href: "/updated-href" },
+      15 |         });
+    > 16 |         expect(res.status()).toBe(200);
+         |                              ^
+      17 |         const body = await res.json();
+      18 |         const updated = body.data || body.menuItem || body;
+      19 |         expect(updated.href).toBe("/updated-href");
+        at /Users/developer/Desktop/khelovani-Web-admin-Back/tests/api/admin/menu/suites/updateMenuItem.suite.ts:16:30
+
+    Error Context: test-results/api-admin-menu-menu.api-Ad-63bf9-artially-update-a-menu-item-chromium/error-context.md
+
+  2) [chromium] › tests/api/admin/menu/suites/updateMenuItem.suite.ts:27:5 › Admin Menu API › 3. PUT /api/admin/menu/:id — Update Menu Item › MNU-021: 404 — update non-existent menu item 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m404[39m
+    Received: [31m422[39m
+
+      30 |         { data: { href: "/updated" } },
+      31 |       );
+    > 32 |       expect(res.status()).toBe(404);
+         |                            ^
+      33 |     });
+      34 |
+      35 |     test("MNU-022: 422 — invalid ID format", async ({ adminApi }) => {
+        at /Users/developer/Desktop/khelovani-Web-admin-Back/tests/api/admin/menu/suites/updateMenuItem.suite.ts:32:28
+
+    Error Context: test-results/api-admin-menu-menu.api-Ad-7621c-date-non-existent-menu-item-chromium/error-context.md
+
+  2 failed
+    [chromium] › tests/api/admin/menu/suites/updateMenuItem.suite.ts:7:5 › Admin Menu API › 3. PUT /api/admin/menu/:id — Update Menu Item › MNU-020: 200 — partially update a menu item 
+    [chromium] › tests/api/admin/menu/suites/updateMenuItem.suite.ts:27:5 › Admin Menu API › 3. PUT /api/admin/menu/:id — Update Menu Item › MNU-021: 404 — update non-existent menu item 
+  1 passed (5.6s)

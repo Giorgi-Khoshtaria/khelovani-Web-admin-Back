@@ -1,4 +1,5 @@
-import { test, expect } from "../../../../fixtures/auth.fixture.js";
+import { test } from "../../../../fixtures/admin.fixture.js";
+import { expect } from "@playwright/test";
 import { DbHelper } from "../../../../helpers/db/db.helper.js";
 import { adminLogin, validateAdminToken } from "../auth.helpers.js";
 

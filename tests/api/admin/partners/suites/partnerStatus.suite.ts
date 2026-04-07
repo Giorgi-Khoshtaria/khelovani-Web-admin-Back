@@ -1,4 +1,5 @@
-import { test, expect } from "../../../../fixtures/auth.fixture.js";
+import { test } from "../../../../fixtures/admin.fixture.js";
+import { expect } from "@playwright/test";
 import { ENDPOINTS } from "../../../../constants/endpoints.js";
 import { PartnerStatusEnum } from "../../../../../src/types/partnerStatus.js";
 import { createPendingPartner } from "../partners.helpers.js";
@@ -31,12 +32,7 @@ export const partnerStatusSuites = () => {
     }) => {
       const { id } = await createPendingPartner(api);
 
-      const res = await adminApi.patch(
-        `${ENDPOINTS.ADMIN_PARTNERS}/${id}/status`,
-        {
-          data: { status: PartnerStatusEnum.REJECTED },
-        },
-      );
+      const res = await adminApi.delete(`${ENDPOINTS.ADMIN_PARTNERS}/${id}`);
       expect(res.status()).toBe(200);
 
       const verifyRes = await adminApi.get(`${ENDPOINTS.ADMIN_PARTNERS}/${id}`);
@@ -53,12 +49,7 @@ export const partnerStatusSuites = () => {
         data: { status: PartnerStatusEnum.APPROVED },
       });
 
-      const res = await adminApi.patch(
-        `${ENDPOINTS.ADMIN_PARTNERS}/${id}/status`,
-        {
-          data: { status: PartnerStatusEnum.REJECTED },
-        },
-      );
+      const res = await adminApi.delete(`${ENDPOINTS.ADMIN_PARTNERS}/${id}`);
       expect(res.status()).toBe(200);
 
       const verifyRes = await adminApi.get(`${ENDPOINTS.ADMIN_PARTNERS}/${id}`);
@@ -105,7 +96,7 @@ export const partnerStatusSuites = () => {
           data: { status: PartnerStatusEnum.PENDING },
         },
       );
-      expect([400, 422]).toContain(res.status());
+      expect(res.status()).toBe(422);
     });
 
     test("AA-045: deleted partner → any status update returns 404", async ({
@@ -114,9 +105,7 @@ export const partnerStatusSuites = () => {
     }) => {
       const { id } = await createPendingPartner(api);
 
-      await adminApi.patch(`${ENDPOINTS.ADMIN_PARTNERS}/${id}/status`, {
-        data: { status: PartnerStatusEnum.REJECTED },
-      });
+      await adminApi.delete(`${ENDPOINTS.ADMIN_PARTNERS}/${id}`);
 
       const res = await adminApi.patch(
         `${ENDPOINTS.ADMIN_PARTNERS}/${id}/status`,
@@ -191,19 +180,17 @@ export const partnerStatusSuites = () => {
       api,
     }) => {
       const { id } = await createPendingPartner(api);
-
       const before = await (
         await adminApi.get(`${ENDPOINTS.ADMIN_PARTNERS}/${id}`)
       ).json();
 
-      await new Promise((r) => setTimeout(r, 50));
-
-      await adminApi.patch(`${ENDPOINTS.ADMIN_PARTNERS}/${id}/status`, {
-        data: { status: PartnerStatusEnum.APPROVED },
-      });
+      // Wait a bit to ensure timestamp changes
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       const after = await (
-        await adminApi.get(`${ENDPOINTS.ADMIN_PARTNERS}/${id}`)
+        await adminApi.patch(`${ENDPOINTS.ADMIN_PARTNERS}/${id}/status`, {
+          data: { status: PartnerStatusEnum.APPROVED },
+        })
       ).json();
 
       expect(new Date(after.updatedAt).getTime()).toBeGreaterThan(
@@ -224,7 +211,7 @@ export const partnerStatusSuites = () => {
           data: { status: "INVALID_STATUS" },
         },
       );
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
     test("AA-061: [V3] empty string status → 400", async ({
@@ -238,7 +225,7 @@ export const partnerStatusSuites = () => {
           data: { status: "" },
         },
       );
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
     test("AA-062: [V4] null status → 400", async ({ adminApi, api }) => {
@@ -249,7 +236,7 @@ export const partnerStatusSuites = () => {
           data: { status: null },
         },
       );
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
     test("AA-063: [V5] missing status field entirely → 400", async ({
@@ -263,7 +250,7 @@ export const partnerStatusSuites = () => {
           data: {},
         },
       );
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
     test("AA-064: [V6] numeric status value → 400", async ({
@@ -277,7 +264,7 @@ export const partnerStatusSuites = () => {
           data: { status: 1 },
         },
       );
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
     test("AA-065: [V7] lowercase valid enum value → 400 (case-sensitive)", async ({
@@ -291,7 +278,7 @@ export const partnerStatusSuites = () => {
           data: { status: PartnerStatusEnum.APPROVED.toLowerCase() },
         },
       );
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
     test("AA-066: no body at all → 400", async ({ adminApi, api }) => {
@@ -299,7 +286,7 @@ export const partnerStatusSuites = () => {
       const res = await adminApi.patch(
         `${ENDPOINTS.ADMIN_PARTNERS}/${id}/status`,
       );
-      expect([400, 422]).toContain(res.status());
+      expect(res.status()).toBe(422);
     });
 
     test("AA-067: invalid ObjectId format in URL → 400", async ({
@@ -311,7 +298,7 @@ export const partnerStatusSuites = () => {
           data: { status: PartnerStatusEnum.APPROVED },
         },
       );
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
     test("AA-068: extra unknown fields in body are ignored (not 400)", async ({
@@ -325,7 +312,7 @@ export const partnerStatusSuites = () => {
           data: {
             status: PartnerStatusEnum.APPROVED,
             unknownField: "should be ignored",
-            role: "superadmin",
+            role: "admin",
           },
         },
       );

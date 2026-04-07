@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import MenuItem from "../../../modules/menu.modules.js";
-import { validateMenuItem } from "../../../validations/forms/menuValidation.js";
 import { Lang } from "../../../types/lang.types.js";
 
 // @desc    Create menu item
@@ -14,20 +13,27 @@ export const createMenuItem = async (
     const { label, href, order, isActive } = req.body;
     const lang = (req.query.lang as Lang) || "ge";
 
-    const validationErrors = validateMenuItem(req.body, lang);
-    if (Object.keys(validationErrors).length > 0) {
-      res.status(422).json({ errors: validationErrors });
-      return;
-    }
-
-    const item = await MenuItem.create({
+    const itemData: any = {
       label,
       href,
-      order: Number(order),
       isActive,
-    });
+    };
+    if (order !== undefined) {
+      itemData.order = Number(order);
+    }
+
+    const item = await MenuItem.create(itemData);
     res.status(201).json(item);
   } catch (error) {
+    if (
+      (error as any).name === "ValidationError" ||
+      (error as any).name === "CastError"
+    ) {
+      res.status(422).json({
+        errors: [{ field: "database", message: (error as Error).message }],
+      });
+      return;
+    }
     res.status(500).json({ message: (error as Error).message });
   }
 };

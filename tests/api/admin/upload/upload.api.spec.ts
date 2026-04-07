@@ -1,4 +1,4 @@
-import { test } from "../../../fixtures/auth.fixture.js";
+import { test } from "../../../fixtures/admin.fixture.js";
 import { uploadImageSuites } from "./suites/uploadImage.suite.js";
 
 /**

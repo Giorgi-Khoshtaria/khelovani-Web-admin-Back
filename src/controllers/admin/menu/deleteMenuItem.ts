@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { Request, Response } from "express";
 import MenuItem from "../../../modules/menu.modules.js";
 import { useTranslation } from "../../../types/translate.util.js";
@@ -12,9 +13,19 @@ export const deleteMenuItem = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const lang = (req.query.lang as Lang) || "ge";
     const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(422).json({
+        errors: [{
+          field: "id",
+          message: tAlerts("invalid_menu_item_id") || "Invalid menu item ID"
+        }],
+      });
+      return;
+    }
 
     const item = await MenuItem.findByIdAndDelete(id);
 

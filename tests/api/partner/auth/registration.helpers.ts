@@ -1,7 +1,7 @@
 import { APIRequestContext } from "@playwright/test";
 import { ENDPOINTS, DEFAULT_PARTNER } from "../../../constants/endpoints.js";
 import { randomId, randomEmail } from "../../../helpers/utils/generators.js";
-import { CreatedPartner } from "../../../fixtures/auth.fixture.js";
+import { CreatedPartner } from "../../../fixtures/partner.fixture.js";
 
 export const registerPartner = (api: APIRequestContext, overrides: Record<string, any> = {}) =>
   api.post(ENDPOINTS.PARTNER_REGISTER, {

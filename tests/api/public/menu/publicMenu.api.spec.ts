@@ -1,5 +1,6 @@
-import { test } from "../../../fixtures/auth.fixture.js";
+import { test } from "../../../fixtures/user.fixture.js";
 import { getPublicMenuSuites } from "./suites/getPublicMenu.suite.js";
+import { publicMenuSecuritySuites } from "./suites/publicMenuSecurity.suite.js";
 
 /**
  * ============================================================
@@ -9,4 +10,5 @@ import { getPublicMenuSuites } from "./suites/getPublicMenu.suite.js";
 
 test.describe("Public Menu API", () => {
   getPublicMenuSuites();
+  publicMenuSecuritySuites();
 });

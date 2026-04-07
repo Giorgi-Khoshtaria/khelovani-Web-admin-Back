@@ -1,4 +1,4 @@
-import { test, CreatedPartner } from "../../../fixtures/auth.fixture.js";
+import { test, CreatedPartner } from "../../../fixtures/partner.fixture.js";
 import { ENDPOINTS } from "../../../constants/endpoints.js";
 import { partnerRegistrationHappyPathSuites } from "./suites/partnerRegistrationHappyPath.suite.js";
 import { partnerRegistrationValidationSuites } from "./suites/partnerRegistrationValidation.suite.js";
@@ -13,7 +13,7 @@ import { partnerRegistrationSecuritySuites } from "./suites/partnerRegistrationS
 test.describe("Partner Registration API", () => {
   const createdPartners: CreatedPartner[] = [];
 
-  test.afterAll(async ({ api }) => {
+  test.afterAll(async ({ request }) => {
     if (createdPartners.length === 0) return;
     console.log(`🧹 Cleaning up ${createdPartners.length} created partners...`);
     for (const partner of createdPartners) {

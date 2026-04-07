@@ -15,19 +15,7 @@ export const updateTranslation = async (
     const { id } = req.params;
     const { translations } = req.body;
     const lang = (req.query.lang as Lang) || "ge";
-    const { t: tValidation } = useTranslation(lang, TranslationNamespace.Validation);
     const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
-
-    if (!translations || (!translations.ge && !translations.en)) {
-      res.status(400).json({
-        success: false,
-        errors: [{
-          field: "ge",
-          message: tValidation("at_least_one_translation_required"),
-        }],
-      });
-      return;
-    }
 
     const translation = await Translation.findById(id);
     if (!translation) {

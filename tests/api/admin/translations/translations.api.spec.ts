@@ -1,4 +1,4 @@
-import { test } from "../../../fixtures/auth.fixture.js";
+import { test } from "../../../fixtures/admin.fixture.js";
 import { createTranslationSuites } from "./suites/createTranslation.suite.js";
 import { bulkTranslationSuites } from "./suites/bulkTranslation.suite.js";
 

@@ -1,6 +1,11 @@
-import { test, expect } from "../../../../fixtures/auth.fixture.js";
+import { test } from "../../../../fixtures/admin.fixture.js";
+import { expect } from "@playwright/test";
 import { ENDPOINTS } from "../../../../constants/endpoints.js";
-import { createTranslation, deleteTranslation, VALID_TRANSLATION } from "../translations.helpers.js";
+import {
+  createTranslation,
+  deleteTranslation,
+  VALID_TRANSLATION,
+} from "../translations.helpers.js";
 
 export const createTranslationSuites = () => {
   test.describe("1. POST /api/admin/translations — Create", () => {
@@ -24,7 +29,7 @@ export const createTranslationSuites = () => {
         const res = await adminApi.post(ENDPOINTS.ADMIN_TRANSLATION, {
           data: payload,
         });
-        expect(res.status()).toBe(409);
+        expect(res.status()).toBe(422);
       } finally {
         await deleteTranslation(adminApi, id);
       }
@@ -35,7 +40,7 @@ export const createTranslationSuites = () => {
       const res = await adminApi.post(ENDPOINTS.ADMIN_TRANSLATION, {
         data: payload,
       });
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
   });
 };

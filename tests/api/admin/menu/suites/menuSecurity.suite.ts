@@ -1,4 +1,5 @@
-import { test, expect } from "../../../../fixtures/auth.fixture.js";
+import { test } from "../../../../fixtures/admin.fixture.js";
+import { expect } from "@playwright/test";
 import { ENDPOINTS } from "../../../../constants/endpoints.js";
 
 export const menuSecuritySuites = () => {
@@ -16,16 +17,36 @@ export const menuSecuritySuites = () => {
     });
 
     test("MNU-042: 429 — rate limit triggered on write operations", async ({
-      adminApi,
+      playwright,
+      adminUser,
     }) => {
-      const MAX_REQUESTS = 60; // Usually rate limit is 60 or less
+      // Manual context to avoid x-test-bypass header in adminApi fixture
+      const requestContext = await playwright.request.newContext({
+        baseURL: "http://localhost:3001",
+      });
+
+      // Login to get token without bypass header
+      const loginRes = await requestContext.post(ENDPOINTS.ADMIN_LOGIN, {
+        data: { email: adminUser.email, password: adminUser.password },
+      });
+      const { token } = await loginRes.json();
+
+      const authContext = await playwright.request.newContext({
+        baseURL: "http://localhost:3001",
+        extraHTTPHeaders: { Authorization: `Bearer ${token}` },
+      });
+
+      const MAX_REQUESTS = 65; 
       const results = await Promise.all(
         Array.from({ length: MAX_REQUESTS }, () =>
-          adminApi.post(ENDPOINTS.ADMIN_MENU, { data: {} }), // Invalid data, but should still count for rate limit
+          authContext.post(ENDPOINTS.ADMIN_MENU, { data: {} }),
         ),
       );
       const statuses = results.map((r) => r.status());
       expect(statuses).toContain(429);
+
+      await authContext.dispose();
+      await requestContext.dispose();
     });
   });
 };

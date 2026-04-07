@@ -15,7 +15,9 @@ export const createTranslation = async (
   overrides?: Record<string, any>,
 ) => {
   const payload = { ...VALID_TRANSLATION, ...overrides };
-  const res = await adminApi.post(ENDPOINTS.ADMIN_TRANSLATION, { data: payload });
+  const res = await adminApi.post(ENDPOINTS.ADMIN_TRANSLATION, {
+    data: payload,
+  });
   if (res.status() !== 201) {
     throw new Error(`Failed to create translation. Status: ${res.status()}`);
   }

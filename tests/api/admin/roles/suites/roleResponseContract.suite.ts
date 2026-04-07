@@ -1,4 +1,5 @@
-import { test, expect } from "../../../../fixtures/auth.fixture.js";
+import { test } from "../../../../fixtures/admin.fixture.js";
+import { expect } from "@playwright/test";
 import { ENDPOINTS } from "../../../../constants/endpoints.js";
 import {
   createRole,
@@ -82,7 +83,7 @@ export const roleResponseContractSuites = () => {
       }
     });
 
-    test("ROL-184: 400 error response is JSON object with message field", async ({
+    test("ROL-184: 422 error response is JSON object with errors array", async ({
       adminApi,
     }) => {
       const res = await adminApi.post(ENDPOINTS.ADMIN_ROLES, {
@@ -91,7 +92,7 @@ export const roleResponseContractSuites = () => {
       const body = await res.json().catch(() => null);
       expect(body).not.toBeNull();
       expect(typeof body).toBe("object");
-      expect(body).toHaveProperty("message");
+      expect(Array.isArray(body.errors)).toBe(true);
     });
 
     test("ROL-185: 404 error response is JSON object with message field", async ({

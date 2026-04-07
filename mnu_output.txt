@@ -1,0 +1,136 @@
+
+Running 15 tests using 4 workers
+
+  ✘   4 [chromium] › tests/api/admin/menu/suites/createMenuItem.suite.ts:7:5 › Admin Menu API › 1. POST /api/admin/menu — Create Menu Item › MNU-001: 201 — create menu item with all valid fields (1.9s)
+  ✓   1 [chromium] › tests/api/admin/menu/suites/createMenuItem.suite.ts:20:5 › Admin Menu API › 1. POST /api/admin/menu — Create Menu Item › MNU-002: 422 — empty request body (2.1s)
+  ✓   3 [chromium] › tests/api/admin/menu/suites/createMenuItem.suite.ts:30:5 › Admin Menu API › 1. POST /api/admin/menu — Create Menu Item › MNU-003: 422 — missing label object (2.1s)
+  ✓   2 [chromium] › tests/api/admin/menu/suites/createMenuItem.suite.ts:44:5 › Admin Menu API › 1. POST /api/admin/menu — Create Menu Item › MNU-004: 422 — missing href (2.1s)
+  ✘   7 [chromium] › tests/api/admin/menu/suites/updateMenuItem.suite.ts:7:5 › Admin Menu API › 3. PUT /api/admin/menu/:id — Update Menu Item › MNU-020: 200 — partially update a menu item (1.2s)
+  ✘   6 [chromium] › tests/api/admin/menu/suites/updateMenuItem.suite.ts:27:5 › Admin Menu API › 3. PUT /api/admin/menu/:id — Update Menu Item › MNU-021: 404 — update non-existent menu item (1.2s)
+  ✘   5 [chromium] › tests/api/admin/menu/suites/getMenuItems.suite.ts:7:5 › Admin Menu API › 2. GET /api/admin/menu — Get Menu Items › MNU-010: 200 — get list of menu items (1.3s)
+  ✓   8 [chromium] › tests/api/admin/menu/suites/createMenuItem.suite.ts:58:5 › Admin Menu API › 1. POST /api/admin/menu — Create Menu Item › MNU-005: 422 — empty href string (1.8s)
+  ✓  12 [chromium] › tests/api/admin/menu/suites/deleteMenuItem.suite.ts:27:5 › Admin Menu API › 4. DELETE /api/admin/menu/:id — Delete Menu Item › MNU-032: 422 — delete with invalid ID format (1.1s)
+  ✓  13 [chromium] › tests/api/admin/menu/suites/menuSecurity.suite.ts:6:5 › Admin Menu API › 5. Security & Rate Limiting › MNU-040: 401 — access without auth token (4ms)
+  ✓  14 [chromium] › tests/api/admin/menu/suites/menuSecurity.suite.ts:12:5 › Admin Menu API › 5. Security & Rate Limiting › MNU-041: 403 — access with user token (3ms)
+  ✓  10 [chromium] › tests/api/admin/menu/suites/updateMenuItem.suite.ts:37:5 › Admin Menu API › 3. PUT /api/admin/menu/:id — Update Menu Item › MNU-022: 422 — invalid ID format (2.2s)
+  ✓  11 [chromium] › tests/api/admin/menu/suites/deleteMenuItem.suite.ts:21:5 › Admin Menu API › 4. DELETE /api/admin/menu/:id — Delete Menu Item › MNU-031: 404 — delete non-existent menu item (2.5s)
+  ✘   9 [chromium] › tests/api/admin/menu/suites/deleteMenuItem.suite.ts:7:5 › Admin Menu API › 4. DELETE /api/admin/menu/:id — Delete Menu Item › MNU-030: 200 — successfully delete menu item (2.8s)
+  ✘  15 [chromium] › tests/api/admin/menu/suites/menuSecurity.suite.ts:22:5 › Admin Menu API › 5. Security & Rate Limiting › MNU-042: 429 — rate limit triggered on write operations (1.2s)
+
+
+  1) [chromium] › tests/api/admin/menu/suites/createMenuItem.suite.ts:7:5 › Admin Menu API › 1. POST /api/admin/menu — Create Menu Item › MNU-001: 201 — create menu item with all valid fields 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m201[39m
+    Received: [31m422[39m
+
+      12 |         data: VALID_MENU_ITEM,
+      13 |       });
+    > 14 |       expect(res.status()).toBe(201);
+         |                            ^
+      15 |       const body = await res.json();
+      16 |       const id = body._id || body.data?._id || body.menuItem?._id;
+      17 |       expect(id).toBeDefined();
+        at /Users/developer/Desktop/khelovani-Web-admin-Back/tests/api/admin/menu/suites/createMenuItem.suite.ts:14:28
+
+    Error Context: test-results/api-admin-menu-menu.api-Ad-49321--item-with-all-valid-fields-chromium/error-context.md
+
+  2) [chromium] › tests/api/admin/menu/suites/getMenuItems.suite.ts:7:5 › Admin Menu API › 2. GET /api/admin/menu — Get Menu Items › MNU-010: 200 — get list of menu items 
+
+    Error: Failed to create menu item. Status: 422
+
+       at api/admin/menu/menu.helpers.ts:18
+
+      16 |   const res = await adminApi.post(ENDPOINTS.ADMIN_MENU, { data: payload });
+      17 |   if (res.status() !== 201) {
+    > 18 |     throw new Error(`Failed to create menu item. Status: ${res.status()}`);
+         |           ^
+      19 |   }
+      20 |   const body = await res.json();
+      21 |   return { id: body._id || body.data?._id || body.menuItem?._id, payload, res };
+        at createMenuItem (/Users/developer/Desktop/khelovani-Web-admin-Back/tests/api/admin/menu/menu.helpers.ts:18:11)
+        at /Users/developer/Desktop/khelovani-Web-admin-Back/tests/api/admin/menu/suites/getMenuItems.suite.ts:9:22
+
+    Error Context: test-results/api-admin-menu-menu.api-Ad-5f264-00-—-get-list-of-menu-items-chromium/error-context.md
+
+  3) [chromium] › tests/api/admin/menu/suites/updateMenuItem.suite.ts:7:5 › Admin Menu API › 3. PUT /api/admin/menu/:id — Update Menu Item › MNU-020: 200 — partially update a menu item 
+
+    Error: Failed to create menu item. Status: 422
+
+       at api/admin/menu/menu.helpers.ts:18
+
+      16 |   const res = await adminApi.post(ENDPOINTS.ADMIN_MENU, { data: payload });
+      17 |   if (res.status() !== 201) {
+    > 18 |     throw new Error(`Failed to create menu item. Status: ${res.status()}`);
+         |           ^
+      19 |   }
+      20 |   const body = await res.json();
+      21 |   return { id: body._id || body.data?._id || body.menuItem?._id, payload, res };
+        at createMenuItem (/Users/developer/Desktop/khelovani-Web-admin-Back/tests/api/admin/menu/menu.helpers.ts:18:11)
+        at /Users/developer/Desktop/khelovani-Web-admin-Back/tests/api/admin/menu/suites/updateMenuItem.suite.ts:11:22
+
+    Error Context: test-results/api-admin-menu-menu.api-Ad-63bf9-artially-update-a-menu-item-chromium/error-context.md
+
+  4) [chromium] › tests/api/admin/menu/suites/updateMenuItem.suite.ts:27:5 › Admin Menu API › 3. PUT /api/admin/menu/:id — Update Menu Item › MNU-021: 404 — update non-existent menu item 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m404[39m
+    Received: [31m500[39m
+
+      30 |         { data: { href: "/updated" } },
+      31 |       );
+    > 32 |       expect(res.status()).toBe(404);
+         |                            ^
+      33 |     });
+      34 |
+      35 |     test("MNU-022: 422 — invalid ID format", async ({ adminApi }) => {
+        at /Users/developer/Desktop/khelovani-Web-admin-Back/tests/api/admin/menu/suites/updateMenuItem.suite.ts:32:28
+
+    Error Context: test-results/api-admin-menu-menu.api-Ad-7621c-date-non-existent-menu-item-chromium/error-context.md
+
+  5) [chromium] › tests/api/admin/menu/suites/deleteMenuItem.suite.ts:7:5 › Admin Menu API › 4. DELETE /api/admin/menu/:id — Delete Menu Item › MNU-030: 200 — successfully delete menu item 
+
+    Error: Failed to create menu item. Status: 422
+
+       at api/admin/menu/menu.helpers.ts:18
+
+      16 |   const res = await adminApi.post(ENDPOINTS.ADMIN_MENU, { data: payload });
+      17 |   if (res.status() !== 201) {
+    > 18 |     throw new Error(`Failed to create menu item. Status: ${res.status()}`);
+         |           ^
+      19 |   }
+      20 |   const body = await res.json();
+      21 |   return { id: body._id || body.data?._id || body.menuItem?._id, payload, res };
+        at createMenuItem (/Users/developer/Desktop/khelovani-Web-admin-Back/tests/api/admin/menu/menu.helpers.ts:18:11)
+        at /Users/developer/Desktop/khelovani-Web-admin-Back/tests/api/admin/menu/suites/deleteMenuItem.suite.ts:11:22
+
+    Error Context: test-results/api-admin-menu-menu.api-Ad-52051-ccessfully-delete-menu-item-chromium/error-context.md
+
+  6) [chromium] › tests/api/admin/menu/suites/menuSecurity.suite.ts:22:5 › Admin Menu API › 5. Security & Rate Limiting › MNU-042: 429 — rate limit triggered on write operations 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoContain[2m([22m[32mexpected[39m[2m) // indexOf[22m
+
+    Expected value: [32m429[39m
+    Received array: [31m[422, 422, 422, 422, 422, 422, 422, 422, 422, 422, …][39m
+
+      28 |       );
+      29 |       const statuses = results.map((r) => r.status());
+    > 30 |       expect(statuses).toContain(429);
+         |                        ^
+      31 |     });
+      32 |   });
+      33 | };
+        at /Users/developer/Desktop/khelovani-Web-admin-Back/tests/api/admin/menu/suites/menuSecurity.suite.ts:30:24
+
+    Error Context: test-results/api-admin-menu-menu.api-Ad-368f6-iggered-on-write-operations-chromium/error-context.md
+
+  6 failed
+    [chromium] › tests/api/admin/menu/suites/createMenuItem.suite.ts:7:5 › Admin Menu API › 1. POST /api/admin/menu — Create Menu Item › MNU-001: 201 — create menu item with all valid fields 
+    [chromium] › tests/api/admin/menu/suites/getMenuItems.suite.ts:7:5 › Admin Menu API › 2. GET /api/admin/menu — Get Menu Items › MNU-010: 200 — get list of menu items 
+    [chromium] › tests/api/admin/menu/suites/updateMenuItem.suite.ts:7:5 › Admin Menu API › 3. PUT /api/admin/menu/:id — Update Menu Item › MNU-020: 200 — partially update a menu item 
+    [chromium] › tests/api/admin/menu/suites/updateMenuItem.suite.ts:27:5 › Admin Menu API › 3. PUT /api/admin/menu/:id — Update Menu Item › MNU-021: 404 — update non-existent menu item 
+    [chromium] › tests/api/admin/menu/suites/deleteMenuItem.suite.ts:7:5 › Admin Menu API › 4. DELETE /api/admin/menu/:id — Delete Menu Item › MNU-030: 200 — successfully delete menu item 
+    [chromium] › tests/api/admin/menu/suites/menuSecurity.suite.ts:22:5 › Admin Menu API › 5. Security & Rate Limiting › MNU-042: 429 — rate limit triggered on write operations 
+  9 passed (10.2s)

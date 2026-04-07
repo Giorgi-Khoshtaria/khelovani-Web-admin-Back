@@ -19,7 +19,7 @@ export const getPublicPartnerById = async (
     const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
 
     if (!mongoose.Types.ObjectId.isValid(id as string)) {
-      res.status(400).json({
+      res.status(422).json({
         message: tAlerts("invalid_partner_id"),
       });
       return;

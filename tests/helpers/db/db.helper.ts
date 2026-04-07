@@ -1,13 +1,13 @@
 import { MongoClient } from "mongodb";
 import bcrypt from "bcrypt";
 import "dotenv/config";
+import { PERMISSIONS } from "../../../src/middleware/role/permissions.js";
 
 /**
  * Helper to directly interact with the test database using standard MongoDB driver.
  */
 export class DbHelper {
   private static client: MongoClient | null = null;
-
   private static async getClient(): Promise<MongoClient> {
     if (this.client) return this.client;
     const uri = process.env.MONGODB_URL_TEST;
@@ -47,13 +47,63 @@ export class DbHelper {
     const client = await this.getClient();
     const db = client.db();
 
-    // First, get the admin role
-    const role = await db.collection("roles").findOne({ name: "admin" });
-    if (!role) {
-      throw new Error(
-        "Admin role not found in database. Run seed:roles first.",
+    // First, ensure all permissions exist in the DB (Optimized: only if missing)
+    const adminPerms = Object.values(PERMISSIONS.ADMIN);
+    const orgPerms = Object.values(PERMISSIONS.PARTNER);
+    const allPermsNames = [...new Set([...adminPerms, ...orgPerms])];
+
+    const existingInDb = await db
+      .collection("permissions")
+      .find({ name: { $in: allPermsNames } })
+      .project({ name: 1 })
+      .toArray();
+
+    const missingPerms = allPermsNames.filter(
+      (p) => !existingInDb.some((e) => e.name === p),
+    );
+
+    if (missingPerms.length > 0) {
+      const ops = missingPerms.map((p) => ({
+        updateOne: {
+          filter: { name: p },
+          update: { $set: { name: p } },
+          upsert: true,
+        },
+      }));
+      await db.collection("permissions").bulkWrite(ops);
+    }
+
+    // Now get all permissions to assign to admin
+    const finalAdminPermissions = await db
+      .collection("permissions")
+      .find({
+        name: { $in: adminPerms },
+      })
+      .toArray();
+
+    if (finalAdminPermissions.length < adminPerms.length) {
+      const foundNames = finalAdminPermissions.map((p) => p.name);
+      const missing = adminPerms.filter((p) => !foundNames.includes(p));
+      console.warn(
+        `Warning: Some admin permissions not found in DB: ${missing.join(", ")}`,
       );
     }
+
+    const permissionIds = finalAdminPermissions.map((p) => p._id);
+
+    await db.collection("roles").updateOne(
+      { name: "admin" },
+      {
+        $set: {
+          isActive: true,
+          permissions: permissionIds,
+          allowedPanels: ["admin", "admin-organization"],
+        },
+      },
+      { upsert: true },
+    );
+    const role = await db.collection("roles").findOne({ name: "admin" });
+    if (!role) throw new Error("Failed to find or create admin role");
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -120,18 +170,50 @@ export class DbHelper {
     const client = await this.getClient();
     const db = client.db();
 
-    // 1. Get the organisation role and ensure it's active
+    // 1. Ensure partner permissions exist (Optimized)
+    const orgPerms = Object.values(PERMISSIONS.PARTNER);
+    const existingInDb = await db
+      .collection("permissions")
+      .find({ name: { $in: orgPerms } })
+      .project({ name: 1 })
+      .toArray();
+
+    const missingPerms = orgPerms.filter(
+      (p) => !existingInDb.some((e) => e.name === p),
+    );
+
+    if (missingPerms.length > 0) {
+      const ops = missingPerms.map((p) => ({
+        updateOne: {
+          filter: { name: p },
+          update: { $set: { name: p } },
+          upsert: true,
+        },
+      }));
+      await db.collection("permissions").bulkWrite(ops);
+    }
+
+    const partnerPermissions = await db
+      .collection("permissions")
+      .find({
+        name: { $in: orgPerms },
+      })
+      .toArray();
+    const partnerPermissionIds = partnerPermissions.map((p) => p._id);
+
     await db.collection("roles").updateOne(
       { name: "organisation" },
-      { $set: { isActive: true } },
-      { upsert: true }
+      {
+        $set: {
+          isActive: true,
+          permissions: partnerPermissionIds,
+          allowedPanels: ["admin-organization"],
+        },
+      },
+      { upsert: true },
     );
     const role = await db.collection("roles").findOne({ name: "organisation" });
-    if (!role) {
-      throw new Error(
-        "Organisation role not found in database. Run seed:roles first.",
-      );
-    }
+    if (!role) throw new Error("Failed to find or create organisation role");
 
     // 2. Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);

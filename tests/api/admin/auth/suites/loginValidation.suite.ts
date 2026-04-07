@@ -1,4 +1,5 @@
-import { test, expect } from "../../../../fixtures/auth.fixture.js";
+import { test } from "../../../../fixtures/admin.fixture.js";
+import { expect } from "@playwright/test";
 import { ENDPOINTS } from "../../../../constants/endpoints.js";
 import { emailValidationScenarios } from "../../../../helpers/shared/validation.helper.js";
 import { adminLogin } from "../auth.helpers.js";
@@ -21,7 +22,8 @@ export const loginValidationSuites = () => {
 
         const body = await res.json();
         expect(body).toHaveProperty("errors");
-        expect(body.errors).toHaveProperty("email");
+        expect(Array.isArray(body.errors)).toBe(true);
+        expect(body.errors.some((e: any) => e.field === "email")).toBe(true);
       });
     });
   });
@@ -67,7 +69,8 @@ export const loginValidationSuites = () => {
       expect(res.status()).toBe(422);
 
       const body = await res.json();
-      expect(body.errors).toHaveProperty("password");
+      expect(Array.isArray(body.errors)).toBe(true);
+      expect(body.errors.some((e: any) => e.field === "password")).toBe(true);
     });
   });
 };

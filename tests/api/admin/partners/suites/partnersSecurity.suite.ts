@@ -1,4 +1,5 @@
-import { test, expect } from "../../../../fixtures/auth.fixture.js";
+import { test } from "../../../../fixtures/admin.fixture.js";
+import { expect } from "@playwright/test";
 import { ENDPOINTS } from "../../../../constants/endpoints.js";
 import { PartnerStatusEnum } from "../../../../../src/types/partnerStatus.js";
 import { createPendingPartner } from "../partners.helpers.js";
@@ -93,7 +94,8 @@ export const partnersSecuritySuites = () => {
     }) => {
       const res = await adminApi.get(ENDPOINTS.ADMIN_PARTNERS);
       const body = await res.json();
-      for (const partner of body) {
+      const partners = body.partners || body;
+      for (const partner of partners) {
         expect(partner).not.toHaveProperty("password");
         expect(partner).not.toHaveProperty("passwordHash");
       }
@@ -131,12 +133,12 @@ export const partnersSecuritySuites = () => {
       const traversals = ["../admin", "..%2Fadmin", "%2e%2e%2fadmin"];
       for (const id of traversals) {
         const res = await adminApi.get(`${ENDPOINTS.ADMIN_PARTNERS}/${id}`);
-        expect([400, 404]).toContain(res.status());
+        expect([404, 422]).toContain(res.status());
         expect(res.status()).not.toBe(500);
       }
     });
 
-    test("AA-084: mass assignment — cannot set role=superadmin via status PATCH", async ({
+    test("AA-084: mass assignment — cannot set role=admin via status PATCH", async ({
       adminApi,
       api,
     }) => {
@@ -146,13 +148,13 @@ export const partnersSecuritySuites = () => {
         await adminApi.patch(`${ENDPOINTS.ADMIN_PARTNERS}/${id}/status`, {
           data: {
             status: PartnerStatusEnum.APPROVED,
-            role: "superadmin",
+            role: "admin",
             isAdmin: true,
           },
         })
       ).json();
 
-      expect(body.role).not.toBe("superadmin");
+      expect(body.role).not.toBe("admin");
       expect(body.isAdmin).not.toBe(true);
     });
 
@@ -197,11 +199,15 @@ export const partnersSecuritySuites = () => {
         {
           data: {
             status: PartnerStatusEnum.APPROVED,
-            junk: "x".repeat(1_000_000),
+            junk: "x".repeat(1_000_000), // 1MB payload
           },
         },
       );
-      expect([200, 400, 413]).toContain(res.status());
+      // If schema is not strict, it might be 200 (ignored junk). 
+      // If express limit is hit, it's 413. 
+      // If validation fails, it's 422.
+      // The important part is it's NOT 500.
+      expect([200, 413, 422]).toContain(res.status());
       expect(res.status()).not.toBe(500);
     });
   });

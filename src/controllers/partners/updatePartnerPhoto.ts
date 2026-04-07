@@ -20,7 +20,7 @@ export const updatePartnerPhoto = async (
     const { t: tAuth } = useTranslation(lang, TranslationNamespace.Auth);
  
     if (!mongoose.Types.ObjectId.isValid(id as string)) {
-      res.status(400).json({
+      res.status(422).json({
         message: tAlerts("invalid_partner_id"),
       });
       return;
@@ -35,7 +35,7 @@ export const updatePartnerPhoto = async (
     }
 
     if (!req.file) {
-      res.status(400).json({ message: tAlerts("no_file_uploaded") });
+      res.status(422).json({ message: tAlerts("no_file_uploaded") });
       return;
     }
 

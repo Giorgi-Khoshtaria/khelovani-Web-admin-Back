@@ -1,7 +1,6 @@
 import bcrypt from "bcrypt";
 import type { Request, Response } from "express";
 import { Types } from "mongoose";
-import { validateLoginForm } from "../../../validations/forms/loginValidation.js";
 import { PartnerStatusEnum } from "../../../types/partnerStatus.js";
 import { generateJWTToken } from "../../../utils/token/genereateJWT-token.js";
 import Organisation from "../../../modules/organization.modules.js";
@@ -34,16 +33,8 @@ export const loginAdmin = async (
     const lang = (req.query.lang as Lang) || "ge";
     const { t: tAuth } = useTranslation(lang, TranslationNamespace.Auth);
 
-    // ── Validate fields ──────────────────────────────────────────────────────
-    const validationErrors = validateLoginForm({ email, password }, lang);
-    if (Object.keys(validationErrors).length > 0) {
-      res.status(422).json({ errors: validationErrors });
-      return;
-    }
-
     // ── Find admin + populate role ──────────────────────────────────────────
-    const normalizedEmail =
-      typeof email === "string" ? email.toLowerCase().trim() : "";
+    const normalizedEmail = email.toLowerCase();
     const admin = await Admin.findOne({ email: normalizedEmail }).populate<{
       role: PopulatedRole | null;
     }>({
@@ -54,7 +45,7 @@ export const loginAdmin = async (
     if (admin) {
       // Guard: role must exist (admins don't need isActive check)
       if (!admin.role) {
-        res.status(403).json({
+        res.status(422).json({
           message: tAuth("role_not_found"),
         });
         return;
@@ -107,7 +98,7 @@ export const loginAdmin = async (
 
     // ── Guard: role must exist ─────────────────────────────────
     if (!partner.role) {
-      res.status(403).json({
+      res.status(422).json({
         message: tAuth("role_not_found"),
       });
       return;
@@ -115,7 +106,7 @@ export const loginAdmin = async (
 
     // ── Guard: role must be active ─────────────────────────────────
     if (!partner.role.isActive) {
-      res.status(403).json({
+      res.status(422).json({
         message: tAuth("org_not_active"),
       });
       return;
@@ -123,7 +114,7 @@ export const loginAdmin = async (
 
     // ── Guard: organisation must be approved ─────────────────────────────────
     if (partner.status !== PartnerStatusEnum.APPROVED) {
-      res.status(403).json({
+      res.status(422).json({
         message: tAuth("org_not_verified"),
       });
       return;

@@ -1,9 +1,7 @@
-import { test, expect } from "../../../../fixtures/auth.fixture.js";
+import { test } from "../../../../fixtures/admin.fixture.js";
+import { expect } from "@playwright/test";
 import { ENDPOINTS } from "../../../../constants/endpoints.js";
-import {
-  createPermission,
-  deletePermission,
-} from "../permissions.helpers.js";
+import { createPermission, deletePermission } from "../permissions.helpers.js";
 
 export const deletePermissionSuites = () => {
   test.describe("5. DELETE /api/admin/permissions/:id — Delete", () => {
@@ -30,13 +28,13 @@ export const deletePermissionSuites = () => {
       expect(res.status()).toBe(404);
     });
 
-    test("PRM-072: 400 — delete invalid ObjectId format", async ({
+    test("PRM-072: 422 — delete invalid ObjectId format", async ({
       adminApi,
     }) => {
       const res = await adminApi.delete(
         `${ENDPOINTS.ADMIN_PERMISSIONS}/not-a-valid-id`,
       );
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
     test("PRM-073: 404 — delete already deleted permission (idempotency check)", async ({

@@ -17,7 +17,7 @@ export const getPermissionById = async (
     const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
 
     if (!mongoose.Types.ObjectId.isValid(id as string)) {
-      res.status(400).json({ message: tAlerts("invalid_id") || "Invalid ID format" });
+      res.status(422).json({ message: tAlerts("invalid_id") || "Invalid ID format" });
       return;
     }
 
@@ -28,7 +28,11 @@ export const getPermissionById = async (
     }
 
     res.status(200).json(permission);
-  } catch (error) {
-    res.status(500).json({ message: (error as Error).message });
+  } catch (error: any) {
+    if (error.name === "ValidationError" || error.name === "CastError") {
+      res.status(422).json({ message: error.message });
+      return;
+    }
+    res.status(500).json({ message: error.message });
   }
 };

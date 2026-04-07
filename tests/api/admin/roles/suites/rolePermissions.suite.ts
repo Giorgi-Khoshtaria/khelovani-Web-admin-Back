@@ -1,4 +1,5 @@
-import { test, expect } from "../../../../fixtures/auth.fixture.js";
+import { test } from "../../../../fixtures/admin.fixture.js";
+import { expect } from "@playwright/test";
 import { ENDPOINTS } from "../../../../constants/endpoints.js";
 import {
   createRole,
@@ -78,24 +79,29 @@ export const rolePermissionsSuites = () => {
     test("ROL-113: role with 50 permissions assigned — no 500", async ({
       adminApi,
     }) => {
-      const permIds: string[] = [];
+      let permIds: string[] = [];
       try {
-        for (let i = 0; i < 50; i++) {
-          const { id } = await createPermission(adminApi);
-          permIds.push(id);
-        }
+        const permResults = await Promise.all(
+          Array.from({ length: 50 }).map(() => createPermission(adminApi))
+        );
+        permIds = permResults.map(p => p.id);
+
         const res = await adminApi.post(ENDPOINTS.ADMIN_ROLES, {
           data: { ...VALID_ROLE, name: uniqueName(), permissions: permIds },
         });
+        
         expect([201, 400]).toContain(res.status());
         expect(res.status()).not.toBe(500);
+        
         if (res.status() === 201) {
           const body = await res.json();
-          await deleteRole(adminApi, body.role._id);
+          await deleteRole(adminApi, body.role?._id || body._id);
         }
       } finally {
-        for (const id of permIds) {
-          await deletePermission(adminApi, id);
+        if (permIds.length > 0) {
+          await Promise.allSettled(
+            permIds.map(id => deletePermission(adminApi, id))
+          );
         }
       }
     });

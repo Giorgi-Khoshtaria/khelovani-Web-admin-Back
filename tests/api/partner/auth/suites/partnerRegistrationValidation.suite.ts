@@ -1,6 +1,10 @@
-import { test, expect, UserFixtures } from "../../../../fixtures/auth.fixture.js";
+import { test, PartnerFixtures } from "../../../../fixtures/partner.fixture.js";
+import { expect } from "@playwright/test";
 import { randomId, randomEmail } from "../../../../helpers/utils/generators.js";
-import { registerPartner, registerPartnerAndTrack } from "../registration.helpers.js";
+import {
+  registerPartner,
+  registerPartnerAndTrack,
+} from "../registration.helpers.js";
 import {
   emailValidationScenarios,
   phoneValidationScenarios,
@@ -12,9 +16,11 @@ export const partnerRegistrationValidationSuites = () => {
     test("PRT-004: 409 — duplicate email", async ({
       api,
       createdPartners,
-    }: UserFixtures) => {
+    }: PartnerFixtures) => {
       const sharedEmail = randomEmail();
-      await registerPartnerAndTrack(api, createdPartners, { email: sharedEmail });
+      await registerPartnerAndTrack(api, createdPartners, {
+        email: sharedEmail,
+      });
 
       const res = await registerPartner(api, { email: sharedEmail });
       expect(res.status()).toBe(409);
@@ -26,7 +32,7 @@ export const partnerRegistrationValidationSuites = () => {
 
     test("PRT-005: 409 — duplicate identification code", async ({
       api,
-    }: UserFixtures) => {
+    }: PartnerFixtures) => {
       const sharedCode = randomId().slice(0, 9);
       await registerPartner(api, { identificationCode: sharedCode });
 
@@ -91,7 +97,12 @@ export const partnerRegistrationValidationSuites = () => {
         value: false,
         note: "terms not accepted",
       },
-      { id: "PRT-024", field: "terms", value: null as any, note: "terms = null" },
+      {
+        id: "PRT-024",
+        field: "terms",
+        value: null as any,
+        note: "terms = null",
+      },
     ];
 
     const allScenarios = [
@@ -111,7 +122,7 @@ export const partnerRegistrationValidationSuites = () => {
     ];
 
     for (const { id, field, value, note } of allScenarios) {
-      test(`${id}: 422 — ${note}`, async ({ api }: UserFixtures) => {
+      test(`${id}: 422 — ${note}`, async ({ api }: PartnerFixtures) => {
         const overrides = { [field]: value } as any;
         if (field !== "email") {
           overrides.email = randomEmail();
@@ -132,7 +143,7 @@ export const partnerRegistrationValidationSuites = () => {
   test.describe("4. Address Validation", () => {
     test("PRT-025: 422 — address with non-Georgian characters", async ({
       api,
-    }: UserFixtures) => {
+    }: PartnerFixtures) => {
       const res = await registerPartner(api, { address: "123 Main Street" });
       expect(res.status()).toBe(422);
 
@@ -144,7 +155,7 @@ export const partnerRegistrationValidationSuites = () => {
 
     test("PRT-026: 422 — addressEn with non-English characters", async ({
       api,
-    }: UserFixtures) => {
+    }: PartnerFixtures) => {
       const res = await registerPartner(api, { addressEn: "123 მთავარი ქუჩა" });
       expect(res.status()).toBe(422);
 

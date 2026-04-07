@@ -34,10 +34,28 @@ const ProductSchema = new Schema<IProduct>(
     owner: { type: Schema.Types.ObjectId, ref: "Organisation", required: true },
     images: { type: [String], required: true },
     
-    titleGe: { type: String, required: true, trim: true },
-    titleEn: { type: String, trim: true },
-    descriptionGe: { type: String, required: true, trim: true },
-    descriptionEn: { type: String, trim: true },
+    titleGe: { 
+      type: String, 
+      required: true, 
+      trim: true,
+      match: [/^[ა-ჰ0-9\s.,/\\\-()!?:;$%&*#@]+$/, "Georgian title must be in Georgian alphabet"]
+    },
+    titleEn: { 
+      type: String, 
+      trim: true,
+      match: [/^[a-zA-Z0-9\s.,/\\\-()!?:;$%&*#@]+$/, "English title must be in English alphabet"]
+    },
+    descriptionGe: { 
+      type: String, 
+      required: true, 
+      trim: true,
+      match: [/^[ა-ჰ0-9\s.,/\\\-()!?:;$%&*#@]+$/, "Georgian description must be in Georgian alphabet"]
+    },
+    descriptionEn: { 
+      type: String, 
+      trim: true,
+      match: [/^[a-zA-Z0-9\s.,/\\\-()!?:;$%&*#@]+$/, "English description must be in English alphabet"]
+    },
     
     category: { 
       type: String, 

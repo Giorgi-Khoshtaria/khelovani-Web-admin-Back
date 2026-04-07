@@ -1,4 +1,5 @@
-import { test, expect } from "../../../../fixtures/auth.fixture.js";
+import { test } from "../../../../fixtures/admin.fixture.js";
+import { expect } from "@playwright/test";
 import { ENDPOINTS } from "../../../../constants/endpoints.js";
 import {
   createRole,
@@ -76,7 +77,7 @@ export const updateRoleSuites = () => {
       }
     });
 
-    test("ROL-064: 400 — invalid panel name in allowedPanels", async ({
+    test("ROL-064: 422 — invalid panel name in allowedPanels", async ({
       adminApi,
     }) => {
       const { id } = await createRole(adminApi);
@@ -84,13 +85,13 @@ export const updateRoleSuites = () => {
         const res = await adminApi.put(`${ENDPOINTS.ADMIN_ROLES}/${id}`, {
           data: { allowedPanels: ["invalid-panel-xyz"] },
         });
-        expect(res.status()).toBe(400);
+        expect(res.status()).toBe(422);
       } finally {
         await deleteRole(adminApi, id);
       }
     });
 
-    test("ROL-065: 400 — non-existent permission ObjectId in permissions array", async ({
+    test("ROL-065: 422 — non-existent permission ObjectId in permissions array", async ({
       adminApi,
     }) => {
       const { id } = await createRole(adminApi);
@@ -98,13 +99,13 @@ export const updateRoleSuites = () => {
         const res = await adminApi.put(`${ENDPOINTS.ADMIN_ROLES}/${id}`, {
           data: { permissions: ["000000000000000000000000"] },
         });
-        expect(res.status()).toBe(400);
+        expect(res.status()).toBe(422);
       } finally {
         await deleteRole(adminApi, id);
       }
     });
 
-    test("ROL-066: 400 — malformed permission ID in permissions array", async ({
+    test("ROL-066: 422 — malformed permission ID in permissions array", async ({
       adminApi,
     }) => {
       const { id } = await createRole(adminApi);
@@ -112,7 +113,7 @@ export const updateRoleSuites = () => {
         const res = await adminApi.put(`${ENDPOINTS.ADMIN_ROLES}/${id}`, {
           data: { permissions: ["not-a-valid-id"] },
         });
-        expect(res.status()).toBe(400);
+        expect(res.status()).toBe(422);
       } finally {
         await deleteRole(adminApi, id);
       }
@@ -130,22 +131,22 @@ export const updateRoleSuites = () => {
       expect(res.status()).toBe(404);
     });
 
-    test("ROL-068: 400 — invalid ObjectId format in URL", async ({
+    test("ROL-068: 422 — invalid ObjectId format in URL", async ({
       adminApi,
     }) => {
       const res = await adminApi.put(`${ENDPOINTS.ADMIN_ROLES}/bad-id`, {
         data: { description: "irrelevant" },
       });
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
-    test("ROL-069: 400 — empty body {}", async ({ adminApi }) => {
+    test("ROL-069: 422 — empty body {}", async ({ adminApi }) => {
       const { id } = await createRole(adminApi);
       try {
         const res = await adminApi.put(`${ENDPOINTS.ADMIN_ROLES}/${id}`, {
           data: {},
         });
-        expect([400, 422]).toContain(res.status());
+        expect(res.status()).toBe(422);
       } finally {
         await deleteRole(adminApi, id);
       }
@@ -261,7 +262,7 @@ export const updateRoleSuites = () => {
       }
     });
 
-    test("ROL-076: [BVA] 400 — description exceeds max length (501 chars)", async ({
+    test("ROL-076: [BVA] 422 — description exceeds max length (501 chars)", async ({
       adminApi,
     }) => {
       const { id } = await createRole(adminApi);
@@ -269,13 +270,13 @@ export const updateRoleSuites = () => {
         const res = await adminApi.put(`${ENDPOINTS.ADMIN_ROLES}/${id}`, {
           data: { description: "x".repeat(501) },
         });
-        expect([400, 422]).toContain(res.status());
+        expect(res.status()).toBe(422);
       } finally {
         await deleteRole(adminApi, id);
       }
     });
 
-    test("ROL-077: 400 — allowedPanels is empty after update (if required)", async ({
+    test("ROL-077: 422 — allowedPanels is empty after update (if required)", async ({
       adminApi,
     }) => {
       const { id } = await createRole(adminApi);
@@ -283,7 +284,7 @@ export const updateRoleSuites = () => {
         const res = await adminApi.put(`${ENDPOINTS.ADMIN_ROLES}/${id}`, {
           data: { allowedPanels: [] },
         });
-        expect([200, 400]).toContain(res.status());
+        expect([200, 422]).toContain(res.status());
       } finally {
         await deleteRole(adminApi, id);
       }

@@ -15,7 +15,7 @@ export const getRoleById = async (req: Request, res: Response): Promise<void> =>
     const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
 
     if (!mongoose.Types.ObjectId.isValid(id as string)) {
-      res.status(400).json({ message: "Invalid role ID format" });
+      res.status(422).json({ message: "Invalid role ID format" });
       return;
     }
 
@@ -26,7 +26,11 @@ export const getRoleById = async (req: Request, res: Response): Promise<void> =>
     }
 
     res.status(200).json(role);
-  } catch (error) {
-    res.status(500).json({ message: (error as Error).message });
+  } catch (error: any) {
+    if (error.name === "ValidationError" || error.name === "CastError") {
+      res.status(422).json({ message: error.message });
+      return;
+    }
+    res.status(500).json({ message: error.message });
   }
 };

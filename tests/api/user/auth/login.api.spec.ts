@@ -1,4 +1,4 @@
-import { test } from "../../../fixtures/auth.fixture.js";
+import { test } from "../../../fixtures/user.fixture.js";
 import { loginHappyPathSuites } from "./suites/login/loginHappyPath.suite.js";
 import { loginValidationSuites } from "./suites/login/loginValidation.suite.js";
 import { loginSecuritySuites } from "./suites/login/loginSecurity.suite.js";
@@ -10,7 +10,7 @@ import { loginSecuritySuites } from "./suites/login/loginSecurity.suite.js";
  */
 
 test.describe("User Login API", () => {
-  test.setTimeout(120_000); // Higher timeout for Mail.tm/Rate limiting
+  test.setTimeout(120_000);
   loginHappyPathSuites();
   loginValidationSuites();
   loginSecuritySuites();

@@ -1,9 +1,7 @@
-import { test, expect } from "../../../../fixtures/auth.fixture.js";
+import { test } from "../../../../fixtures/admin.fixture.js";
+import { expect } from "@playwright/test";
 import { ENDPOINTS } from "../../../../constants/endpoints.js";
-import {
-  createPermission,
-  deletePermission,
-} from "../permissions.helpers.js";
+import { createPermission, deletePermission } from "../permissions.helpers.js";
 
 export const updatePermissionSuites = () => {
   test.describe("4. PUT /api/admin/permissions/:id — Update", () => {
@@ -112,29 +110,29 @@ export const updatePermissionSuites = () => {
       expect(res.status()).toBe(404);
     });
 
-    test("PRM-056: 400 — invalid ObjectId format in URL", async ({
+    test("PRM-056: 422 — invalid ObjectId format in URL", async ({
       adminApi,
     }) => {
       const res = await adminApi.put(`${ENDPOINTS.ADMIN_PERMISSIONS}/bad-id`, {
         data: { description: "irrelevant" },
       });
-      expect(res.status()).toBe(400);
+      expect(res.status()).toBe(422);
     });
 
-    test("PRM-057: 400 — empty body {}", async ({ adminApi }) => {
+    test("PRM-057: 422 — empty body {}", async ({ adminApi }) => {
       const { id } = await createPermission(adminApi);
 
       try {
         const res = await adminApi.put(`${ENDPOINTS.ADMIN_PERMISSIONS}/${id}`, {
           data: {},
         });
-        expect([400, 422]).toContain(res.status());
+        expect(res.status()).toBe(422);
       } finally {
         await deletePermission(adminApi, id);
       }
     });
 
-    test("PRM-058: 400 — description exceeds max length (1001 chars)", async ({
+    test("PRM-058: 422 — description exceeds max length (1001 chars)", async ({
       adminApi,
     }) => {
       const { id } = await createPermission(adminApi);
@@ -143,7 +141,7 @@ export const updatePermissionSuites = () => {
         const res = await adminApi.put(`${ENDPOINTS.ADMIN_PERMISSIONS}/${id}`, {
           data: { description: "x".repeat(1001) },
         });
-        expect([400, 422]).toContain(res.status());
+        expect(res.status()).toBe(422);
       } finally {
         await deletePermission(adminApi, id);
       }

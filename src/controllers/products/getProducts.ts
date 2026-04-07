@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import mongoose from "mongoose";
 import Product from "../../modules/product.modules.js";
 
 // @desc    Get all products
@@ -25,6 +26,14 @@ export const getProducts = async (
       req.user?.permissions?.includes("products.viewAll");
 
     if (targetPartnerId) {
+      if (!mongoose.Types.ObjectId.isValid(targetPartnerId as string)) {
+        res.status(400).json({ message: "Invalid partner ID format" });
+        return;
+      }
+      if (!isAdmin && targetPartnerId !== userId) {
+        res.status(403).json({ message: "Forbidden: Cannot access another partner's products" });
+        return;
+      }
       query.owner = targetPartnerId;
     }
     // If no partnerId, and it's not an admin, filter by the logged-in user's products
@@ -47,7 +56,7 @@ export const getProducts = async (
       ];
     }
 
-    const products = await Product.find(query).sort({ createdAt: -1 });
+    const products = await Product.find(query).sort({ createdAt: -1 }).select("-__v");
 
     res.status(200).json(products);
   } catch (error) {
