@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CraftCategory } from "../../types/itemsCategory.enum.js";
+import { ProductCategory } from "../../types/itemsCategory.enum.js";
 
 const georgianRegex = /^[ა-ჰ0-9\s.,/\\\-()!?:;$%&*#@]+$/;
 const englishRegex = /^[a-zA-Z0-9\s.,/\\\-()!?:;$%&*#@]+$/;
@@ -39,15 +39,13 @@ export const productSchema = {
         .max(2000, "descriptionEn_max")
         .regex(englishRegex, "descriptionEn_english"),
 
-      category: z.nativeEnum(CraftCategory),
+      category: z.nativeEnum(ProductCategory),
 
-      price: z
-        .number()
-        .positive("invalid_price"),
+      price: z.number().positive("invalid_price"),
 
-      stockQuantity: z
-        .number()
-        .min(0, "invalid_stock"),
+      stockQuantity: z.number().min(0, "invalid_stock"),
+
+      currency: z.string().trim().optional().default("GEL"),
 
       locationGe: z
         .string()
@@ -115,9 +113,10 @@ export const productSchema = {
 
       shippingPrice: z.number().min(0, "invalid_shipping_price").optional(),
 
+      dimensions: z.string().trim().optional().or(z.literal("")),
       weight: z.number().positive("invalid_weight").optional(),
       shippingAvailable: z.boolean().optional().default(true),
-      isShown: z.boolean().optional().default(true),
+      isShown: z.boolean().optional().default(false),
       isOneOfAKind: z.boolean().optional().default(false),
     })
     .strict(),

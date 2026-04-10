@@ -6,6 +6,8 @@ import { Lang } from "../../types/lang.types.js";
 import { TranslationNamespace } from "../../types/translation.enum.js";
 import mongoose from "mongoose";
 
+import bcrypt from "bcrypt";
+
 // @desc    Update partner info
 // @route   PUT /api/partners/:id
 // @access  Private Admin/Owner
@@ -16,6 +18,12 @@ export const updatePartner = async (
   try {
     const { id } = req.params;
     const updateData = req.body;
+
+    // Hash password if updating
+    if (updateData.password) {
+      updateData.password = await bcrypt.hash(updateData.password, 10);
+    }
+
     const lang = (req.query.lang as Lang) || "ge";
     const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
     const { t: tAuth } = useTranslation(lang, TranslationNamespace.Auth);

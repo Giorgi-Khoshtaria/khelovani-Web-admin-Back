@@ -14,7 +14,7 @@ import { requirePermission } from "../../middleware/role/requirePermission.js";
 import { PERMISSIONS } from "../../middleware/role/permissions.js";
 import { twoMinutesLimiter } from "../../utils/limiters/rate-limit.js";
 import { validate } from "../../middleware/validate.js";
-import { translationSchema, bulkTranslationSchema } from "../../validations/schemas/translation.schema.js";
+import { createTranslationSchema, updateTranslationSchema, bulkTranslationSchema } from "../../validations/schemas/translation.schema.js";
 
 const router = Router();
 
@@ -28,7 +28,7 @@ router.post(
   authenticate,
   twoMinutesLimiter,
   requirePermission(PERMISSIONS.ADMIN.TRANSLATION_EDIT),
-  validate(translationSchema),
+  validate(createTranslationSchema),
   addTranslation,
 );
 router.post(
@@ -51,9 +51,10 @@ router.put(
   authenticate,
   twoMinutesLimiter,
   requirePermission(PERMISSIONS.ADMIN.TRANSLATION_EDIT),
-  validate(translationSchema),
+  validate(updateTranslationSchema),
   updateTranslation,
 );
+
 router.delete(
   "/:id",
   authenticate,

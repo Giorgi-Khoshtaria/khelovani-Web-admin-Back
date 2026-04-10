@@ -64,13 +64,34 @@ export const orgSchema = {
         .min(5, "address_min_length")
         .max(200, "address_max_length"),
 
+      addressEn: z
+        .string()
+        .trim()
+        .min(1, "addressEn_required")
+        .max(200, "addressEn_max_length")
+        .optional()
+        .or(z.literal("")),
+
       description: z
         .string()
         .max(500, "description_max_length")
         .optional()
         .or(z.literal("")),
+
+      descriptionEn: z
+        .string()
+        .max(500, "descriptionEn_max_length")
+        .optional()
+        .or(z.literal("")),
+
+      website: z.string().url("website_invalid").optional().or(z.literal("")),
+      facebook: z.string().url("facebook_invalid").optional().or(z.literal("")),
+      instagram: z.string().url("instagram_invalid").optional().or(z.literal("")),
+      tiktok: z.string().url("tiktok_invalid").optional().or(z.literal("")),
+
+      password: z.string().min(6, "password_min_length").optional(),
     })
-    .strict(),
+    .partial(),
 };
 
 /**
@@ -105,15 +126,26 @@ export const partnerRegistrationSchema = {
         .trim()
         .min(1, "addressEn_required")
         .regex(/^[a-zA-Z0-9\s.,/\\\-()]+$/, "addressEn_needs_english"),
-      description: z.string().max(500, "description_max_length").optional().or(z.literal("")),
-      descriptionEn: z.string().max(500, "description_max_length").optional().or(z.literal("")),
+      description: z
+        .string()
+        .max(500, "description_max_length")
+        .optional()
+        .or(z.literal("")),
+      descriptionEn: z
+        .string()
+        .max(500, "description_max_length")
+        .optional()
+        .or(z.literal("")),
       website: z.string().url("website_invalid").optional().or(z.literal("")),
       facebook: z.string().url("facebook_invalid").optional().or(z.literal("")),
-      instagram: z.string().url("instagram_invalid").optional().or(z.literal("")),
+      instagram: z
+        .string()
+        .url("instagram_invalid")
+        .optional()
+        .or(z.literal("")),
       tiktok: z.string().url("tiktok_invalid").optional().or(z.literal("")),
       terms: z.boolean().refine((val) => val === true, {
         message: "terms_required",
       }),
-    })
-    .strict(),
+    }),
 };

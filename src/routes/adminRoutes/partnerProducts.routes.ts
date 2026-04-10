@@ -57,7 +57,7 @@ router.delete(
   deleteProduct,
 );
 
-router.put(
+router.patch(
   "/:productId",
   requirePermission(
     PERMISSIONS.ADMIN.PRODUCT_EDIT,

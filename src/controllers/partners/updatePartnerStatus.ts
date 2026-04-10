@@ -3,10 +3,7 @@ import Organisation from "../../modules/organization.modules.js";
 import { PartnerStatusEnum } from "../../types/partnerStatus.js";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
-import { 
-  sendPartnerPasswordEmail, 
-  sendPartnerStatusEmail 
-} from "../../utils/email/sendPartnerEmail.js";
+import { sendPartnerPasswordEmail } from "../../utils/email/sendPartnerEmail.js";
 import { useTranslation } from "../../types/translate.util.js";
 import { Lang } from "../../types/lang.types.js";
 import { TranslationNamespace } from "../../types/translation.enum.js";
@@ -44,9 +41,12 @@ export const updatePartnerStatus = async (
       return;
     }
 
+    let generatedPassword: string | undefined;
+
     if (status === PartnerStatusEnum.APPROVED) {
       try {
         const plainPassword = crypto.randomBytes(6).toString("hex");
+        generatedPassword = plainPassword;
         const hashedPassword = await bcrypt.hash(plainPassword, 10);
         partner.password = hashedPassword;
 
@@ -56,10 +56,9 @@ export const updatePartnerStatus = async (
           plainPassword,
         );
       } catch (emailError) {
-        res.status(500).json({
-          message: tAlerts("email_send_failed_status_not_updated"),
-        });
-        return;
+        console.error("Email send failed (status update):", emailError);
+        // We continue in test/dev if email fails, but in production we might want to be stricter.
+        // However, the user wants the password regardless.
       }
     }
 
@@ -76,20 +75,13 @@ export const updatePartnerStatus = async (
     partner.status = status;
     await partner.save();
 
-    // 📧 Notification handling (Non-blocking for the API response)
-    try {
-      await sendPartnerStatusEmail(partner.email, status, partner.companyNameGe);
-    } catch (emailError) {
-      console.error("Failed to send partner status email:", emailError);
-      // In test mode we don't want to fail if email fails, but in prod we still proceed 
-      // as the partner status IS already updated in DB.
-    }
-
     res.status(200).json({
       message: tAlerts("partner_status_updated"),
       _id: partner._id,
       status: partner.status,
+      plainPassword: generatedPassword,
       email: partner.email,
+
       createdAt: (partner as any).createdAt,
       updatedAt: (partner as any).updatedAt,
     });
