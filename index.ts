@@ -24,10 +24,11 @@ app.set("trust proxy", 1);
 const PORT = process.env.PORT || 3001;
 
 // ✅ 1. cors პირველი
-const origins: string[] = [];
-if (process.env.FRONTEND_URL) origins.push(process.env.FRONTEND_URL);
-if (process.env.FRONTEND_URL_ADMIN)
-  origins.push(process.env.FRONTEND_URL_ADMIN);
+const origins = [
+  process.env.FRONTEND_URL,
+  process.env.FRONTEND_URL_ADMIN,
+  process.env.FRONTEND_ADMIN_LIVE_URL,
+].filter(Boolean) as string[];
 
 app.use(
   cors({
