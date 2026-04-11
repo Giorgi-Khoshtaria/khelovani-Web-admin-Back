@@ -14,7 +14,17 @@ export const getProducts = async (
     const userRole = req.user?.role?.toLowerCase();
     const userId = req.user?.id;
 
-    const { search, category, partnerId: queryPartnerId } = req.query;
+    const { 
+      search, 
+      category, 
+      partnerId: queryPartnerId,
+      page = "1",
+      limit = "10"
+    } = req.query;
+
+    const pageNumber = parseInt(page as string) || 1;
+    const limitNumber = parseInt(limit as string) || 10;
+    const skip = (pageNumber - 1) * limitNumber;
 
     let query: any = {};
 
@@ -56,10 +66,23 @@ export const getProducts = async (
       ];
     }
 
-    const products = await Product.find(query).sort({ createdAt: -1 }).select("-__v");
+    const totalCount = await Product.countDocuments(query);
+    const totalPages = Math.ceil(totalCount / limitNumber);
 
-    res.status(200).json(products);
+    const products = await Product.find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limitNumber)
+      .select("-__v");
+
+    res.status(200).json({
+      products,
+      totalCount,
+      totalPages,
+      currentPage: pageNumber,
+    });
   } catch (error) {
+    console.error("GetProducts Error:", error);
     res.status(500).json({ message: "Error fetching products" });
   }
 };
