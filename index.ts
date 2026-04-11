@@ -19,6 +19,8 @@ import uploadRoutes from "./src/routes/adminRoutes/upload.routes.js";
 
 const app = express();
 app.disable("x-powered-by");
+app.set("trust proxy", 1);
+
 const PORT = process.env.PORT || 3001;
 
 // ✅ 1. cors პირველი
