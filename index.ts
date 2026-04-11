@@ -28,6 +28,7 @@ const origins = [
   process.env.FRONTEND_URL,
   process.env.FRONTEND_URL_ADMIN,
   process.env.FRONTEND_ADMIN_LIVE_URL,
+  process.env.FRONTEND_WEB_LIVE_URL,
 ].filter(Boolean) as string[];
 
 app.use(
