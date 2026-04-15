@@ -28,7 +28,6 @@ export const deleteProduct = async (
 
     const isAdmin =
       userRole === "admin" ||
-      userRole === "super_admin" ||
       req.user?.permissions?.includes("products.viewAll");
 
     // Authorization: Admin can delete any product, Partner only their own

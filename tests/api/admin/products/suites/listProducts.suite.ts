@@ -3,7 +3,7 @@ import { expect } from "@playwright/test";
 import { ENDPOINTS } from "../../../../constants/endpoints.js";
 
 export const listProductsSuites = () => {
-  test.describe("1. List Products (GET /api/admin/products)", () => {
+  test.describe("1. List Products (GET /api/products)", () => {
     test("PR-001: Admin can list all products", async ({ adminApi }) => {
       const res = await adminApi.get(ENDPOINTS.ADMIN_PRODUCTS);
       expect(res.status()).toBe(200);

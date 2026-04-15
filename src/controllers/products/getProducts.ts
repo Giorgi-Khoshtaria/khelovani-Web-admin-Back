@@ -14,12 +14,12 @@ export const getProducts = async (
     const userRole = req.user?.role?.toLowerCase();
     const userId = req.user?.id;
 
-    const { 
-      search, 
-      category, 
+    const {
+      search,
+      category,
       partnerId: queryPartnerId,
       page = "1",
-      limit = "10"
+      limit = "10",
     } = req.query;
 
     const pageNumber = parseInt(page as string) || 1;
@@ -32,7 +32,6 @@ export const getProducts = async (
     const targetPartnerId = partnerId || queryPartnerId;
     const isAdmin =
       userRole === "admin" ||
-      userRole === "super_admin" ||
       req.user?.permissions?.includes("products.viewAll");
 
     if (targetPartnerId) {
@@ -40,17 +39,26 @@ export const getProducts = async (
         res.status(400).json({ message: "Invalid partner ID format" });
         return;
       }
+      // If filtering by partner, must be admin or the partner themselves
       if (!isAdmin && targetPartnerId !== userId) {
-        res.status(403).json({ message: "Forbidden: Cannot access another partner's products" });
+        res
+          .status(403)
+          .json({
+            message: "Forbidden: Cannot access another partner's products",
+          });
         return;
       }
       query.owner = targetPartnerId;
     }
-    // If no partnerId, and it's not an admin, filter by the logged-in user's products
-    else if (!isAdmin) {
-      query.owner = userId;
+    // Public view or general authenticated view
+    else {
+      // If not an admin, we only show public products by default
+      // UNLESS a partner is logged in and specifically browsing their own space (handled via targetPartnerId above)
+      if (!isAdmin) {
+        query.isShown = true;
+      }
+      // Admins get to see everything if they don't provide a targetPartnerId
     }
-    // If it's an admin and no partnerId, query remains empty {} to fetch all
 
     if (category && category !== "all") {
       query.category = category;

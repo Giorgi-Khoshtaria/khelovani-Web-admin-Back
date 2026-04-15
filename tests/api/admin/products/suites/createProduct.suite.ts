@@ -6,7 +6,7 @@ import fs from "fs";
 import path from "path";
 
 export const createProductSuites = () => {
-  test.describe("3. Create Product (POST /api/admin/products/partner/:id)", () => {
+  test.describe("3. Create Product (POST /api/products/partner/:id)", () => {
     const partnerId = process.env.ORGANIZER_PARTNER_ID!;
 
     // Use an actual tested image asset to avoid Cloudinary format errors
@@ -184,8 +184,8 @@ export const createProductSuites = () => {
         }
         expect(res.status()).toBe(422);
         const body = await res.json();
-        const hasField = body.errors.some((e: any) =>
-          e.field === t.field || e.field.startsWith(`${t.field}.`)
+        const hasField = body.errors.some(
+          (e: any) => e.field === t.field || e.field.startsWith(`${t.field}.`),
         );
         expect(hasField).toBe(true);
       });

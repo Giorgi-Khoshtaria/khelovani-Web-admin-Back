@@ -5,46 +5,51 @@ import {
   getProductById,
   updateProduct,
   deleteProduct,
-} from "../../controllers/products/index.js";
-import upload from "../../utils/config/multer.js";
-import { authenticate } from "../../middleware/auth/authenticate.js";
-import { requirePermission } from "../../middleware/role/requirePermission.js";
-import { PERMISSIONS } from "../../middleware/role/permissions.js";
-import { twoMinutesLimiter } from "../../utils/limiters/rate-limit.js";
-import { CloudinaryFolder } from "../../types/cloudinaryFolder.enum.js";
-import { handleMulterError } from "../../middleware/error/handleMulterError.js";
-import { validate } from "../../middleware/validate.js";
-import { parseProductData } from "../../middleware/parseProduct.js";
+} from "../controllers/products/index.js";
+import upload from "../utils/config/multer.js";
+import { authenticate, optionalAuthenticate } from "../middleware/auth/authenticate.js";
+import { requirePermission } from "../middleware/role/requirePermission.js";
+import { PERMISSIONS } from "../middleware/role/permissions.js";
+import { twoMinutesLimiter } from "../utils/limiters/rate-limit.js";
+import { CloudinaryFolder } from "../types/cloudinaryFolder.enum.js";
+import { handleMulterError } from "../middleware/error/handleMulterError.js";
+import { validate } from "../middleware/validate.js";
+import { parseProductData } from "../middleware/parseProduct.js";
 import {
   productSchema,
   updateProductSchema,
-} from "../../validations/schemas/product.schema.js";
+} from "../validations/schemas/product.schema.js";
 import {
   commonParamsSchema,
   productIdParamsSchema,
-} from "../../validations/schemas/common.schema.js";
+} from "../validations/schemas/common.schema.js";
 
 const router = Router();
 
-// ✅ Admin Product management routes
-router.use(authenticate);
-
-// Global product routes
+// ✅ Public fetching routes (with optional auth for admin/owner view)
 router.get(
   "/",
   twoMinutesLimiter,
-  requirePermission(PERMISSIONS.ADMIN.PRODUCT_VIEW_ALL),
+  optionalAuthenticate,
   getProducts,
 );
 
 router.get(
   "/:productId",
-  requirePermission(
-    PERMISSIONS.ADMIN.PRODUCT_VIEW_ALL,
-    PERMISSIONS.PARTNER.PRODUCT_VIEW,
-  ),
+  optionalAuthenticate,
   validate(productIdParamsSchema),
   getProductById,
+);
+
+// ✅ Protected management routes (require login)
+router.use(authenticate);
+
+// Global product listing for admins (keeps permission requirement)
+router.get(
+  "/all",
+  twoMinutesLimiter,
+  requirePermission(PERMISSIONS.ADMIN.PRODUCT_VIEW_ALL),
+  getProducts,
 );
 
 router.delete(

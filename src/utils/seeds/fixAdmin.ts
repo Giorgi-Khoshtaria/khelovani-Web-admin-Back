@@ -15,7 +15,7 @@ mongoose
     // 1. Find the admin role
     const adminRole = await Role.findOne({ name: ROLES.ADMIN });
     if (!adminRole) {
-      console.log("super_admin role not found! Run your seed script first.");
+      console.log("admin role not found! Run your seed script first.");
       process.exit(1);
     }
 
@@ -36,7 +36,7 @@ mongoose
       await adminRole.save();
     }
 
-    console.log(`✅ Success: ${email} is now Super Admin with active status.`);
+    console.log(`✅ Success: ${email} is now Admin with active status.`);
     process.exit(0);
   })
   .catch(console.error);

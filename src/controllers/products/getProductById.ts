@@ -26,15 +26,19 @@ export const getProductById = async (
       return;
     }
 
-    // Authorization: owner can see it, admin can see it, partner must be owner
+    // Authorization: anyone can see 'isShown' products.
+    // Otherwise, owner can see it, admin can see it.
     const isOwner = product.owner.toString() === userId;
     const isAdmin =
       userRole === "admin" ||
-      userRole === "super_admin" ||
       req.user?.permissions?.includes("products.viewAll");
 
-    if (!isOwner && !isAdmin) {
-      res.status(403).json({ message: "Unauthorized" });
+    if (!product.isShown && !isOwner && !isAdmin) {
+      res
+        .status(403)
+        .json({
+          message: "Forbidden: You do not have permission to view this product",
+        });
       return;
     }
 

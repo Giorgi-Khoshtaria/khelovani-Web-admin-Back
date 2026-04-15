@@ -11,7 +11,10 @@ import { SYSTEM_ROLES } from "./role.utils.js";
 // @desc    Delete a role
 // @route   DELETE /api/admin/roles/:id
 // @access  Private Admin
-export const deleteRole = async (req: Request, res: Response): Promise<void> => {
+export const deleteRole = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   try {
     const { id } = req.params;
     const lang = (req.query.lang as Lang) || "ge";
@@ -38,14 +41,18 @@ export const deleteRole = async (req: Request, res: Response): Promise<void> => 
     // Check Admins
     const inAdmin = await Admin.exists({ role: id as string });
     if (inAdmin) {
-      res.status(409).json({ message: "Cannot delete role assigned to an admin" });
+      res
+        .status(409)
+        .json({ message: "Cannot delete role assigned to an admin" });
       return;
     }
 
     // Check Organisations
     const inOrg = await Organisation.exists({ role: id as string });
     if (inOrg) {
-      res.status(409).json({ message: "Cannot delete role assigned to an organization" });
+      res
+        .status(409)
+        .json({ message: "Cannot delete role assigned to an organization" });
       return;
     }
 
@@ -53,7 +60,7 @@ export const deleteRole = async (req: Request, res: Response): Promise<void> => 
 
     res.status(200).json({
       message: tAlerts("role_deleted_success"),
-      _id: id
+      _id: id,
     });
   } catch (error: any) {
     if (error.name === "ValidationError" || error.name === "CastError") {

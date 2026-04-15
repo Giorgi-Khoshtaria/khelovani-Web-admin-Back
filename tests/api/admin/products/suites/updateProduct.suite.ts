@@ -6,7 +6,7 @@ import fs from "fs";
 import path from "path";
 
 export const updateProductSuites = () => {
-  test.describe("4. Update Product (PUT /api/admin/products/:productId)", () => {
+  test.describe("4. Update Product (PUT /api/products/:productId)", () => {
     let testProductId: string;
     const partnerId = process.env.ORGANIZER_PARTNER_ID!;
     const dummyImage = fs.readFileSync(

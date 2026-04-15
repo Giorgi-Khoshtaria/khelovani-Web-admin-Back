@@ -251,11 +251,10 @@ export const updateRoleSuites = () => {
       const { id } = await createRole(adminApi);
       try {
         const res = await adminApi.put(`${ENDPOINTS.ADMIN_ROLES}/${id}`, {
-          data: { description: "clean", isSuperAdmin: true, _id: "spoofed" },
+          data: { description: "clean", _id: "spoofed" },
         });
         expect(res.status()).toBe(200);
         const body = await res.json();
-        expect(body.role.isSuperAdmin).toBeUndefined();
         expect(body.role._id).toBe(id);
       } finally {
         await deleteRole(adminApi, id);

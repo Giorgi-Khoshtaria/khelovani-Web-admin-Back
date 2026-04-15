@@ -4,7 +4,7 @@ import { ENDPOINTS } from "../../../../constants/endpoints.js";
 import { createTestProduct, cleanupProduct } from "../products.helpers.js";
 
 export const getProductByIdSuites = () => {
-  test.describe("2. Get Product By ID (GET /api/admin/products/:productId)", () => {
+  test.describe("2. Get Product By ID (GET /api/products/:productId)", () => {
     let testProductId: string;
     const partnerId = process.env.ORGANIZER_PARTNER_ID!;
 

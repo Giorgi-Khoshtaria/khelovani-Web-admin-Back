@@ -4,7 +4,7 @@ import { ENDPOINTS } from "../../../../constants/endpoints.js";
 import { createTestProduct, cleanupProduct } from "../products.helpers.js";
 
 export const deleteProductSuites = () => {
-  test.describe("5. Delete Product (DELETE /api/admin/products/:productId)", () => {
+  test.describe("5. Delete Product (DELETE /api/products/:productId)", () => {
     let testProductId: string;
     const partnerId = process.env.ORGANIZER_PARTNER_ID!;
 

@@ -31,11 +31,14 @@ export const addProduct = async (
 
     const isAdmin =
       userRole === "admin" ||
-      userRole === "super_admin" ||
       req.user?.permissions?.includes("products.create");
 
     if (paramPartnerId && paramPartnerId !== userId && !isAdmin) {
-      res.status(403).json({ message: "Forbidden: cannot create product for another partner" });
+      res
+        .status(403)
+        .json({
+          message: "Forbidden: cannot create product for another partner",
+        });
       return;
     }
 
@@ -62,8 +65,8 @@ export const addProduct = async (
       !("images" in req.files) ||
       (req.files as any).images.length === 0
     ) {
-      res.status(422).json({ 
-        errors: [{ field: "images", message: "images_required" }] 
+      res.status(422).json({
+        errors: [{ field: "images", message: "images_required" }],
       });
       return;
     }
@@ -85,22 +88,27 @@ export const addProduct = async (
     });
   } catch (error) {
     console.error("ADD_PRODUCT_ERROR:", error);
-    if ((error as any).name === "ValidationError" || (error as any).name === "CastError") {
+    if (
+      (error as any).name === "ValidationError" ||
+      (error as any).name === "CastError"
+    ) {
       const errorMsg = (error as Error).message;
-      res.status(422).json({ 
+      res.status(422).json({
         message: "Validation Error",
-        errors: (error as any).errors ? Object.values((error as any).errors).map((err: any) => ({
-          field: err.path,
-          message: err.message,
-        })) : [{ field: (error as any).path, message: errorMsg }]
+        errors: (error as any).errors
+          ? Object.values((error as any).errors).map((err: any) => ({
+              field: err.path,
+              message: err.message,
+            }))
+          : [{ field: (error as any).path, message: errorMsg }],
       });
       return;
     }
     const lang = (req.query.lang as Lang) || "ge";
     const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
-    res.status(500).json({ 
-      message: tAlerts("server_error") || (error as Error).message, 
-      error: String(error) 
+    res.status(500).json({
+      message: tAlerts("server_error") || (error as Error).message,
+      error: String(error),
     });
   }
 };

@@ -37,7 +37,6 @@ export const updateProduct = async (
     const isOwner = product.owner.toString() === userId;
     const isAdmin =
       userRole === "admin" ||
-      userRole === "super_admin" ||
       req.user?.permissions?.includes("products.viewAll");
 
     if (!isOwner && !isAdmin) {
@@ -91,14 +90,19 @@ export const updateProduct = async (
     });
   } catch (error) {
     console.error("UPDATE_PRODUCT_ERROR:", error);
-    if ((error as any).name === "ValidationError" || (error as any).name === "CastError") {
+    if (
+      (error as any).name === "ValidationError" ||
+      (error as any).name === "CastError"
+    ) {
       const errorMsg = (error as Error).message;
-      res.status(422).json({ 
+      res.status(422).json({
         message: "Validation Error",
-        errors: (error as any).errors ? Object.values((error as any).errors).map((err: any) => ({
-          field: err.path,
-          message: err.message,
-        })) : [{ field: (error as any).path, message: errorMsg }]
+        errors: (error as any).errors
+          ? Object.values((error as any).errors).map((err: any) => ({
+              field: err.path,
+              message: err.message,
+            }))
+          : [{ field: (error as any).path, message: errorMsg }],
       });
       return;
     }
