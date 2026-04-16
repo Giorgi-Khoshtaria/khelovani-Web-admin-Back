@@ -35,7 +35,11 @@ export const createTranslationSchema = {
 export const updateTranslationSchema = {
   body: z.object({
     namespace: z.string().trim().optional(),
-    key: z.string().trim().optional(),
+    key: z.string()
+      .trim()
+      .min(2, "key_too_short")
+      .max(100, "key_too_long")
+      .optional(),
     translations: z.object({
       ge: z.string()
         .trim()

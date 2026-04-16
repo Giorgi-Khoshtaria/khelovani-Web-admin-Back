@@ -49,7 +49,11 @@ export const addTranslation = async (
 
     loadTranslationCache();
 
-    res.status(201).json({ success: true, data: newTranslation });
+    res.status(201).json({
+      success: true,
+      message: tAlerts("translation_created_success"),
+      data: newTranslation,
+    });
   } catch (error) {
     const lang = (req.query.lang as Lang) || "ge";
     const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);

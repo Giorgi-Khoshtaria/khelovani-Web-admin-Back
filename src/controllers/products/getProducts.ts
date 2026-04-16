@@ -14,16 +14,10 @@ export const getProducts = async (
     const userRole = req.user?.role?.toLowerCase();
     const userId = req.user?.id;
 
-    const {
-      search,
-      category,
-      partnerId: queryPartnerId,
-      page = "1",
-      limit = "10",
-    } = req.query;
+    const { search, category, partnerId: queryPartnerId } = req.query;
 
-    const pageNumber = parseInt(page as string) || 1;
-    const limitNumber = parseInt(limit as string) || 10;
+    const pageNumber = Math.max(1, parseInt(req.query.page as string) || 1);
+    const limitNumber = Math.max(1, parseInt(req.query.limit as string) || 15);
     const skip = (pageNumber - 1) * limitNumber;
 
     let query: any = {};
@@ -41,11 +35,9 @@ export const getProducts = async (
       }
       // If filtering by partner, must be admin or the partner themselves
       if (!isAdmin && targetPartnerId !== userId) {
-        res
-          .status(403)
-          .json({
-            message: "Forbidden: Cannot access another partner's products",
-          });
+        res.status(403).json({
+          message: "Forbidden: Cannot access another partner's products",
+        });
         return;
       }
       query.owner = targetPartnerId;
@@ -65,13 +57,8 @@ export const getProducts = async (
     }
 
     if (search) {
-      const searchRegex = new RegExp(search as string, "i");
-      query.$or = [
-        { titleGe: searchRegex },
-        { titleEn: searchRegex },
-        { descriptionGe: searchRegex },
-        { descriptionEn: searchRegex },
-      ];
+      const searchRegex = { $regex: search as string, $options: "i" };
+      query.$or = [{ titleGe: searchRegex }, { titleEn: searchRegex }];
     }
 
     const totalCount = await Product.countDocuments(query);

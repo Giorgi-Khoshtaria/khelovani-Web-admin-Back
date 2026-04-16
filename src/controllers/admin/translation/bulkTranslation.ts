@@ -33,15 +33,19 @@ export const bulkTranslation = async (
 
     // 1. Verify all namespaces exist before proceeding
     const existingNamespaces = await Namespace.find().lean();
-    const existingIds = existingNamespaces.map((ns: any) => ns._id.toString());
+    const existingIds = existingNamespaces.map((ns: any) => ns._id);
 
-    const invalidItems = items.filter((item: any) => !existingIds.includes(item.namespace));
-    
+    const invalidItems = items.filter(
+      (item: any) => !existingIds.includes(item.namespace),
+    );
+
     if (invalidItems.length > 0) {
-      const uniqueInvalids = [...new Set(invalidItems.map((i: any) => i.namespace))];
-      res.status(422).json({ 
-        success: false, 
-        message: `${tAlerts("import_failed_namespaces_not_found")}: ${uniqueInvalids.join(", ")}` 
+      const uniqueInvalids = [
+        ...new Set(invalidItems.map((i: any) => i.namespace)),
+      ];
+      res.status(422).json({
+        success: false,
+        message: `${tAlerts("namespace_not_found")}: ${uniqueInvalids.join(", ")}`,
       });
       return;
     }
@@ -55,7 +59,12 @@ export const bulkTranslation = async (
       success: true,
       message: tAlerts("translations_bulk_import_success"),
     });
-  } catch (err: any) {
-    res.status(500).json({ success: false, message: err.message });
+  } catch (error) {
+    const lang = (req.query.lang as Lang) || "ge";
+    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
+    res.status(500).json({
+      success: false,
+      message: tAlerts("server_error") || (error as Error).message,
+    });
   }
 };
