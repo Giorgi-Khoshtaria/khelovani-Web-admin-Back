@@ -45,15 +45,16 @@ export const getProducts = async (
     // Public view or general authenticated view
     else {
       // If not an admin, we only show public products by default
-      // UNLESS a partner is logged in and specifically browsing their own space (handled via targetPartnerId above)
       if (!isAdmin) {
         query.isShown = true;
       }
-      // Admins get to see everything if they don't provide a targetPartnerId
     }
 
     if (category && category !== "all") {
-      query.category = category;
+      // Ensure we only take the last value if multiple are passed
+      const categoryValue = Array.isArray(category) ? category[category.length - 1] : category;
+      // Use prefix match to handle compound categories (e.g., "jewelry" matches "jewelry_accessories")
+      query.category = { $regex: new RegExp(`^${categoryValue}(_|$)`, "i") };
     }
 
     if (search) {
