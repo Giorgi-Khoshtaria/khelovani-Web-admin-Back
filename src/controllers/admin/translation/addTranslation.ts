@@ -1,4 +1,3 @@
-import { Request, Response } from "express";
 import Translation, {
   Namespace,
 } from "../../../modules/translation.modules.js";
@@ -8,60 +7,45 @@ import {
 } from "../../../types/translate.util.js";
 import { Lang } from "../../../types/lang.types.js";
 import { TranslationNamespace } from "../../../types/translation.enum.js";
+import { asyncHandler } from "../../../utils/asyncHandler.js";
+import { sendResponse } from "../../../utils/apiResponse.js";
+import { AppError } from "../../../utils/errors/AppError.js";
 
-// @desc    Add a single translation
-// @route   POST /api/admin/translations
-// @access  Private Admin
-export const addTranslation = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
-  try {
-    const { namespace, key, translations } = req.body;
-    const lang = (req.query.lang as Lang) || "ge";
-    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
+/**
+ * @desc    Add a single translation
+ * @route   POST /api/admin/translations
+ * @access  Private Admin
+ */
+export const addTranslation = asyncHandler(async (req, res) => {
+  const { namespace, key, translations } = req.body;
+  const lang = (req.query.lang as Lang) || "ge";
+  const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
 
-    // Verify namespace exists
-    const nsExists = await Namespace.findById(namespace);
-    if (!nsExists) {
-      res.status(404).json({
-        success: false,
-        message: tAlerts("namespace_not_found"),
-      });
-      return;
-    }
-
-    // Check if key already exists in this namespace
-    const existing = await Translation.findOne({ namespace, key });
-    if (existing) {
-      res.status(422).json({
-        success: false,
-        message: tAlerts("translation_key_exists"),
-      });
-      return;
-    }
-
-    const newTranslation = await Translation.create({
-      namespace,
-      key,
-      translations,
-    });
-
-    loadTranslationCache();
-
-    res.status(201).json({
-      success: true,
-      message: tAlerts("translation_created_success"),
-      data: newTranslation,
-    });
-  } catch (error) {
-    const lang = (req.query.lang as Lang) || "ge";
-    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: tAlerts("server_error") || (error as Error).message,
-      });
+  // 1. Verify namespace exists
+  const nsExists = await Namespace.findById(namespace);
+  if (!nsExists) {
+    throw new AppError(tAlerts("namespace_not_found"), 404);
   }
-};
+
+  // 2. Check for duplicate key in this namespace
+  const existing = await Translation.findOne({ namespace, key });
+  if (existing) {
+    throw new AppError(tAlerts("translation_key_exists"), 422);
+  }
+
+  // 3. Create translation
+  const translation = await Translation.create({
+    namespace,
+    key,
+    translations,
+  });
+
+  loadTranslationCache();
+
+  sendResponse(
+    res,
+    201,
+    tAlerts("translation_added_success") || "Translation added successfully",
+    translation,
+  );
+});

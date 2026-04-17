@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { ROLES } from "../../../middleware/role/permissions.js";
+import { ROLES } from "../middleware/role/permissions.js";
 
 export const SYSTEM_ROLES: string[] = [ROLES.ADMIN];
 

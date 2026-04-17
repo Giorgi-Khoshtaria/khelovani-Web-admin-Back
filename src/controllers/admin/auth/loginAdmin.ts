@@ -1,158 +1,96 @@
 import bcrypt from "bcrypt";
-import type { Request, Response } from "express";
-import { Types } from "mongoose";
-import { PartnerStatusEnum } from "../../../types/partnerStatus.js";
-import { generateJWTToken } from "../../../utils/token/genereateJWT-token.js";
-import Organisation from "../../../modules/organization.modules.js";
 import Admin from "../../../modules/admin.modules.js";
+import Organisation from "../../../modules/organization.modules.js";
+import { generateJWTToken } from "../../../utils/token/genereateJWT-token.js";
 import { useTranslation } from "../../../types/translate.util.js";
 import { Lang } from "../../../types/lang.types.js";
 import { TranslationNamespace } from "../../../types/translation.enum.js";
+import { PartnerStatusEnum } from "../../../types/partnerStatus.js";
+import { asyncHandler } from "../../../utils/asyncHandler.js";
+import { sendResponse } from "../../../utils/apiResponse.js";
+import { AppError } from "../../../utils/errors/AppError.js";
 
-interface PopulatedPermission {
-  _id: Types.ObjectId;
-  name: string;
-}
+/**
+ * @desc    Admin/Partner Login
+ * @route   POST /api/admin/auth/login
+ * @access  Public
+ */
+export const loginAdmin = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+  const lang = (req.query.lang as Lang) || "ge";
+  const { t: tAuth } = useTranslation(lang, TranslationNamespace.Auth);
 
-interface PopulatedRole {
-  _id: Types.ObjectId;
-  name: string;
-  permissions: PopulatedPermission[];
-  allowedPanels: string[];
-  description: string;
-  isActive: boolean;
-}
+  const normalizedEmail = email.trim().toLowerCase();
 
-// ── Login Partner ─────────────────────────────────────────────────────────────
-export const loginAdmin = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
-  try {
-    const { email, password } = req.body;
-    const lang = (req.query.lang as Lang) || "ge";
-    const { t: tAuth } = useTranslation(lang, TranslationNamespace.Auth);
+  // 1. Try to find Admin first
+  const admin = await Admin.findOne({ email: normalizedEmail }).populate({
+    path: "role",
+    populate: { path: "permissions" },
+  });
 
-    // ── Find admin + populate role ──────────────────────────────────────────
-    const normalizedEmail = email.toLowerCase();
-    const admin = await Admin.findOne({ email: normalizedEmail }).populate<{
-      role: PopulatedRole | null;
-    }>({
-      path: "role",
-      populate: { path: "permissions" },
-    });
+  if (admin) {
+    const isPasswordValid = await bcrypt.compare(password, admin.password);
 
-    if (admin) {
-      // Guard: role must exist (admins don't need isActive check)
-      if (!admin.role) {
-        res.status(422).json({
-          message: tAuth("role_not_found"),
-        });
-        return;
-      }
-
-      const isPasswordValid = await bcrypt.compare(password, admin.password);
-      if (!isPasswordValid) {
-        res.status(422).json({
-          message: tAuth("invalid_email_password"),
-        });
-        return;
-      }
-
-      const token = generateJWTToken({
-        id: admin._id.toString(),
-        role: admin.role.name,
-        permissions: (admin.role.permissions ?? [])
-          .map((p) => p?.name)
-          .filter((n): n is string => typeof n === "string"),
-        allowedPanels: admin.role.allowedPanels || [],
-      });
-
-      const { password: _, ...adminWithoutPassword } = admin.toObject();
-
-      res.status(200).json({
-        message: tAuth("admin_login_success"),
-        token,
-        id: admin._id,
-      });
-      return;
+    // Use the same generic error for inactive role and wrong password to avoid enumeration
+    if (!admin.role || !(admin.role as any).isActive || !isPasswordValid) {
+      throw new AppError(tAuth("invalid_email_password"), 422);
     }
 
-    // ── Find organisation + populate role ────────────────────────────────────
-    const partner = await Organisation.findOne({
-      email: normalizedEmail,
-    }).populate<{
-      role: PopulatedRole | null;
-    }>({
-      path: "role",
-      populate: { path: "permissions" },
-    });
-
-    if (!partner) {
-      console.log("Admin/Partner not found:", normalizedEmail);
-      res.status(422).json({
-        message: tAuth("user_not_found"),
-      });
-      return;
-    }
-
-    // ── Guard: role must exist ─────────────────────────────────
-    if (!partner.role) {
-      res.status(422).json({
-        message: tAuth("role_not_found"),
-      });
-      return;
-    }
-
-    // ── Guard: role must be active ─────────────────────────────────
-    if (!partner.role.isActive) {
-      res.status(422).json({
-        message: tAuth("org_not_active"),
-      });
-      return;
-    }
-
-    // ── Guard: organisation must be approved ─────────────────────────────────
-    if (partner.status !== PartnerStatusEnum.APPROVED) {
-      res.status(422).json({
-        message: tAuth("org_not_verified"),
-      });
-      return;
-    }
-
-    // ── Check password ───────────────────────────────────────────────────────
-    const isPasswordValid = await bcrypt.compare(password, partner.password);
-    if (!isPasswordValid) {
-      res.status(422).json({
-        message: tAuth("invalid_email_password"),
-      });
-      return;
-    }
-
-    // ── Generate JWT ─────────────────────────────────────────────────────────
     const token = generateJWTToken({
-      id: partner._id.toString(),
-      role: partner.role.name,
-      permissions: (partner.role.permissions ?? [])
-        .map((p) => p?.name)
-        .filter((n): n is string => typeof n === "string"),
-      allowedPanels: partner.role.allowedPanels || [],
+      id: admin._id.toString(),
+      role: (admin.role as any).name,
+      permissions: ((admin.role as any).permissions ?? [])
+        .map((p: any) => p?.name)
+        .filter((n: any): n is string => typeof n === "string"),
+      allowedPanels: (admin.role as any).allowedPanels || [],
     });
 
-    // ── Strip password before sending ────────────────────────────────────────
-    const { password: _, ...partnerWithoutPassword } = partner.toObject();
-
-    res.status(200).json({
-      message: tAuth("org_login_success"),
+    return sendResponse(res, 200, tAuth("admin_login_success"), {
       token,
-      id: partner._id,
+      id: admin._id,
     });
-  } catch (error) {
-    console.error("ADMIN LOGIN ERROR:", error);
-    const lang = (req.query.lang as Lang) || "ge";
-    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
-    res
-      .status(500)
-      .json({ message: tAlerts("server_error") || (error as Error).message });
   }
-};
+
+  // 2. If not admin, try to find Organisation (Partner)
+  const partner = await Organisation.findOne({
+    email: normalizedEmail,
+  }).populate({
+    path: "role",
+    populate: { path: "permissions" },
+  });
+
+  if (!partner) {
+    throw new AppError(tAuth("user_not_found"), 422);
+  }
+
+  if (!partner.role) {
+    throw new AppError(tAuth("role_not_found"), 422);
+  }
+
+  if (!(partner.role as any).isActive) {
+    throw new AppError(tAuth("org_not_active"), 422);
+  }
+
+  if (partner.status !== PartnerStatusEnum.APPROVED) {
+    throw new AppError(tAuth("org_not_verified"), 422);
+  }
+
+  const isPasswordValid = await bcrypt.compare(password, partner.password);
+  if (!isPasswordValid) {
+    throw new AppError(tAuth("invalid_email_password"), 422);
+  }
+
+  const token = generateJWTToken({
+    id: partner._id.toString(),
+    role: (partner.role as any).name,
+    permissions: ((partner.role as any).permissions ?? [])
+      .map((p: any) => p?.name)
+      .filter((n: any): n is string => typeof n === "string"),
+    allowedPanels: (partner.role as any).allowedPanels || [],
+  });
+
+  sendResponse(res, 200, tAuth("org_login_success"), {
+    token,
+    id: partner._id,
+  });
+});

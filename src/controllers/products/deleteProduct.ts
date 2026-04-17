@@ -1,69 +1,58 @@
-import { Request, Response } from "express";
-import Product from "../../modules/product.modules.js";
-
 import mongoose from "mongoose";
+import Product from "../../modules/product.modules.js";
+import { useTranslation } from "../../types/translate.util.js";
+import { Lang } from "../../types/lang.types.js";
+import { TranslationNamespace } from "../../types/translation.enum.js";
+import { asyncHandler } from "../../utils/asyncHandler.js";
+import { sendResponse, getCloudinaryPublicId } from "../../utils/apiResponse.js";
+import { AppError } from "../../utils/errors/AppError.js";
 
-// @desc    Delete a product
-// @route   DELETE /api/products/:productId
-export const deleteProduct = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
-  try {
-    const { productId } = req.params;
-    const userRole = req.user?.role?.toLowerCase();
-    const userId = req.user?.id;
+/**
+ * @desc    Delete a product
+ * @route   DELETE /api/products/:productId
+ * @access  Private Admin/Owner
+ */
+export const deleteProduct = asyncHandler(async (req, res) => {
+  const lang = (req.query.lang as Lang) || "ge";
+  const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
 
-    if (!mongoose.Types.ObjectId.isValid(productId as string)) {
-      res.status(400).json({ message: "Invalid product ID format" });
-      return;
-    }
+  const { productId } = req.params;
+  const userRole = req.user?.role?.toLowerCase();
+  const userId = req.user?.id;
 
-    const product = await Product.findById(productId as string);
-
-    if (!product) {
-      res.status(404).json({ message: "Product not found" });
-      return;
-    }
-
-    const isAdmin =
-      userRole === "admin" ||
-      req.user?.permissions?.includes("products.viewAll");
-
-    // Authorization: Admin can delete any product, Partner only their own
-    if (!isAdmin && product.owner.toString() !== userId) {
-      res.status(403).json({ message: "Unauthorized to delete this product" });
-      return;
-    }
-
-    // Delete images from Cloudinary if they exist
-    if (product.images && product.images.length > 0) {
-      const deletePromises = product.images.map(async (imageUrl: string) => {
-        try {
-          const parts = imageUrl.split("/");
-          const fileNameWithExt = parts.pop();
-          const folderName = parts.pop();
-
-          if (fileNameWithExt && folderName) {
-            const publicId = `${folderName}/${fileNameWithExt.split(".")[0]}`;
-            // @ts-ignore - cloudinary import is default
-            const result = await (
-              await import("../../utils/config/cloudinary.js")
-            ).default.uploader.destroy(publicId);
-            return result;
-          }
-        } catch (err) {
-          console.error("Cloudinary delete error for:", imageUrl, err);
-        }
-      });
-      await Promise.all(deletePromises);
-    }
-
-    await Product.deleteOne({ _id: productId });
-
-    res.status(200).json({ message: "პროდუქტი წარმატებით წაიშალა" });
-  } catch (error) {
-    console.error("DELETE_PRODUCT_ERROR:", error);
-    res.status(500).json({ message: "შეცდომა პროდუქტის წაშლისას" });
+  if (!mongoose.Types.ObjectId.isValid(productId as string)) {
+    throw new AppError(tAlerts("invalid_product_id") || "Invalid product ID format", 400);
   }
-};
+
+  const product = await Product.findById(productId);
+  if (!product) {
+    throw new AppError(tAlerts("product_not_found") || "Product not found", 404);
+  }
+
+  const isOwner = product.owner.toString() === userId;
+  const isAdmin = userRole === "admin";
+
+  if (!isOwner && !isAdmin) {
+    throw new AppError(tAlerts("unauthorized_delete") || "Unauthorized: You cannot delete this product", 403);
+  }
+
+  if (product.images && product.images.length > 0) {
+    const cloudinary = (await import("../../utils/config/cloudinary.js")).default;
+    const deletePromises = product.images.map(async (imageUrl) => {
+      try {
+        const publicId = getCloudinaryPublicId(imageUrl);
+        if (publicId) {
+          // @ts-ignore
+          return await cloudinary.uploader.destroy(publicId);
+        }
+      } catch (err) {
+        console.error("Cloudinary delete error:", err);
+      }
+    });
+    await Promise.all(deletePromises);
+  }
+
+  await product.deleteOne();
+
+  sendResponse(res, 200, tAlerts("product_deleted_success") || "Product deleted successfully");
+});

@@ -1,70 +1,80 @@
-import { Request, Response } from "express";
-import Translation, { Namespace } from "../../../modules/translation.modules.js";
-import { loadTranslationCache, useTranslation } from "../../../types/translate.util.js";
+import Translation, {
+  Namespace,
+} from "../../../modules/translation.modules.js";
+import {
+  loadTranslationCache,
+  useTranslation,
+} from "../../../types/translate.util.js";
 import { Lang } from "../../../types/lang.types.js";
 import { TranslationNamespace } from "../../../types/translation.enum.js";
+import { asyncHandler } from "../../../utils/asyncHandler.js";
+import { sendResponse } from "../../../utils/apiResponse.js";
+import { AppError } from "../../../utils/errors/AppError.js";
 
-// @desc    Bulk import/update translations
-// @route   POST /api/admin/translations/bulk
-// @access  Private Admin
-export const bulkTranslation = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
-  try {
-    const { items } = req.body;
-    const lang = (req.query.lang as Lang) || "ge";
-    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
+/**
+ * @desc    Bulk create/update translations
+ * @route   POST /api/admin/translations/bulk
+ * @access  Private Admin
+ */
+export const bulkTranslation = asyncHandler(async (req, res) => {
+  const { items } = req.body;
+  const lang = (req.query.lang as Lang) || "ge";
+  const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
 
-    const bulkOps = items.map((item: any) => ({
-      updateOne: {
-        filter: { namespace: item.namespace, key: item.key },
-        update: {
-          $set: {
-            translations: { 
-              ge: item.ge || "", 
-              en: item.en || "" 
-            },
+  if (!items || !Array.isArray(items)) {
+    throw new AppError(
+      tAlerts("invalid_payload_items_array") || "Invalid items array",
+      400,
+    );
+  }
+
+  const bulkOps = items.map((item: any) => ({
+    updateOne: {
+      filter: { namespace: item.namespace, key: item.key },
+      update: {
+        $set: {
+          translations: {
+            ge: item.ge || "",
+            en: item.en || "",
           },
         },
-        upsert: true,
       },
-    }));
+      upsert: true,
+    },
+  }));
 
-    // 1. Verify all namespaces exist before proceeding
-    const existingNamespaces = await Namespace.find().lean();
-    const existingIds = existingNamespaces.map((ns: any) => ns._id);
+  // Verify all namespaces exist
+  const uniqueNamespaces = [
+    ...new Set(items.map((item: any) => item.namespace)),
+  ];
+  const existingNamespaces = await Namespace.find({
+    _id: { $in: uniqueNamespaces },
+  });
+  const existingIds = existingNamespaces.map((n) => n._id.toString());
 
-    const invalidItems = items.filter(
-      (item: any) => !existingIds.includes(item.namespace),
+  const invalidItems = items.filter(
+    (item: any) => !existingIds.includes(item.namespace),
+  );
+
+  if (invalidItems.length > 0) {
+    const uniqueInvalids = [
+      ...new Set(invalidItems.map((i: any) => i.namespace)),
+    ];
+    throw new AppError(
+      `${tAlerts("namespace_not_found")}: ${uniqueInvalids.join(", ")}`,
+      422,
     );
-
-    if (invalidItems.length > 0) {
-      const uniqueInvalids = [
-        ...new Set(invalidItems.map((i: any) => i.namespace)),
-      ];
-      res.status(422).json({
-        success: false,
-        message: `${tAlerts("namespace_not_found")}: ${uniqueInvalids.join(", ")}`,
-      });
-      return;
-    }
-
-    // 2. Insert/Update translations
-    await Translation.bulkWrite(bulkOps);
-
-    loadTranslationCache();
-
-    res.status(200).json({
-      success: true,
-      message: tAlerts("translations_bulk_import_success"),
-    });
-  } catch (error) {
-    const lang = (req.query.lang as Lang) || "ge";
-    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
-    res.status(500).json({
-      success: false,
-      message: tAlerts("server_error") || (error as Error).message,
-    });
   }
-};
+
+  // Insert/Update translations
+  await Translation.bulkWrite(bulkOps);
+
+  loadTranslationCache();
+
+  sendResponse(
+    res,
+    200,
+    tAlerts("translations_bulk_import_success") ||
+      "Translations bulk processed successfully",
+  );
+});

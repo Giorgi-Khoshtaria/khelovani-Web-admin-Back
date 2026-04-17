@@ -6,83 +6,68 @@ import { UserTypes } from "../../types/userTypes.js";
 import { useTranslation } from "../../types/translate.util.js";
 import { Lang } from "../../types/lang.types.js";
 import { TranslationNamespace } from "../../types/translation.enum.js";
+import { asyncHandler } from "../../utils/asyncHandler.js";
+import { sendResponse } from "../../utils/apiResponse.js";
+import { AppError } from "../../utils/errors/AppError.js";
 
 // @desc    Register user
 // @route   POST /api/user/register
 // @access  Public
-export const registerUser = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
-  try {
-    const {
-      idNumber,
-      nameGe,
-      nameEn,
-      dateOfBirth,
-      city,
-      address,
-      email,
-      phone,
-      password,
-    }: UserTypes = req.body;
-    const lang = (req.query.lang as Lang) || "ge";
-    const { t: tAuth } = useTranslation(lang, TranslationNamespace.Auth);
+export const registerUser = asyncHandler(async (req: Request, res: Response) => {
+  const {
+    idNumber,
+    nameGe,
+    nameEn,
+    dateOfBirth,
+    city,
+    address,
+    email,
+    phone,
+    password,
+  }: UserTypes = req.body;
+  const lang = (req.query.lang as Lang) || "ge";
+  const { t: tAuth } = useTranslation(lang, TranslationNamespace.Auth);
 
-    const trimmedEmail = email.toLowerCase();
-    const trimmedIdNumber = idNumber;
+  const trimmedEmail = email.toLowerCase();
+  const trimmedIdNumber = idNumber;
 
-    // ── Check email duplicate ──────────────────────────────────────────────
-    const existingByEmail = await User.findOne({ email: trimmedEmail });
+  // ── Check email duplicate ──────────────────────────────────────────────
+  const existingByEmail = await User.findOne({ email: trimmedEmail });
 
-    if (existingByEmail) {
-      if (!existingByEmail.isVerified) {
-        await sendUserRegistrationVerificationEmail(trimmedEmail, lang);
-        res.status(200).json({
-          message: tAuth("verification_email_resent"),
-        });
-        return;
-      }
-      res.status(409).json({
-        message: tAuth("email_already_exists"),
-      });
-      return;
+  if (existingByEmail) {
+    if (!existingByEmail.isVerified) {
+      await sendUserRegistrationVerificationEmail(trimmedEmail, lang);
+      return sendResponse(res, 200, tAuth("verification_email_resent") || "Verification email resent");
     }
-
-    // ── Check idNumber duplicate (separate check) ──────────────────────────
-    const existingByIdNumber = await User.findOne({
-      idNumber: trimmedIdNumber,
-    });
-
-    if (existingByIdNumber) {
-      res.status(409).json({
-        message: tAuth("id_number_already_exists"),
-      });
-      return;
-    }
-
-    // ── Hash + create ──────────────────────────────────────────────────────
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    await User.create({
-      idNumber: trimmedIdNumber,
-      nameGe: nameGe?.trim(),
-      nameEn: nameEn.trim(),
-      dateOfBirth,
-      city: city.trim().toLowerCase(),
-      address: address.trim(),
-      email: trimmedEmail,
-      phone: phone.trim(),
-      password: hashedPassword,
-      isVerified: false,
-    });
-
-    await sendUserRegistrationVerificationEmail(trimmedEmail, lang);
-
-    res.status(201).json({
-      message: tAuth("register_success_verify_email"),
-    });
-  } catch (error) {
-    res.status(500).json({ message: (error as Error).message });
+    throw new AppError(tAuth("email_already_exists") || "Email already exists", 409);
   }
-};
+
+  // ── Check idNumber duplicate (separate check) ──────────────────────────
+  const existingByIdNumber = await User.findOne({
+    idNumber: trimmedIdNumber,
+  });
+
+  if (existingByIdNumber) {
+    throw new AppError(tAuth("id_number_already_exists") || "ID number already exists", 409);
+  }
+
+  // ── Hash + create ──────────────────────────────────────────────────────
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  await User.create({
+    idNumber: trimmedIdNumber,
+    nameGe: nameGe?.trim(),
+    nameEn: nameEn.trim(),
+    dateOfBirth,
+    city: city.trim().toLowerCase(),
+    address: address.trim(),
+    email: trimmedEmail,
+    phone: phone.trim(),
+    password: hashedPassword,
+    isVerified: false,
+  });
+
+  await sendUserRegistrationVerificationEmail(trimmedEmail, lang);
+
+  sendResponse(res, 201, tAuth("register_success_verify_email") || "Registered successfully, verify email");
+});

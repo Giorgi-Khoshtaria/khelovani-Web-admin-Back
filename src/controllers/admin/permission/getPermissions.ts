@@ -1,39 +1,45 @@
-import type { Request, Response } from "express";
 import Permission from "../../../modules/permission.modules.js";
-import { Lang } from "../../../types/lang.types.js";
+import { asyncHandler } from "../../../utils/asyncHandler.js";
+import { sendResponse, escapeRegex } from "../../../utils/apiResponse.js";
 
-// @desc    Get all permissions (with Pagination)
-// @route   GET /api/admin/permissions
-export const getPermissions = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
-  try {
-    const { search, category, page = "1", limit = "100" } = req.query;
+const MAX_LIMIT = 100;
 
-    const pageNum = Math.max(1, parseInt(page as string) || 1);
-    const limitNum = Math.max(1, parseInt(limit as string) || 100);
-    const skip = (pageNum - 1) * limitNum;
+/**
+ * @desc    Get all permissions (with Pagination)
+ * @route   GET /api/admin/permissions
+ * @access  Private Admin
+ */
+export const getPermissions = asyncHandler(async (req, res) => {
+  const { search, category, page = "1", limit = "20" } = req.query;
 
-    let query: any = {};
-    if (category && category !== "all") {
-      query.category = category; 
-    }
-    
-    if (search) {
-      query.$or = [
-        { name: { $regex: search as string, $options: "i" } },
-        { description: { $regex: search as string, $options: "i" } },
-      ];
-    }
+  const pageNum = Math.max(1, parseInt(page as string) || 1);
+  const limitNum = Math.min(MAX_LIMIT, Math.max(1, parseInt(limit as string) || 20));
+  const skip = (pageNum - 1) * limitNum;
 
-    const permissions = await Permission.find(query)
+  const query: any = {};
+  if (category && category !== "all") {
+    query.category = category;
+  }
+
+  if (search) {
+    const escaped = escapeRegex(search as string);
+    query.$or = [
+      { name: { $regex: escaped, $options: "i" } },
+      { description: { $regex: escaped, $options: "i" } },
+    ];
+  }
+
+  const [permissions, totalCount] = await Promise.all([
+    Permission.find(query)
       .sort({ category: 1, name: 1 })
       .skip(skip)
-      .limit(limitNum);
+      .limit(limitNum),
+    Permission.countDocuments(query),
+  ]);
 
-    res.status(200).json(permissions);
-  } catch (error) {
-    res.status(500).json({ message: (error as Error).message });
-  }
-};
+  sendResponse(res, 200, "Permissions retrieved successfully", permissions, {
+    totalCount,
+    totalPages: Math.ceil(totalCount / limitNum),
+    currentPage: pageNum,
+  });
+});

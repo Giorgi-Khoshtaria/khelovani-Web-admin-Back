@@ -20,6 +20,11 @@ export const authenticate = (
   res: Response,
   next: NextFunction,
 ): void => {
+  // ✅ Skip authentication for OPTIONS preflight requests
+  if (req.method === "OPTIONS") {
+    return next();
+  }
+
   const token = req.headers.authorization?.split(" ")[1]; // Bearer <token>
 
   if (!token) {

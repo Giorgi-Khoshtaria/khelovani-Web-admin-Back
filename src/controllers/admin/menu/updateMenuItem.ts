@@ -1,59 +1,44 @@
 import mongoose from "mongoose";
-import { Request, Response } from "express";
 import MenuItem from "../../../modules/menu.modules.js";
 import { useTranslation } from "../../../types/translate.util.js";
 import { Lang } from "../../../types/lang.types.js";
 import { TranslationNamespace } from "../../../types/translation.enum.js";
+import { asyncHandler } from "../../../utils/asyncHandler.js";
+import { sendResponse } from "../../../utils/apiResponse.js";
+import { AppError } from "../../../utils/errors/AppError.js";
 
-// @desc    Update menu item
-// @route   PUT /api/admin/menu/:id
-// @access  Private Admin
-export const updateMenuItem = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
-  try {
-    const id = req.params.id as string;
-    const { label, href, order, isActive } = req.body;
-    const lang = (req.query.lang as Lang) || "ge";
-    const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
+/**
+ * @desc    Update menu item
+ * @route   PUT /api/admin/menu/:id
+ * @access  Private Admin
+ */
+export const updateMenuItem = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  const lang = (req.query.lang as Lang) || "ge";
+  const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      res.status(422).json({
-        errors: [{
-          field: "id",
-          message: tAlerts("invalid_menu_item_id") || "Invalid menu item ID"
-        }],
-      });
-      return;
-    }
-
-    const updateData: any = { ...req.body };
-    if (req.body.order !== undefined) {
-      updateData.order = Number(req.body.order);
-    }
-
-    const item = await MenuItem.findByIdAndUpdate(
-      id,
-      updateData,
-      { new: true, runValidators: true },
+  if (!mongoose.Types.ObjectId.isValid(id as string)) {
+    throw new AppError(
+      tAlerts("invalid_menu_item_id") || "Invalid menu item ID",
+      422,
     );
-
-    if (!item) {
-      res.status(404).json({
-        message: tAlerts("menu_item_not_found"),
-      });
-      return;
-    }
-
-    res.status(200).json(item);
-  } catch (error) {
-    if ((error as any).name === "ValidationError" || (error as any).name === "CastError") {
-      res.status(422).json({
-        errors: [{ field: "database", message: (error as Error).message }],
-      });
-      return;
-    }
-    res.status(500).json({ message: (error as Error).message });
   }
-};
+
+  const { label, href, order, isActive } = req.body;
+  const updateData: Record<string, any> = {};
+  if (label !== undefined) updateData.label = label;
+  if (href !== undefined) updateData.href = href;
+  if (order !== undefined) updateData.order = Number(order);
+  if (isActive !== undefined) updateData.isActive = isActive;
+
+  const item = await MenuItem.findByIdAndUpdate(id, updateData, {
+    new: true,
+    runValidators: true,
+  });
+
+  if (!item) {
+    throw new AppError(tAlerts("menu_item_not_found"), 404);
+  }
+
+  sendResponse(res, 200, "Menu item updated successfully", item);
+});
