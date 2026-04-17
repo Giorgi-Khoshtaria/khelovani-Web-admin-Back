@@ -34,6 +34,22 @@ const origins = [
 
 app.use(helmet());
 
+// Custom middleware to set Permissions-Policy header
+app.use((req, res, next) => {
+  res.setHeader(
+    "Permissions-Policy",
+    "geolocation=(), camera=(), microphone=(), interest-cohort=()",
+  );
+  next();
+});
+
+app.get("/", (req, res) => {
+  res.status(200).json({
+    message: "Khelovani API is running",
+    version: "1.0.0",
+  });
+});
+
 app.use(
   cors({
     origin: origins,
