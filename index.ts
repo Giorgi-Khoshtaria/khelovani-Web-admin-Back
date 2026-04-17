@@ -16,6 +16,7 @@ import permissionRoutes from "./src/routes/adminRoutes/permission.routes.js";
 import adminMenuRoutes from "./src/routes/adminRoutes/menu.routes.js";
 import publicMenuRoutes from "./src/routes/menu.routes.js";
 import uploadRoutes from "./src/routes/adminRoutes/upload.routes.js";
+import helmet from "helmet";
 
 const app = express();
 app.disable("x-powered-by");
@@ -30,6 +31,8 @@ const origins = [
   process.env.FRONTEND_ADMIN_LIVE_URL,
   process.env.FRONTEND_WEB_LIVE_URL,
 ].filter(Boolean) as string[];
+
+app.use(helmet());
 
 app.use(
   cors({
