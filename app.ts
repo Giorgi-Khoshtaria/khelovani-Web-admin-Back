@@ -38,11 +38,33 @@ app.use(express.json({ limit: "5mb" }));
 // ✅ 3.1 Security Middleware (Sanitize after body parser)
 app.use(mongoSanitize());
 
-// Custom middleware to set Permissions-Policy header
-app.use((req, res, next) => {
+// Helmet v8 does not ship Permissions-Policy — set it explicitly
+app.use((_req, res, next) => {
   res.setHeader(
     "Permissions-Policy",
-    "geolocation=(), camera=(), microphone=(), interest-cohort=()",
+    [
+      "accelerometer=()",
+      "autoplay=()",
+      "camera=()",
+      "cross-origin-isolated=()",
+      "display-capture=()",
+      "encrypted-media=()",
+      "fullscreen=()",
+      "geolocation=()",
+      "gyroscope=()",
+      "keyboard-map=()",
+      "magnetometer=()",
+      "microphone=()",
+      "midi=()",
+      "payment=()",
+      "picture-in-picture=()",
+      "publickey-credentials-get=()",
+      "screen-wake-lock=()",
+      "sync-xhr=()",
+      "usb=()",
+      "web-share=()",
+      "xr-spatial-tracking=()",
+    ].join(", "),
   );
   next();
 });
