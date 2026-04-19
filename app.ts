@@ -49,7 +49,7 @@ app.use((_req, res, next) => {
 app.use(
   (
     err: any,
-    req: express.Request,
+    _req: express.Request,
     res: express.Response,
     next: express.NextFunction,
   ) => {
@@ -66,7 +66,7 @@ app.use(
 app.use(globalLimiter);
 
 // Root Status Route
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
   res.status(200).json({
     message: "Khelovani API is running",
     version: "1.0.0",
