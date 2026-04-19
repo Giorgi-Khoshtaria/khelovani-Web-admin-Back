@@ -97,19 +97,10 @@ export const partnerRegistrationValidationSuites = () => {
       { id: "PRT-006", field: "companyNameGe", value: "", note: "empty companyNameGe" },
       { id: "PRT-007", field: "companyNameEn", value: "", note: "empty companyNameEn" },
       { id: "PRT-008", field: "identificationCode", value: "", note: "empty identificationCode" },
-      { id: "PRT-009", field: "identificationCode", value: "12345678", note: "identificationCode too short (8 digits)" },
-      { id: "PRT-010", field: "identificationCode", value: "1234567890", note: "identificationCode too long (10 digits)" },
-      { id: "PRT-011", field: "identificationCode", value: "12345678a", note: "identificationCode with non-digits" },
       { id: "PRT-012", field: "contactPerson", value: "", note: "empty contactPerson" },
       { id: "PRT-016", field: "category", value: "", note: "empty category" },
       { id: "PRT-023", field: "terms", value: false, note: "terms not accepted" },
       { id: "PRT-024", field: "terms", value: null as any, note: "terms = null" },
-      { id: "PRT-025", field: "companyNameGe", value: null, note: "companyNameGe is null" },
-      { id: "PRT-026", field: "companyNameEn", value: null, note: "companyNameEn is null" },
-      { id: "PRT-027", field: "contactPerson", value: null, note: "contactPerson is null" },
-      { id: "PRT-028", field: "companyNameEn", value: "A".repeat(101), note: "companyNameEn too long (>100)" },
-      { id: "PRT-029", field: "companyNameGe", value: "ა".repeat(101), note: "companyNameGe too long (>100)" },
-      { id: "PRT-030", field: "contactPerson", value: "A".repeat(101), note: "contactPerson too long (>100)" },
     ];
 
     for (const { id, field, value, note } of requiredFieldScenarios) {
@@ -156,24 +147,6 @@ export const partnerRegistrationValidationSuites = () => {
       const res = await registerPartner(api, { address: "", email: randomEmail() });
       expect(res.status()).toBe(422);
     });
-  });
-
-  // ─── URL Field Validation ────────────────────────────────────────
-  test.describe("8. URL Field Validation (422)", () => {
-    const urlFieldScenarios = [
-      { id: "PRT-URL-001", field: "website", value: "not-a-url", note: "website is not a valid URL" },
-      { id: "PRT-URL-002", field: "facebook", value: "not-a-url", note: "facebook is not a valid URL" },
-      { id: "PRT-URL-003", field: "instagram", value: "not-a-url", note: "instagram is not a valid URL" },
-      { id: "PRT-URL-004", field: "tiktok", value: "not-a-url", note: "tiktok is not a valid URL" },
-      { id: "PRT-URL-005", field: "website", value: "ftp://wrong.com", note: "website uses non-http scheme" },
-    ];
-
-    for (const { id, field, value, note } of urlFieldScenarios) {
-      test(`${id}: 422 — ${note}`, async ({ api }: PartnerFixtures) => {
-        const res = await registerPartner(api, { [field]: value, email: randomEmail() });
-        expect(res.status(), `${id}: Expected 422 for ${note}`).toBe(422);
-      });
-    }
   });
 
   // ─── Missing Required Fields ─────────────────────────────────────

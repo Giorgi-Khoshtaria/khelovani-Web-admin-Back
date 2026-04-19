@@ -1,7 +1,7 @@
 import { test } from "../../../../fixtures/admin.fixture.js";
 import { expect } from "@playwright/test";
 import { ENDPOINTS } from "../../../../constants/endpoints.js";
-import { emailValidationScenarios } from "../../../../helpers/shared/validation.helper.js";
+import { emailValidationScenarios, loginPasswordScenarios } from "../../../../helpers/shared/validation.helper.js";
 import { adminLogin } from "../auth.helpers.js";
 
 export const loginValidationSuites = () => {
@@ -42,13 +42,15 @@ export const loginValidationSuites = () => {
   // Login schema only checks: non-empty string, max 100 chars.
   // Complexity rules (uppercase, digits, etc.) apply only to registration.
   test.describe("3. Password Validation", () => {
-    test("AL-P001: 422 — empty password", async ({ api }) => {
-      const res = await adminLogin(api, { email: "admin@test.com", password: "" });
-      expect(res.status()).toBe(422);
-      const body = await res.json();
-      expect(Array.isArray(body.errors)).toBe(true);
-      expect(body.errors.some((e: any) => e.field === "password")).toBe(true);
-    });
+    for (const { id, value, note } of loginPasswordScenarios) {
+      test(`${id}: 422 — Password: ${note}`, async ({ api }) => {
+        const res = await adminLogin(api, { email: "admin@test.com", password: value });
+        expect(res.status()).toBe(422);
+        const body = await res.json();
+        expect(Array.isArray(body.errors)).toBe(true);
+        expect(body.errors.some((e: any) => e.field === "password")).toBe(true);
+      });
+    }
 
     test("AL-P002: 422 — password is null", async ({ api }) => {
       const res = await adminLogin(api, { email: "admin@test.com", password: null as any });
@@ -60,14 +62,6 @@ export const loginValidationSuites = () => {
     test("AL-P003: 422 — password is a number (wrong type)", async ({ api }) => {
       const res = await adminLogin(api, { email: "admin@test.com", password: 123456 as any });
       expect(res.status()).toBe(422);
-    });
-
-    test("AL-P004: 413 or 422 — password over 100 characters", async ({ api }) => {
-      const res = await adminLogin(api, {
-        email: "admin@test.com",
-        password: "A".repeat(101),
-      });
-      expect([413, 422]).toContain(res.status());
     });
 
     test("AL-P005: 422 — missing password field entirely", async ({ api }) => {
@@ -83,16 +77,6 @@ export const loginValidationSuites = () => {
 
   // ─── Missing Fields ──────────────────────────────────────────────
   test.describe("4. Missing / Empty Body", () => {
-    test("AL-013: 422 — missing password field", async ({ api }) => {
-      const res = await api.post(`${ENDPOINTS.ADMIN_LOGIN}?lang=en`, {
-        data: { email: "admin@test.com" },
-      });
-      expect(res.status()).toBe(422);
-      const body = await res.json();
-      expect(Array.isArray(body.errors)).toBe(true);
-      expect(body.errors.some((e: any) => e.field === "password")).toBe(true);
-    });
-
     test("AL-014: 422 — missing email field", async ({ api }) => {
       const res = await api.post(`${ENDPOINTS.ADMIN_LOGIN}?lang=en`, {
         data: { password: "ValidAdminPass123!" },

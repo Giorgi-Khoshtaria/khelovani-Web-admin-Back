@@ -140,30 +140,33 @@ export const nameEnValidationScenarios: ValidationScenario[] = [
 ];
 
 export const nameGeValidationScenarios: ValidationScenario[] = [
-  { id: "VAL-NAME-GE-004", field: "nameGe", value: "ა",              note: "too short (1 char)" },
-  { id: "VAL-NAME-GE-005", field: "nameGe", value: "ა".repeat(101),  note: "over max length (101 chars)" },
-  { id: "VAL-NAME-GE-006", field: "nameGe", value: "John",           note: "Latin chars rejected" },
-  { id: "VAL-NAME-GE-007", field: "nameGe", value: "123",            note: "digits only rejected" },
+  { id: "VAL-NAME-GE-001", field: "nameGe", value: "",               note: "empty string" },
+  { id: "VAL-NAME-GE-002", field: "nameGe", value: "ა",              note: "too short (1 char)" },
+  { id: "VAL-NAME-GE-003", field: "nameGe", value: null,             note: "null value" },
+  { id: "VAL-NAME-GE-004", field: "nameGe", value: "ა".repeat(101),  note: "over max length (101 chars)" },
+  { id: "VAL-NAME-GE-005", field: "nameGe", value: "John",           note: "Latin chars rejected" },
+  { id: "VAL-NAME-GE-006", field: "nameGe", value: "123",            note: "digits only rejected" },
 ];
 
 // ─── Date of Birth (registration) ─────────────────────────────────────────────
 
 export const dateOfBirthValidationScenarios: ValidationScenario[] = [
-  { id: "VAL-DOB-006", field: "dateOfBirth", value: "01-01-1990",  note: "non-ISO format (DD-MM-YYYY)" },
-  { id: "VAL-DOB-007", field: "dateOfBirth", value: "1990/01/01",  note: "slash-separated format" },
-  { id: "VAL-DOB-008", field: "dateOfBirth", value: "not-a-date",  note: "invalid string" },
-  { id: "VAL-DOB-009", field: "dateOfBirth", value: "",            note: "empty string" },
-  { id: "VAL-DOB-010", field: "dateOfBirth", value: "9999-12-31",  note: "future date (far future)" },
+  { id: "VAL-DOB-001", field: "dateOfBirth", value: "01-01-1990",  note: "non-ISO format (DD-MM-YYYY)" },
+  { id: "VAL-DOB-002", field: "dateOfBirth", value: "1990/01/01",  note: "slash-separated format" },
+  { id: "VAL-DOB-003", field: "dateOfBirth", value: "not-a-date",  note: "invalid string" },
+  { id: "VAL-DOB-004", field: "dateOfBirth", value: "",            note: "empty string" },
+  { id: "VAL-DOB-005", field: "dateOfBirth", value: "9999-12-31",  note: "future date (far future)" },
 ];
 
 // ─── ID Number (user registration) ────────────────────────────────────────────
 
 export const idNumberValidationScenarios: ValidationScenario[] = [
-  { id: "VAL-ID-007", field: "idNumber", value: "",              note: "empty string" },
-  { id: "VAL-ID-008", field: "idNumber", value: "1234567890",    note: "too short (10 digits)" },
-  { id: "VAL-ID-009", field: "idNumber", value: "123456789012",  note: "too long (12 digits)" },
-  { id: "VAL-ID-010", field: "idNumber", value: "1234567890a",   note: "contains letter" },
-  { id: "VAL-ID-011", field: "idNumber", value: "           ",   note: "whitespace only" },
+  { id: "VAL-ID-001", field: "idNumber", value: "",              note: "empty string" },
+  { id: "VAL-ID-002", field: "idNumber", value: "1234567890",    note: "too short (10 digits)" },
+  { id: "VAL-ID-003", field: "idNumber", value: "123456789012",  note: "too long (12 digits)" },
+  { id: "VAL-ID-004", field: "idNumber", value: null,            note: "null value" },
+  { id: "VAL-ID-005", field: "idNumber", value: "1234567890a",   note: "contains letter" },
+  { id: "VAL-ID-006", field: "idNumber", value: "           ",   note: "whitespace only" },
 ];
 
 // ─── Login ────────────────────────────────────────────────────────────────────

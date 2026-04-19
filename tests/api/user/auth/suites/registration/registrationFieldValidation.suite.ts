@@ -68,7 +68,7 @@ export const registrationFieldValidationSuites = () => {
     test.describe("nameGe field", () => {
       for (const { id, value, note } of nameGeValidationScenarios) {
         test(`${id}: 422 — nameGe: ${note}`, async ({ request }) => {
-          const res = await register(request, { nameGe: value, email: randomEmail() }, true);
+          const res = await register(request, { nameGe: value as any, email: randomEmail() }, true);
           expect(res.status(), `${id}: ${note}`).toBe(422);
           const body = await res.json();
           expect(Array.isArray(body.errors)).toBe(true);
@@ -332,18 +332,13 @@ export const registrationFieldValidationSuites = () => {
     test.describe("idNumber field", () => {
       for (const { id, value, note } of idNumberValidationScenarios) {
         test(`${id}: 422 — idNumber: ${note}`, async ({ request }) => {
-          const res = await register(request, { idNumber: value, email: randomEmail() }, true);
+          const res = await register(request, { idNumber: value as any, email: randomEmail() }, true);
           expect(res.status(), `${id}: ${note}`).toBe(422);
           const body = await res.json();
           expect(Array.isArray(body.errors)).toBe(true);
           expect(body.errors).toContainEqual(expect.objectContaining({ field: "idNumber" }));
         });
       }
-
-      test("REG-VAL-030: 422 — idNumber is null", async ({ request }) => {
-        const res = await register(request, { idNumber: null as any, email: randomEmail() }, true);
-        expect(res.status()).toBe(422);
-      });
 
       test("REG-VAL-031: 422 — idNumber missing entirely", async ({ request }) => {
         const res = await register(request, { idNumber: undefined as any, email: randomEmail() }, true);
