@@ -4,6 +4,7 @@ import { getMenuItemsSuites } from "./suites/getMenuItems.suite.js";
 import { updateMenuItemSuites } from "./suites/updateMenuItem.suite.js";
 import { deleteMenuItemSuites } from "./suites/deleteMenuItem.suite.js";
 import { menuSecuritySuites } from "./suites/menuSecurity.suite.js";
+import { menuValidationSuites } from "./suites/menuValidation.suite.js";
 
 /**
  * ============================================================
@@ -13,6 +14,7 @@ import { menuSecuritySuites } from "./suites/menuSecurity.suite.js";
 
 test.describe("Admin Menu API", () => {
   createMenuItemSuites();
+  menuValidationSuites();
   getMenuItemsSuites();
   updateMenuItemSuites();
   deleteMenuItemSuites();

@@ -1,19 +1,29 @@
 import { APIRequestContext } from "@playwright/test";
 import { ENDPOINTS } from "../../../constants/endpoints.js";
 import { randomId } from "../../../helpers/utils/generators.js";
+import { ProductCategory } from "../../../../src/types/itemsCategory.enum.js";
+
 import fs from "fs";
 import path from "path";
 
+const ALL_CATEGORIES = Object.values(ProductCategory);
+let categoryIndex = 0;
+
+/** Cycles through every valid ProductCategory on each call. */
+export const nextCategory = (): ProductCategory =>
+  ALL_CATEGORIES[categoryIndex++ % ALL_CATEGORIES.length];
+
 /**
  * Returns a valid product data object for testing.
+ * Category rotates through all valid enum values unless overridden.
  */
-export const getTestProductData = (overrides = {}) => {
+export const getTestProductData = (overrides: Record<string, any> = {}) => {
   return {
     titleGe: `ტესტ პროდუქტი ${randomId()}`,
     titleEn: `Test Product ${randomId()}`,
     descriptionGe: "ეს არის ტესტ პროდუქტის აღწერა მინიმუმ 10 სიმბოლო",
     descriptionEn: "This is a test product description at least 10 chars",
-    category: "jewelry_accessories",
+    category: nextCategory(),
     price: 15.5,
     stockQuantity: 10,
     condition: "handmade",
@@ -26,7 +36,7 @@ export const getTestProductData = (overrides = {}) => {
     locationGe: "თბილისი",
     locationEn: "Tbilisi",
     weight: 0.5,
-    isShown: true,
+    isShown: false,
     isOneOfAKind: false,
     ...overrides,
   };
@@ -38,12 +48,14 @@ export const getTestProductData = (overrides = {}) => {
 export async function createTestProduct(
   api: APIRequestContext,
   partnerId: string,
-  overrides = {}
+  overrides = {},
 ) {
   const data = getTestProductData(overrides);
-  
+
   // Use actual tested asset instead of buffer
-  const dummyImage = fs.readFileSync(path.join(process.cwd(), "tests/helpers/assets/eocB2.jpg"));
+  const dummyImage = fs.readFileSync(
+    path.join(process.cwd(), "tests/helpers/assets/eocB2.jpg"),
+  );
 
   const formData: any = {};
   for (const [key, value] of Object.entries(data)) {
@@ -54,30 +66,38 @@ export async function createTestProduct(
     }
   }
 
-  const res = await api.post(`${ENDPOINTS.ADMIN_PRODUCTS}/partner/${partnerId}`, {
-    multipart: {
-      ...formData,
-      images: {
-        name: "test-product.jpg",
-        mimeType: "image/jpeg",
-        buffer: dummyImage,
+  const res = await api.post(
+    `${ENDPOINTS.ADMIN_PRODUCTS}/partner/${partnerId}`,
+    {
+      multipart: {
+        ...formData,
+        images: {
+          name: "test-product.jpg",
+          mimeType: "image/jpeg",
+          buffer: dummyImage,
+        },
       },
     },
-  });
+  );
 
   if (res.status() !== 201) {
     const errorBody = await res.json().catch(() => ({}));
-    throw new Error(`createTestProduct failed (${res.status()}): ${JSON.stringify(errorBody)}`);
+    throw new Error(
+      `createTestProduct failed (${res.status()}): ${JSON.stringify(errorBody)}`,
+    );
   }
 
   const body = await res.json();
-  return body.product;
+  return body.data;
 }
 
 /**
  * Deletes a product by ID.
  */
-export async function cleanupProduct(api: APIRequestContext, productId: string) {
+export async function cleanupProduct(
+  api: APIRequestContext,
+  productId: string,
+) {
   const res = await api.delete(`${ENDPOINTS.ADMIN_PRODUCTS}/${productId}`);
   return res;
 }

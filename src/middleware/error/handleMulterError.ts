@@ -22,10 +22,10 @@ export const handleMulterError = (err: any, req: Request, res: Response, next: N
     });
   }
 
-  // For Cloudinary errors or other crashes, return 500 but log details
+  // Cloudinary rejections or other upload errors — return 422, never 500
   if (err) {
-    console.error("[MULTER_CRASH]:", err);
-    return res.status(500).json({ message: "სერვერის შეცდომა ფაილის ატვირთვისას", detail: err.message });
+    console.error("[UPLOAD_ERROR]:", err);
+    return res.status(422).json({ message: "ფაილის ატვირთვა ვერ მოხერხდა" });
   }
 
   next();

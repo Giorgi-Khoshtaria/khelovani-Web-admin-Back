@@ -19,13 +19,13 @@ export const loginHappyPathSuites = () => {
       expect(res.status()).toBe(200);
 
       const body = await res.json();
-      expect(body).toHaveProperty("token");
-      expect(body).toHaveProperty("id");
+      expect(body.data).toHaveProperty("token");
+      expect(body.data).toHaveProperty("id");
       expect(body).toHaveProperty("message");
-      expect(typeof body.token).toBe("string");
-      expect(body.token.length).toBeGreaterThan(20);
+      expect(typeof body.data.token).toBe("string");
+      expect(body.data.token.length).toBeGreaterThan(20);
 
-      const tokenData = validateAdminToken(body.token);
+      const tokenData = validateAdminToken(body.data.token);
       expect(tokenData.role).toBe("admin");
       expect(Array.isArray(tokenData.permissions)).toBe(true);
     });
@@ -41,14 +41,14 @@ export const loginHappyPathSuites = () => {
       expect(res.status()).toBe(200);
 
       const body = await res.json();
-      expect(body).toHaveProperty("token");
-      expect(body).toHaveProperty("id");
+      expect(body.data).toHaveProperty("token");
+      expect(body.data).toHaveProperty("id");
       expect(body).toHaveProperty("message");
-      expect(typeof body.token).toBe("string");
-      expect(body.token.length).toBeGreaterThan(20);
+      expect(typeof body.data.token).toBe("string");
+      expect(body.data.token.length).toBeGreaterThan(20);
       expect(body.message).toMatch(/login.*success|admin.*login.*success/i);
 
-      const tokenData = validateAdminToken(body.token);
+      const tokenData = validateAdminToken(body.data.token);
       expect(tokenData.role).toBe("admin");
       expect(Array.isArray(tokenData.permissions)).toBe(true);
     });
@@ -67,7 +67,7 @@ export const loginHappyPathSuites = () => {
       expect(res.status()).toBe(200);
 
       const body = await res.json();
-      expect(body).toHaveProperty("token");
+      expect(body.data).toHaveProperty("token");
       expect(body).toHaveProperty("message");
     });
 
@@ -85,7 +85,7 @@ export const loginHappyPathSuites = () => {
       expect(res.status()).toBe(200);
 
       const body = await res.json();
-      const tokenData = validateAdminToken(body.token);
+      const tokenData = validateAdminToken(body.data.token);
 
       expect(tokenData.role).toBe("admin");
       expect(Array.isArray(tokenData.permissions)).toBe(true);

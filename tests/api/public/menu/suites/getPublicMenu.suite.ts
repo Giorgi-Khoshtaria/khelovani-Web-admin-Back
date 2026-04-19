@@ -10,7 +10,8 @@ export const getPublicMenuSuites = () => {
       const res = await api.get(ENDPOINTS.PUBLIC_MENU);
       expect(res.status()).toBe(200);
 
-      const items = await res.json();
+      const body = await res.json();
+      const items = body.data;
       expect(Array.isArray(items)).toBe(true);
 
       if (items.length > 0) {

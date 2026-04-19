@@ -61,15 +61,12 @@ export const deleteRoleSuites = () => {
       const partnersRes = await adminApi.get(ENDPOINTS.ADMIN_PARTNERS);
       const partners = await partnersRes.json();
 
-      if (!Array.isArray(partners) || partners.length === 0) {
-        if (!Array.isArray(partners)) {
-          console.log(`ROL-095: Expected partners array, got: ${JSON.stringify(partners)}`);
-        }
+      if (!Array.isArray(partners.data) || partners.data.length === 0) {
         await deleteRole(adminApi, roleId);
         return;
       }
 
-      const partner = partners[0];
+      const partner = partners.data[0];
       const partnerId = partner._id;
       const originalRoleId = partner.role?._id || partner.role;
 
@@ -163,7 +160,7 @@ export const deleteRoleSuites = () => {
         await adminApi.delete(`${ENDPOINTS.ADMIN_ROLES}/${id}`)
       ).json();
       const hasMsg = typeof body.message === "string";
-      const hasId = body._id === id || body.role?._id === id;
+      const hasId = body.data?._id === id || body._id === id;
       expect(hasMsg || hasId, "DELETE must confirm what was deleted").toBe(
         true,
       );

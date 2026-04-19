@@ -27,7 +27,7 @@ export const getProductByIdSuites = () => {
       );
       expect(res.status()).toBe(200);
       const body = await res.json();
-      expect(body._id).toBe(testProductId);
+      expect(body.data._id).toBe(testProductId);
     });
 
     test("PR-011: Partner can get their own product details by ID", async ({
@@ -44,10 +44,12 @@ export const getProductByIdSuites = () => {
       }
       expect(res.status()).toBe(200);
       const body = await res.json();
-      expect(body._id).toBe(myProduct._id);
+      expect(body.data._id).toBe(myProduct._id);
+
+      await cleanupProduct(partnerApi, myProduct._id);
     });
 
-    test("PR-012: 404 — Product not found (invalid but valid length ID)", async ({
+    test("PR-012: 404 — Product not found (valid-length ID that does not exist)", async ({
       adminApi,
     }) => {
       const nonExistentId = "67f123456789012345678901";
@@ -57,15 +59,14 @@ export const getProductByIdSuites = () => {
       expect(res.status()).toBe(404);
     });
 
-    test("PR-013: 400 — Invalid product ID format", async ({ adminApi }) => {
+    test("PR-013: 422 — Invalid product ID format", async ({ adminApi }) => {
       const res = await adminApi.get(`${ENDPOINTS.ADMIN_PRODUCTS}/invalid-id`);
       expect(res.status()).toBe(422);
     });
 
-    test("PR-014: Partner cannot get another partner's product details (Access Isolation)", async ({
+    test("PR-014: Partner cannot get another partner's hidden product (access isolation)", async ({
       partnerApi,
     }) => {
-      // testProductId was created for process.env.ORGANIZER_PARTNER_ID, not the partnerUser
       const res = await partnerApi.get(
         `${ENDPOINTS.ADMIN_PRODUCTS}/${testProductId}`,
       );

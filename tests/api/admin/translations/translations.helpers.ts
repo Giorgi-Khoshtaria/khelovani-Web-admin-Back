@@ -1,5 +1,6 @@
 import { APIRequestContext } from "@playwright/test";
 import { ENDPOINTS } from "../../../constants/endpoints.js";
+import { randomId } from "../../../helpers/utils/generators.js";
 
 export const VALID_TRANSLATION = {
   namespace: "common",
@@ -14,7 +15,7 @@ export const createTranslation = async (
   adminApi: APIRequestContext,
   overrides?: Record<string, any>,
 ) => {
-  const payload = { ...VALID_TRANSLATION, ...overrides };
+  const payload = { ...VALID_TRANSLATION, key: `qa_${randomId()}`, ...overrides };
   const res = await adminApi.post(ENDPOINTS.ADMIN_TRANSLATION, {
     data: payload,
   });
@@ -22,7 +23,7 @@ export const createTranslation = async (
     throw new Error(`Failed to create translation. Status: ${res.status()}`);
   }
   const body = await res.json();
-  const id = body._id || body.data?._id || body.translation?._id;
+  const id = body.data?._id ?? body._id ?? body.translation?._id;
   return { id, payload, res };
 };
 

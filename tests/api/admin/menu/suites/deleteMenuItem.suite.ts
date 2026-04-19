@@ -14,8 +14,8 @@ export const deleteMenuItemSuites = () => {
 
       // Verify deletion
       const getRes = await adminApi.get(ENDPOINTS.ADMIN_MENU);
-      const array = (await getRes.json()).data || (await getRes.json());
-      expect(array.some((m: any) => m._id === id)).toBe(false);
+      const listBody = await getRes.json();
+      expect(listBody.data.some((m: any) => m._id === id)).toBe(false);
     });
 
     test("MNU-031: 404 — delete non-existent menu item", async ({

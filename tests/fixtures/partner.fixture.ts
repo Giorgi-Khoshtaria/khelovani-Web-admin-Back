@@ -62,7 +62,8 @@ export const partnerTest = base.extend<PartnerFixtures>({
       );
     }
 
-    const { token } = await loginRes.json();
+    const loginBody = await loginRes.json();
+    const token = loginBody.data?.token ?? loginBody.token;
 
     const authContext = await playwright.request.newContext({
       baseURL: "http://localhost:3001",

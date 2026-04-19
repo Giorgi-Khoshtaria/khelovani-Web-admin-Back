@@ -8,6 +8,7 @@ import { rolePermissionsSuites } from "./suites/rolePermissions.suite.js";
 import { systemRoleProtectionSuites } from "./suites/systemRoleProtection.suite.js";
 import { rolesSecuritySuites } from "./suites/rolesSecurity.suite.js";
 import { roleResponseContractSuites } from "./suites/roleResponseContract.suite.js";
+import { roleValidationSuites } from "./suites/roleValidation.suite.js";
 
 /**
  * ============================================================
@@ -17,6 +18,7 @@ import { roleResponseContractSuites } from "./suites/roleResponseContract.suite.
 
 test.describe("Admin Roles API", () => {
   createRoleSuites();
+  roleValidationSuites();
   listRolesSuites();
   getRoleByIdSuites();
   updateRoleSuites();

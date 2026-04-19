@@ -23,7 +23,7 @@ export const partnerStatusSuites = () => {
       const body = await (
         await adminApi.get(`${ENDPOINTS.ADMIN_PARTNERS}/${id}`)
       ).json();
-      expect(body.status).toBe(PartnerStatusEnum.APPROVED);
+      expect(body.data.status).toBe(PartnerStatusEnum.APPROVED);
     });
 
     test("AA-041: PENDING → REJECTED — 200 and record is deleted (404 after)", async ({
@@ -77,7 +77,7 @@ export const partnerStatusSuites = () => {
       const body = await (
         await adminApi.get(`${ENDPOINTS.ADMIN_PARTNERS}/${id}`)
       ).json();
-      expect(body.status).toBe(PartnerStatusEnum.APPROVED);
+      expect(body.data.status).toBe(PartnerStatusEnum.APPROVED);
     });
 
     test("AA-044: APPROVED → PENDING — should be rejected (400 or 422)", async ({
@@ -171,8 +171,8 @@ export const partnerStatusSuites = () => {
         })
       ).json();
 
-      expect(body.status).toBe(PartnerStatusEnum.APPROVED);
-      expect(body.email).toBe(email);
+      expect(body.data.status).toBe(PartnerStatusEnum.APPROVED);
+      expect(body.data.email).toBe(email);
     });
 
     test("AA-050: updatedAt timestamp changes after status update", async ({
@@ -193,8 +193,8 @@ export const partnerStatusSuites = () => {
         })
       ).json();
 
-      expect(new Date(after.updatedAt).getTime()).toBeGreaterThan(
-        new Date(before.updatedAt).getTime(),
+      expect(new Date(after.data.updatedAt).getTime()).toBeGreaterThan(
+        new Date(before.data.updatedAt).getTime(),
       );
     });
   });

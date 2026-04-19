@@ -5,11 +5,13 @@ import {
   forgotPassword,
   resetPassword,
   deleteUserByEmail,
+  getProfile,
 } from "../controllers/user/index.js";
 import {
   twoMinutesLimiter,
   oneHourLimiter,
 } from "../utils/limiters/rate-limit.js";
+import { authenticate } from "../middleware/auth/authenticate.js";
 
 import { verifyEmailCallback } from "../controllers/verification/index.js";
 import { validate } from "../middleware/validate.js";
@@ -49,7 +51,7 @@ router.post(
 router.get("/verify", verifyEmailCallback);
 
 // ✅ Protected
-// router.get("/profile", authenticate, getProfile);
+router.get("/profile", authenticate, getProfile);
 
 // ✅ Protected + permission
 // router.get("/", authenticate, requirePanel(PANELS.ADMIN), requirePermission(PERMISSIONS.USERS.READ), getAllUsers);

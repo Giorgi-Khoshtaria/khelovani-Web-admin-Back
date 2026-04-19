@@ -64,7 +64,8 @@ export const adminTest = base.extend<AdminFixtures>({
       );
     }
 
-    const { token } = await loginRes.json();
+    const loginBody = await loginRes.json();
+    const token = loginBody.data?.token ?? loginBody.token;
 
     const authContext = await playwright.request.newContext({
       baseURL: "http://localhost:3001",
@@ -104,7 +105,8 @@ export const adminTest = base.extend<AdminFixtures>({
     const loginRes = await requestContext.post(ENDPOINTS.ADMIN_LOGIN, {
       data: { email: partnerUser.email, password: partnerUser.password },
     });
-    const { token } = await loginRes.json();
+    const loginBody = await loginRes.json();
+    const token = loginBody.data?.token ?? loginBody.token;
     const authContext = await playwright.request.newContext({
       baseURL: "http://localhost:3001",
       extraHTTPHeaders: { 

@@ -27,7 +27,8 @@ const upload = multer({
   storage,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
   fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith("image/")) {
+    const allowed = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+    if (allowed.includes(file.mimetype)) {
       cb(null, true);
     } else {
       cb(new Error("მხოლოდ სურათების ატვირთვაა ნებადართული") as any, false);

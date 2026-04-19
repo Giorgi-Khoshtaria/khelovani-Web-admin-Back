@@ -23,7 +23,7 @@ export const rolePermissionsSuites = () => {
         const body = await (
           await adminApi.get(`${ENDPOINTS.ADMIN_ROLES}/${roleId}`)
         ).json();
-        const permIds = body.permissions.map((p: any) => p._id ?? p);
+        const permIds = body.data.permissions.map((p: any) => p._id ?? p);
         expect(permIds).toContain(permId);
       } finally {
         await deleteRole(adminApi, roleId);
@@ -48,8 +48,8 @@ export const rolePermissionsSuites = () => {
         const body2 = await (
           await adminApi.get(`${ENDPOINTS.ADMIN_ROLES}/${roleId2}`)
         ).json();
-        expect(body1.permissions.map((p: any) => p._id ?? p)).toContain(permId);
-        expect(body2.permissions.map((p: any) => p._id ?? p)).toContain(permId);
+        expect(body1.data.permissions.map((p: any) => p._id ?? p)).toContain(permId);
+        expect(body2.data.permissions.map((p: any) => p._id ?? p)).toContain(permId);
       } finally {
         await deleteRole(adminApi, roleId1);
         await deleteRole(adminApi, roleId2);
@@ -70,7 +70,7 @@ export const rolePermissionsSuites = () => {
       const body = await (
         await adminApi.get(`${ENDPOINTS.ADMIN_ROLES}/${roleId}`)
       ).json();
-      const permIds = body.permissions.map((p: any) => p._id ?? p);
+      const permIds = body.data.permissions.map((p: any) => p._id ?? p);
       expect(permIds).not.toContain(permId);
 
       await deleteRole(adminApi, roleId);
@@ -95,7 +95,7 @@ export const rolePermissionsSuites = () => {
         
         if (res.status() === 201) {
           const body = await res.json();
-          await deleteRole(adminApi, body.role?._id || body._id);
+          await deleteRole(adminApi, body.data?._id);
         }
       } finally {
         if (permIds.length > 0) {

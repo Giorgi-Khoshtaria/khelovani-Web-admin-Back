@@ -62,7 +62,7 @@ export const optionalAuthenticate = (
     req.user = decoded as Request["user"];
     next();
   } catch {
-    // We treat invalid tokens as "not logged in" for optional routes
-    next();
+    // Token was provided but is invalid — reject with 401 (not silently skip)
+    res.status(401).json({ message: "არასწორი ან ვადაგასული ტოკენი" });
   }
 };

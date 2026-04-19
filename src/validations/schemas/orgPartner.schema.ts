@@ -90,6 +90,7 @@ export const orgSchema = {
       tiktok: z.string().url("tiktok_invalid").optional().or(z.literal("")),
 
       password: z.string().min(6, "password_min_length").optional(),
+      role: z.string().regex(/^[a-f\d]{24}$/i, "invalid_role_id").optional(),
     })
     .partial(),
 };
@@ -100,14 +101,14 @@ export const orgSchema = {
 export const partnerRegistrationSchema = {
   body: z
     .object({
-      companyNameGe: z.string().trim().min(1, "companyNameGe_required"),
-      companyNameEn: z.string().trim().min(1, "companyNameEn_required"),
+      companyNameGe: z.string().trim().min(1, "companyNameGe_required").max(100, "companyNameGe_max_length"),
+      companyNameEn: z.string().trim().min(1, "companyNameEn_required").max(100, "companyNameEn_max_length"),
       identificationCode: z
         .string()
         .trim()
         .min(1, "id_code_required")
         .regex(/^\d{9}$/, "id_code_invalid"),
-      contactPerson: z.string().trim().min(1, "contactPerson_required"),
+      contactPerson: z.string().trim().min(1, "contactPerson_required").max(100, "contactPerson_max_length"),
       phone: z
         .string()
         .trim()
@@ -115,16 +116,18 @@ export const partnerRegistrationSchema = {
         .regex(/^5\d{2}\s?\d{3}\s?\d{3}$/, "phone_invalid"),
       city: z.enum(VALID_CITIES),
       category: z.string().trim().min(1, "category_required"),
-      email: z.string().trim().min(1, "email_required").email("email_invalid"),
+      email: z.string().trim().min(1, "email_required").email("email_invalid").max(254, "email_too_long"),
       address: z
         .string()
         .trim()
         .min(1, "address_required")
+        .max(200, "address_max_length")
         .regex(/^[ა-ჰ0-9\s.,/\\\-()]+$/, "address_needs_georgian"),
       addressEn: z
         .string()
         .trim()
         .min(1, "addressEn_required")
+        .max(200, "addressEn_max_length")
         .regex(/^[a-zA-Z0-9\s.,/\\\-()]+$/, "addressEn_needs_english"),
       description: z
         .string()
@@ -136,7 +139,7 @@ export const partnerRegistrationSchema = {
         .max(500, "description_max_length")
         .optional()
         .or(z.literal("")),
-      website: z.string().url("website_invalid").optional().or(z.literal("")),
+      website: z.string().url("website_invalid").regex(/^https?:\/\//, "website_invalid").optional().or(z.literal("")),
       facebook: z.string().url("facebook_invalid").optional().or(z.literal("")),
       instagram: z
         .string()

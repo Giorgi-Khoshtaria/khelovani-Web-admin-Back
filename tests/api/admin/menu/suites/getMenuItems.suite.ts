@@ -11,9 +11,8 @@ export const getMenuItemsSuites = () => {
         const res = await adminApi.get(ENDPOINTS.ADMIN_MENU);
         expect(res.status()).toBe(200);
         const body = await res.json();
-        const menus = body.data || body;
-        expect(Array.isArray(menus)).toBe(true);
-        expect(menus.some((m: any) => m._id === id)).toBe(true);
+        expect(Array.isArray(body.data)).toBe(true);
+        expect(body.data.some((m: any) => m._id === id)).toBe(true);
       } finally {
         await deleteMenuItem(adminApi, id);
       }

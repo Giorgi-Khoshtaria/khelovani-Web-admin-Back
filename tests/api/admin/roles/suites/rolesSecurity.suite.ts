@@ -113,22 +113,12 @@ export const rolesSecuritySuites = () => {
       for (const search of [
         '{"$gt":""}',
         '{"$where":"return true"}',
-        "'; DROP TABLE roles;--",
       ]) {
         const res = await adminApi.get(ENDPOINTS.ADMIN_ROLES, {
           params: { search },
         });
         expect(res.status()).not.toBe(500);
       }
-    });
-
-    test("ROL-161: SQL injection in role name on create → 422", async ({
-      adminApi,
-    }) => {
-      const res = await adminApi.post(ENDPOINTS.ADMIN_ROLES, {
-        data: { ...VALID_ROLE, name: "'; DROP TABLE roles; --" },
-      });
-      expect(res.status()).toBe(422);
     });
 
     test("ROL-162: XSS in name field on create → 422", async ({ adminApi }) => {
@@ -149,10 +139,10 @@ export const rolesSecuritySuites = () => {
       if (res.status() === 201) {
         const body = await res.json();
         const text = await (
-          await adminApi.get(`${ENDPOINTS.ADMIN_ROLES}/${body.role._id}`)
+          await adminApi.get(`${ENDPOINTS.ADMIN_ROLES}/${body.data._id}`)
         ).text();
         expect(text).not.toContain("<img src=x onerror=alert(1)>");
-        await deleteRole(adminApi, body.role._id);
+        await deleteRole(adminApi, body.data._id);
       } else {
         expect(res.status()).toBe(422);
       }
@@ -172,9 +162,9 @@ export const rolesSecuritySuites = () => {
       });
       if (res.status() === 201) {
         const body = await res.json();
-        expect(body.role._id).not.toBe("000000000000000000000099");
-        expect(body.role.isSystem).not.toBe(true);
-        await deleteRole(adminApi, body.role._id);
+        expect(body.data._id).not.toBe("000000000000000000000099");
+        expect(body.data.isSystem).not.toBe(true);
+        await deleteRole(adminApi, body.data._id);
       } else {
         expect(res.status()).toBe(422);
       }

@@ -28,7 +28,5 @@ export const createPermission = asyncHandler(async (req, res) => {
     category: category || "General",
   });
 
-  sendResponse(res, 201, tAlerts("permission_created_success") || "Permission created successfully", {
-    permission: newPermission,
-  });
+  sendResponse(res, 201, tAlerts("permission_created_success") || "Permission created successfully", newPermission);
 });

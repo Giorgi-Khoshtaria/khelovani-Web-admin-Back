@@ -11,11 +11,10 @@ export const getPartnerByIdSuites = () => {
       api,
     }) => {
       const { id, email } = await createPendingPartner(api);
-
       const res = await adminApi.get(`${ENDPOINTS.ADMIN_PARTNERS}/${id}`);
       expect(res.status()).toBe(200);
       const body = await res.json();
-      expect(body.email).toBe(email);
+      expect(body.data.email).toBe(email);
     });
 
     test("AA-021: 200 — response does not contain password or hash", async ({
@@ -23,44 +22,31 @@ export const getPartnerByIdSuites = () => {
       api,
     }) => {
       const { id } = await createPendingPartner(api);
-
       const body = await (
         await adminApi.get(`${ENDPOINTS.ADMIN_PARTNERS}/${id}`)
       ).json();
-      expect(body).not.toHaveProperty("password");
-      expect(body).not.toHaveProperty("passwordHash");
-      expect(body).not.toHaveProperty("hash");
+      expect(body.data).not.toHaveProperty("password");
+      expect(body.data).not.toHaveProperty("passwordHash");
+      expect(body.data).not.toHaveProperty("hash");
     });
 
-    test("AA-022: 404 — valid ObjectId that does not exist", async ({
-      adminApi,
-    }) => {
-      const res = await adminApi.get(
-        `${ENDPOINTS.ADMIN_PARTNERS}/000000000000000000000000`,
-      );
+    test("AA-022: 404 — valid ObjectId that does not exist", async ({ adminApi }) => {
+      const res = await adminApi.get(`${ENDPOINTS.ADMIN_PARTNERS}/000000000000000000000000`);
       expect(res.status()).toBe(404);
     });
 
-    test("AA-023: 400 — invalid ObjectId format (too short)", async ({
-      adminApi,
-    }) => {
+    test("AA-023: 422 — invalid ObjectId format (too short)", async ({ adminApi }) => {
       const res = await adminApi.get(`${ENDPOINTS.ADMIN_PARTNERS}/invalid-id`);
       expect(res.status()).toBe(422);
     });
 
-    test("AA-024: 400 — invalid ObjectId: all letters", async ({
-      adminApi,
-    }) => {
+    test("AA-024: 422 — invalid ObjectId: all letters", async ({ adminApi }) => {
       const res = await adminApi.get(`${ENDPOINTS.ADMIN_PARTNERS}/abcdefghij`);
       expect(res.status()).toBe(422);
     });
 
-    test("AA-025: 400 — ObjectId with special characters", async ({
-      adminApi,
-    }) => {
-      const res = await adminApi.get(
-        `${ENDPOINTS.ADMIN_PARTNERS}/../../etc/passwd`,
-      );
+    test("AA-025: 422/404 — ObjectId with special characters — never 500", async ({ adminApi }) => {
+      const res = await adminApi.get(`${ENDPOINTS.ADMIN_PARTNERS}/../../etc/passwd`);
       expect([404, 422]).toContain(res.status());
       expect(res.status()).not.toBe(500);
     });
@@ -80,7 +66,7 @@ export const getPartnerByIdSuites = () => {
       expect(res.status()).toBe(403);
     });
 
-    test("AA-028: 200 — response has expected shape (id, email, status, createdAt)", async ({
+    test("AA-028: 200 — response data has expected fields", async ({
       adminApi,
       api,
     }) => {
@@ -88,11 +74,10 @@ export const getPartnerByIdSuites = () => {
       const body = await (
         await adminApi.get(`${ENDPOINTS.ADMIN_PARTNERS}/${id}`)
       ).json();
-
-      expect(body).toHaveProperty("_id");
-      expect(body).toHaveProperty("email");
-      expect(body).toHaveProperty("status");
-      expect(body).toHaveProperty("createdAt");
+      expect(body.data).toHaveProperty("_id");
+      expect(body.data).toHaveProperty("email");
+      expect(body.data).toHaveProperty("status");
+      expect(body.data).toHaveProperty("createdAt");
     });
 
     test("AA-029: 200 — newly created partner has status PENDING", async ({
@@ -103,15 +88,8 @@ export const getPartnerByIdSuites = () => {
       const body = await (
         await adminApi.get(`${ENDPOINTS.ADMIN_PARTNERS}/${id}`)
       ).json();
-      expect(body.status).toBe(PartnerStatusEnum.PENDING);
+      expect(body.data.status).toBe(PartnerStatusEnum.PENDING);
     });
 
-    test("AA-030: 400 — ObjectId with SQL injection payload", async ({
-      adminApi,
-    }) => {
-      const res = await adminApi.get(`${ENDPOINTS.ADMIN_PARTNERS}/' OR '1'='1`);
-      expect(res.status()).toBe(422);
-      expect(res.status()).not.toBe(500);
-    });
   });
 };

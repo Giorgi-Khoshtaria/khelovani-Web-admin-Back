@@ -14,7 +14,7 @@ export const getPermissionByIdSuites = () => {
         const res = await adminApi.get(`${ENDPOINTS.ADMIN_PERMISSIONS}/${id}`);
         expect(res.status()).toBe(200);
         const body = await res.json();
-        expect(body.name).toBe(name);
+        expect(body.data.name).toBe(name);
       } finally {
         await deletePermission(adminApi, id);
       }
@@ -29,12 +29,12 @@ export const getPermissionByIdSuites = () => {
         const body = await (
           await adminApi.get(`${ENDPOINTS.ADMIN_PERMISSIONS}/${id}`)
         ).json();
-        expect(body).toHaveProperty("_id");
-        expect(body).toHaveProperty("name");
-        expect(body).toHaveProperty("description");
-        expect(body).toHaveProperty("category");
-        expect(body).toHaveProperty("createdAt");
-        expect(body).toHaveProperty("updatedAt");
+        expect(body.data).toHaveProperty("_id");
+        expect(body.data).toHaveProperty("name");
+        expect(body.data).toHaveProperty("description");
+        expect(body.data).toHaveProperty("category");
+        expect(body.data).toHaveProperty("createdAt");
+        expect(body.data).toHaveProperty("updatedAt");
       } finally {
         await deletePermission(adminApi, id);
       }
@@ -49,7 +49,7 @@ export const getPermissionByIdSuites = () => {
         const body = await (
           await adminApi.get(`${ENDPOINTS.ADMIN_PERMISSIONS}/${id}`)
         ).json();
-        expect(body._id).toBe(id);
+        expect(body.data._id).toBe(id);
       } finally {
         await deletePermission(adminApi, id);
       }

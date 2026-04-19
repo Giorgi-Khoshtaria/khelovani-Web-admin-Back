@@ -35,10 +35,10 @@ export const getPublicPartnerByIdSuites = (
       expect(res.status()).toBe(200);
 
       const body = await res.json();
-      expect(body.email).toBe(sharedState.approvedPartnerEmail);
-      expect(body).toHaveProperty("companyNameEn");
-      expect(body).toHaveProperty("city");
-      expect(body).not.toHaveProperty("internalField"); // example of sensitive data hiding
+      expect(body.data.email).toBe(sharedState.approvedPartnerEmail);
+      expect(body.data).toHaveProperty("companyNameEn");
+      expect(body.data).toHaveProperty("city");
+      expect(body.data).not.toHaveProperty("internalField"); // example of sensitive data hiding
     });
   });
 };

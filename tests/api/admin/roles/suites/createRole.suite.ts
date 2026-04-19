@@ -24,8 +24,8 @@ export const createRoleSuites = () => {
       });
       expect(res.status()).toBe(201);
       const body = await res.json();
-      expect(body.role.name).toBe(name);
-      await deleteRole(adminApi, body.role._id);
+      expect(body.data.name).toBe(name);
+      await deleteRole(adminApi, body.data._id);
     });
 
     test("ROL-002: 201 — create role without optional description", async ({
@@ -37,7 +37,7 @@ export const createRoleSuites = () => {
       });
       expect(res.status()).toBe(201);
       const body = await res.json();
-      await deleteRole(adminApi, body.role._id);
+      await deleteRole(adminApi, body.data._id);
     });
 
     test("ROL-003: 201 — create role without optional permissions array", async ({
@@ -49,7 +49,7 @@ export const createRoleSuites = () => {
       });
       expect(res.status()).toBe(201);
       const body = await res.json();
-      await deleteRole(adminApi, body.role._id);
+      await deleteRole(adminApi, body.data._id);
     });
 
     test("ROL-004: [N2] 409 — duplicate role name", async ({ adminApi }) => {
@@ -125,7 +125,7 @@ export const createRoleSuites = () => {
       });
       expect(res.status()).toBe(201);
       const body = await res.json();
-      await deleteRole(adminApi, body.role._id);
+      await deleteRole(adminApi, body.data._id);
     });
 
     test("ROL-013: [BVA max=100] 201 — name of exactly 100 characters", async ({
@@ -136,7 +136,7 @@ export const createRoleSuites = () => {
       });
       expect(res.status()).toBe(201);
       const body = await res.json();
-      await deleteRole(adminApi, body.role._id);
+      await deleteRole(adminApi, body.data._id);
     });
 
     test("ROL-014: [BVA max+1=101] 422 — name of 101 characters", async ({
@@ -158,7 +158,7 @@ export const createRoleSuites = () => {
       expect([201, 422]).toContain(res.status());
       if (res.status() === 201) {
         const body = await res.json();
-        await deleteRole(adminApi, body.role._id);
+        await deleteRole(adminApi, body.data._id);
       }
     });
 

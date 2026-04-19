@@ -27,8 +27,8 @@ export const loginHappyPathSuites = () => {
           data: { email: sharedUser.email, password: sharedUser.password },
         });
         const body = await res.json();
-        expect(body).toHaveProperty("token");
-        expect(body).toHaveProperty("user");
+        expect(body.data).toHaveProperty("token");
+        expect(body.data).toHaveProperty("user");
       },
     );
 
@@ -37,7 +37,7 @@ export const loginHappyPathSuites = () => {
         data: { email: sharedUser.email, password: sharedUser.password },
       });
       const body = await res.json();
-      expect(body.token).toMatch(
+      expect(body.data.token).toMatch(
         /^[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+$/,
       );
     });

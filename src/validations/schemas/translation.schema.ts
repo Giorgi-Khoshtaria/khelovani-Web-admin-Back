@@ -49,8 +49,13 @@ export const updateTranslationSchema = {
         .trim()
         .optional()
         .refine((val) => !val || !xssRegex.test(val), "xss_detected"),
-    }),
-  }).strict()
+    }).optional(),
+  })
+  .strict()
+  .refine(
+    (data) => data.namespace !== undefined || data.key !== undefined || data.translations !== undefined,
+    { message: "at_least_one_field_required" },
+  )
 };
 
 /**

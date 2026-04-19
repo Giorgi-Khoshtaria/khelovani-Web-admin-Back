@@ -17,7 +17,7 @@ export const systemRoleProtectionSuites = () => {
       roleName: string,
     ): Promise<any | null> {
       const body = await (await adminApi.get(ENDPOINTS.ADMIN_ROLES)).json();
-      return body.find((r: any) => r.name === roleName) ?? null;
+      return body.data?.find((r: any) => r.name === roleName) ?? null;
     }
 
     for (const systemRoleName of SYSTEM_ROLES) {
@@ -87,7 +87,7 @@ export const systemRoleProtectionSuites = () => {
       );
       expect(verifyRes.status()).toBe(200);
       const body = await verifyRes.json();
-      expect(body.name).toBe("admin");
+      expect(body.data.name).toBe("admin");
     });
 
     test("ROL-135: non-system role can still be deleted (protection is targeted)", async ({

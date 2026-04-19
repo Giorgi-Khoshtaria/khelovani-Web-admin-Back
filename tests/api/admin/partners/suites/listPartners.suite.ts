@@ -6,14 +6,15 @@ import { createPendingPartner } from "../partners.helpers.js";
 
 export const listPartnersSuites = () => {
   test.describe("1. GET /api/admin/partners — List Partners", () => {
-    test("AA-001: 200 — returns paginated object of partners", async ({ adminApi }) => {
+    test("AA-001: 200 — returns envelope with data array and meta", async ({ adminApi }) => {
       const res = await adminApi.get(ENDPOINTS.ADMIN_PARTNERS);
       expect(res.status()).toBe(200);
       const body = await res.json();
-      expect(body).toHaveProperty("partners");
-      expect(Array.isArray(body.partners)).toBe(true);
-      expect(body).toHaveProperty("totalCount");
-      expect(body).toHaveProperty("totalPages");
+      expect(body).toHaveProperty("data");
+      expect(Array.isArray(body.data)).toBe(true);
+      expect(body).toHaveProperty("meta");
+      expect(body.meta).toHaveProperty("totalCount");
+      expect(body.meta).toHaveProperty("totalPages");
     });
 
     test("AA-002: 200 — search filter returns matching partner", async ({
@@ -27,11 +28,11 @@ export const listPartnersSuites = () => {
       });
       expect(res.status()).toBe(200);
       const body = await res.json();
-      expect(Array.isArray(body.partners)).toBe(true);
-      expect(body.partners.some((p: any) => p.email === email)).toBe(true);
+      expect(Array.isArray(body.data)).toBe(true);
+      expect(body.data.some((p: any) => p.email === email)).toBe(true);
     });
 
-    test("AA-003: 200 — search with no match returns empty array", async ({
+    test("AA-003: 200 — search with no match returns empty data array", async ({
       adminApi,
     }) => {
       const res = await adminApi.get(ENDPOINTS.ADMIN_PARTNERS, {
@@ -39,8 +40,8 @@ export const listPartnersSuites = () => {
       });
       expect(res.status()).toBe(200);
       const body = await res.json();
-      expect(Array.isArray(body.partners)).toBe(true);
-      expect(body.partners.length).toBe(0);
+      expect(Array.isArray(body.data)).toBe(true);
+      expect(body.data.length).toBe(0);
     });
 
     test("AA-004: 200 — filter by status=PENDING returns only pending partners", async ({
@@ -51,8 +52,8 @@ export const listPartnersSuites = () => {
       });
       expect(res.status()).toBe(200);
       const body = await res.json();
-      expect(Array.isArray(body.partners)).toBe(true);
-      for (const partner of body.partners) {
+      expect(Array.isArray(body.data)).toBe(true);
+      for (const partner of body.data) {
         expect(partner.status).toBe(PartnerStatusEnum.PENDING);
       }
     });
@@ -65,12 +66,12 @@ export const listPartnersSuites = () => {
       });
       expect(res.status()).toBe(200);
       const body = await res.json();
-      for (const partner of body.partners) {
+      for (const partner of body.data) {
         expect(partner.status).toBe(PartnerStatusEnum.APPROVED);
       }
     });
 
-    test("AA-006: 200 — pagination: page=1 returns correct slice", async ({
+    test("AA-006: 200 — pagination: page=1 returns correct slice and meta", async ({
       adminApi,
     }) => {
       const res = await adminApi.get(ENDPOINTS.ADMIN_PARTNERS, {
@@ -78,9 +79,9 @@ export const listPartnersSuites = () => {
       });
       expect(res.status()).toBe(200);
       const body = await res.json();
-      expect(body).toHaveProperty("totalCount");
-      expect(Array.isArray(body.partners)).toBe(true);
-      expect(body.partners.length).toBeLessThanOrEqual(5);
+      expect(body.meta).toHaveProperty("totalCount");
+      expect(Array.isArray(body.data)).toBe(true);
+      expect(body.data.length).toBeLessThanOrEqual(5);
     });
 
     test("AA-007: 200 — no passwords in list response", async ({
@@ -88,7 +89,7 @@ export const listPartnersSuites = () => {
     }) => {
       const res = await adminApi.get(ENDPOINTS.ADMIN_PARTNERS);
       const body = await res.json();
-      for (const partner of body.partners) {
+      for (const partner of body.data) {
         expect(partner).not.toHaveProperty("password");
         expect(partner).not.toHaveProperty("passwordHash");
       }
@@ -106,14 +107,14 @@ export const listPartnersSuites = () => {
       expect(res.status()).toBe(403);
     });
 
-    test("AA-010: 400 — invalid status filter value", async ({ adminApi }) => {
+    test("AA-010: 422 — invalid status filter value", async ({ adminApi }) => {
       const res = await adminApi.get(ENDPOINTS.ADMIN_PARTNERS, {
         params: { status: "NOT_A_REAL_STATUS" },
       });
       expect(res.status()).toBe(422);
     });
 
-    test("AA-011: 200 — empty search string returns partners object (no crash)", async ({
+    test("AA-011: 200 — empty search string returns data array (no crash)", async ({
       adminApi,
     }) => {
       const res = await adminApi.get(ENDPOINTS.ADMIN_PARTNERS, {
@@ -121,8 +122,8 @@ export const listPartnersSuites = () => {
       });
       expect(res.status()).toBe(200);
       const body = await res.json();
-      expect(body).toHaveProperty("partners");
-      expect(Array.isArray(body.partners)).toBe(true);
+      expect(body).toHaveProperty("data");
+      expect(Array.isArray(body.data)).toBe(true);
     });
 
     test("AA-012: 200 — extremely long search string does not crash server", async ({

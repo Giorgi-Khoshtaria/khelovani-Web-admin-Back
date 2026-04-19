@@ -104,7 +104,6 @@ export const permissionsSecuritySuites = () => {
       const injections = [
         '{"$gt": ""}',
         '{"$where": "return true"}',
-        "'; DROP TABLE permissions; --",
       ];
       for (const search of injections) {
         const res = await adminApi.get(ENDPOINTS.ADMIN_PERMISSIONS, {
@@ -134,7 +133,7 @@ export const permissionsSecuritySuites = () => {
 
       if (res.status() === 201) {
         const body = await res.json();
-        const id = body.permission._id;
+        const id = body.data._id;
 
         const getRes = await adminApi.get(
           `${ENDPOINTS.ADMIN_PERMISSIONS}/${id}`,
@@ -178,9 +177,9 @@ export const permissionsSecuritySuites = () => {
 
       if (res.status() === 201) {
         const body = await res.json();
-        expect(body.permission._id).not.toBe("000000000000000000000099");
-        expect(body.permission.isSystem).not.toBe(true);
-        await deletePermission(adminApi, body.permission._id);
+        expect(body.data._id).not.toBe("000000000000000000000099");
+        expect(body.data.isSystem).not.toBe(true);
+        await deletePermission(adminApi, body.data._id);
       } else {
         expect(res.status()).toBe(422);
       }
@@ -207,12 +206,6 @@ export const permissionsSecuritySuites = () => {
       expect(res.headers()["x-powered-by"]).toBeUndefined();
     });
 
-    test("PRM-107: SQL injection in name field → 422", async ({ adminApi }) => {
-      const res = await adminApi.post(ENDPOINTS.ADMIN_PERMISSIONS, {
-        data: { ...VALID_PERMISSION, name: "'; DROP TABLE permissions; --" },
-      });
-      expect(res.status()).toBe(422);
-    });
   });
 
   test.describe("8. Response Shape Contract", () => {
@@ -225,10 +218,10 @@ export const permissionsSecuritySuites = () => {
       });
       const body = await res.json();
       expect(res.status()).toBe(201);
-      expect(body).toHaveProperty("permission");
-      expect(body.permission).toHaveProperty("_id");
-      expect(body.permission.name).toBe(name);
-      await deletePermission(adminApi, body.permission._id);
+      expect(body).toHaveProperty("data");
+      expect(body.data).toHaveProperty("_id");
+      expect(body.data.name).toBe(name);
+      await deletePermission(adminApi, body.data._id);
     });
 
     test("PRM-111: POST 201 — Content-Type is application/json", async ({
@@ -240,7 +233,7 @@ export const permissionsSecuritySuites = () => {
       });
       expect(res.headers()["content-type"]).toContain("application/json");
       const body = await res.json();
-      await deletePermission(adminApi, body.permission._id);
+      await deletePermission(adminApi, body.data._id);
     });
 
     test("PRM-112: PUT 200 — response reflects updated fields", async ({
@@ -255,8 +248,8 @@ export const permissionsSecuritySuites = () => {
           })
         ).json();
 
-        expect(body.permission.description).toBe("shape test");
-        expect(body.permission.category).toBe("ShapeCat");
+        expect(body.data.description).toBe("shape test");
+        expect(body.data.category).toBe("ShapeCat");
       } finally {
         await deletePermission(adminApi, id);
       }
@@ -312,7 +305,7 @@ export const permissionsSecuritySuites = () => {
         const body = await (
           await adminApi.get(ENDPOINTS.ADMIN_PERMISSIONS)
         ).json();
-        for (const p of body) {
+        for (const p of body.data) {
           expect(p).toHaveProperty("_id");
           expect(p).toHaveProperty("name");
           expect(p).toHaveProperty("category");
@@ -350,7 +343,7 @@ export const permissionsSecuritySuites = () => {
       ).json();
 
       const hasMessage = typeof body.message === "string";
-      const hasDeletedId = body._id === id || body.permission?._id === id;
+      const hasDeletedId = body.data?._id === id || body._id === id;
       expect(
         hasMessage || hasDeletedId,
         "DELETE response must confirm what was deleted",

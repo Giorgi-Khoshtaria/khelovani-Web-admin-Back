@@ -5,9 +5,11 @@ import { getPermissionByIdSuites } from "./suites/getPermissionById.suite.js";
 import { updatePermissionSuites } from "./suites/updatePermission.suite.js";
 import { deletePermissionSuites } from "./suites/deletePermission.suite.js";
 import { permissionsSecuritySuites } from "./suites/permissionsSecurity.suite.js";
+import { permissionValidationSuites } from "./suites/permissionValidation.suite.js";
 
 test.describe("Admin Permissions API", () => {
   createPermissionSuites();
+  permissionValidationSuites();
   listPermissionsSuites();
   getPermissionByIdSuites();
   updatePermissionSuites();

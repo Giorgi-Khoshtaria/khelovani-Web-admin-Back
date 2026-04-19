@@ -34,7 +34,7 @@ export const loginValidationSuites = () => {
         });
         expect(res.status()).toBe(403);
         const body = await res.json();
-        expect(body.code).toBe("EMAIL_NOT_VERIFIED");
+        expect(body.data?.code ?? body.code).toBe("EMAIL_NOT_VERIFIED");
       },
     );
 

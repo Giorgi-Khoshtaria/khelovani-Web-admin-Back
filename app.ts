@@ -64,24 +64,6 @@ app.use(
   },
 );
 
-// Middleware to catch empty bodies for non-GET requests
-app.use(
-  (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    if (
-      ["POST", "PUT", "PATCH"].includes(req.method) &&
-      (!req.body || Object.keys(req.body).length === 0)
-    ) {
-      // Only apply this to registration if you want, or globally as a better REST practice
-      if (req.path === "/api/user/register") {
-        return res
-          .status(400)
-          .json({ success: false, message: "Empty request body" });
-      }
-    }
-    next();
-  },
-);
-
 // ✅ 4. rate limiter
 app.use(globalLimiter);
 

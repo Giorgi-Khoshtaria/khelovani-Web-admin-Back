@@ -16,20 +16,31 @@ export const addProduct = asyncHandler(async (req, res) => {
   const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
 
   const data = req.body;
-  const ownerId = req.user?.id;
+  const requesterId = req.user?.id;
+  const userRole = req.user?.role?.toLowerCase();
+  const targetPartnerId = req.params.id;
 
-  if (!ownerId) {
-    throw new AppError(tAlerts("unauthorized") || "Owner ID is required", 401);
+  if (!requesterId) {
+    throw new AppError(tAlerts("unauthorized") || "Unauthorized", 401);
   }
 
-  let imageUrls: string[] = [];
-  if (req.files && Array.isArray(req.files)) {
-    imageUrls = (req.files as Express.Multer.File[]).map((file) => file.path);
+  const isAdmin = userRole === "admin" || req.user?.permissions?.includes("products.viewAll");
+  if (!isAdmin && requesterId !== targetPartnerId) {
+    throw new AppError("Forbidden: Cannot create products for another partner", 403);
   }
+
+  const filesDict = req.files as Record<string, Express.Multer.File[]> | undefined;
+  const imageFiles = filesDict?.["images"];
+
+  if (!imageFiles || imageFiles.length === 0) {
+    throw new AppError(tAlerts("images_required") || "At least one image is required", 422);
+  }
+
+  const imageUrls = imageFiles.map((file) => file.path);
 
   const product = await Product.create({
     ...data,
-    owner: ownerId,
+    owner: targetPartnerId,
     images: imageUrls,
   });
 

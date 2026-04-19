@@ -6,12 +6,14 @@ import { randomId } from "../../../../helpers/utils/generators.js";
 
 export const listPermissionsSuites = () => {
   test.describe("2. GET /api/admin/permissions — List", () => {
-    test("PRM-020: 200 — returns array of permissions", async ({
+    test("PRM-020: 200 — returns envelope with data array", async ({
       adminApi,
     }) => {
       const res = await adminApi.get(ENDPOINTS.ADMIN_PERMISSIONS);
       expect(res.status()).toBe(200);
-      expect(Array.isArray(await res.json())).toBe(true);
+      const body = await res.json();
+      expect(body).toHaveProperty("data");
+      expect(Array.isArray(body.data)).toBe(true);
     });
 
     test("PRM-021: 200 — newly created permission appears in list", async ({
@@ -20,9 +22,11 @@ export const listPermissionsSuites = () => {
       const { id, name } = await createPermission(adminApi);
 
       try {
-        const res = await adminApi.get(ENDPOINTS.ADMIN_PERMISSIONS);
+        const res = await adminApi.get(ENDPOINTS.ADMIN_PERMISSIONS, {
+          params: { search: name },
+        });
         const body = await res.json();
-        expect(body.some((p: any) => p.name === name)).toBe(true);
+        expect(body.data.some((p: any) => p.name === name)).toBe(true);
       } finally {
         await deletePermission(adminApi, id);
       }
@@ -39,14 +43,14 @@ export const listPermissionsSuites = () => {
         });
         expect(res.status()).toBe(200);
         const body = await res.json();
-        expect(body.length).toBeGreaterThan(0);
-        expect(body.some((p: any) => p.name === name)).toBe(true);
+        expect(body.data.length).toBeGreaterThan(0);
+        expect(body.data.some((p: any) => p.name === name)).toBe(true);
       } finally {
         await deletePermission(adminApi, id);
       }
     });
 
-    test("PRM-023: 200 — search with no match returns empty array (not error)", async ({
+    test("PRM-023: 200 — search with no match returns empty data array (not error)", async ({
       adminApi,
     }) => {
       const res = await adminApi.get(ENDPOINTS.ADMIN_PERMISSIONS, {
@@ -54,8 +58,8 @@ export const listPermissionsSuites = () => {
       });
       expect(res.status()).toBe(200);
       const body = await res.json();
-      expect(Array.isArray(body)).toBe(true);
-      expect(body.length).toBe(0);
+      expect(Array.isArray(body.data)).toBe(true);
+      expect(body.data.length).toBe(0);
     });
 
     test("PRM-024: 200 — filter by category returns only that category", async ({
@@ -70,8 +74,8 @@ export const listPermissionsSuites = () => {
         });
         expect(res.status()).toBe(200);
         const body = await res.json();
-        expect(body.length).toBeGreaterThan(0);
-        for (const p of body) {
+        expect(body.data.length).toBeGreaterThan(0);
+        for (const p of body.data) {
           expect(p.category).toBe(cat);
         }
       } finally {
@@ -79,14 +83,14 @@ export const listPermissionsSuites = () => {
       }
     });
 
-    test("PRM-025: 200 — filter by non-existent category returns empty array", async ({
+    test("PRM-025: 200 — filter by non-existent category returns empty data array", async ({
       adminApi,
     }) => {
       const res = await adminApi.get(ENDPOINTS.ADMIN_PERMISSIONS, {
         params: { category: "NonExistentCategory_xyz_abc" },
       });
       expect(res.status()).toBe(200);
-      expect((await res.json()).length).toBe(0);
+      expect((await res.json()).data.length).toBe(0);
     });
 
     test("PRM-026: 200 — pagination: limit=5 returns at most 5 items", async ({
@@ -97,8 +101,8 @@ export const listPermissionsSuites = () => {
       });
       expect(res.status()).toBe(200);
       const body = await res.json();
-      expect(Array.isArray(body)).toBe(true);
-      expect(body.length).toBeLessThanOrEqual(5);
+      expect(Array.isArray(body.data)).toBe(true);
+      expect(body.data.length).toBeLessThanOrEqual(5);
     });
 
     test("PRM-027: 200 — deleted permission no longer in list", async ({
@@ -111,7 +115,7 @@ export const listPermissionsSuites = () => {
         params: { search: name },
       });
       const body = await res.json();
-      expect(body.some((p: any) => p.name === name)).toBe(false);
+      expect(body.data.some((p: any) => p.name === name)).toBe(false);
     });
 
     test("PRM-028: 200 — no passwords or hashes in list response", async ({
@@ -119,7 +123,7 @@ export const listPermissionsSuites = () => {
     }) => {
       const res = await adminApi.get(ENDPOINTS.ADMIN_PERMISSIONS);
       const body = await res.json();
-      for (const p of body) {
+      for (const p of body.data) {
         expect(p).not.toHaveProperty("password");
         expect(p).not.toHaveProperty("passwordHash");
       }
@@ -142,7 +146,7 @@ export const listPermissionsSuites = () => {
         params: { search: "" },
       });
       expect(res.status()).toBe(200);
-      expect(Array.isArray(await res.json())).toBe(true);
+      expect(Array.isArray((await res.json()).data)).toBe(true);
     });
   });
 };

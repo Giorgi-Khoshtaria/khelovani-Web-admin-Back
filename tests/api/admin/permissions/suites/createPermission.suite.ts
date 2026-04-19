@@ -20,9 +20,9 @@ export const createPermissionSuites = () => {
       });
       expect(res.status()).toBe(201);
       const body = await res.json();
-      expect(body.permission.name).toBe(name);
+      expect(body.data.name).toBe(name);
 
-      await deletePermission(adminApi, body.permission._id);
+      await deletePermission(adminApi, body.data._id);
     });
 
     test("PRM-002: 201 — create permission without optional description", async ({
@@ -34,7 +34,7 @@ export const createPermissionSuites = () => {
       });
       expect(res.status()).toBe(201);
       const body = await res.json();
-      await deletePermission(adminApi, body.permission._id);
+      await deletePermission(adminApi, body.data._id);
     });
 
     test("PRM-003: 201 — create permission without optional category", async ({
@@ -46,7 +46,7 @@ export const createPermissionSuites = () => {
       });
       expect(res.status()).toBe(201);
       const body = await res.json();
-      await deletePermission(adminApi, body.permission._id);
+      await deletePermission(adminApi, body.data._id);
     });
 
     test("PRM-004: [N2] 409 — duplicate name returns conflict", async ({
@@ -125,7 +125,7 @@ export const createPermissionSuites = () => {
       });
       expect(res.status()).toBe(201);
       const body = await res.json();
-      await deletePermission(adminApi, body.permission._id);
+      await deletePermission(adminApi, body.data._id);
     });
 
     test("PRM-013: [BVA max=100] 201 — name of exactly 100 characters", async ({
@@ -137,7 +137,7 @@ export const createPermissionSuites = () => {
       });
       expect(res.status()).toBe(201);
       const body = await res.json();
-      await deletePermission(adminApi, body.permission._id);
+      await deletePermission(adminApi, body.data._id);
     });
 
     test("PRM-014: [BVA max+1=101] 422 — name of 101 characters", async ({
@@ -175,7 +175,7 @@ export const createPermissionSuites = () => {
       });
       expect(res.status()).toBe(201);
       const body = await res.json();
-      await deletePermission(adminApi, body.permission._id);
+      await deletePermission(adminApi, body.data._id);
     });
 
     test("PRM-018: 201 — duplicate name check is case-sensitive", async ({

@@ -47,7 +47,7 @@ export const updateProductSuites = () => {
         };
       }
 
-      return await api.put(`${ENDPOINTS.ADMIN_PRODUCTS}/${productId}`, {
+      return await api.patch(`${ENDPOINTS.ADMIN_PRODUCTS}/${productId}`, {
         multipart,
       });
     };
@@ -59,8 +59,8 @@ export const updateProductSuites = () => {
       const res = await putMultipart(adminApi, testProductId, updateData);
       expect(res.status()).toBe(200);
       const body = await res.json();
-      expect(body.product.titleGe).toBe(updateData.titleGe);
-      expect(body.product.price).toBe(updateData.price);
+      expect(body.data.titleGe).toBe(updateData.titleGe);
+      expect(body.data.price).toBe(updateData.price);
     });
 
     test("PR-041: Partner can update their own product", async ({
@@ -132,7 +132,7 @@ export const updateProductSuites = () => {
       const res = await putMultipart(adminApi, testProductId, {}, dummyImage);
       expect(res.status()).toBe(200);
       const body = await res.json();
-      expect(body.product.images.length).toBeGreaterThan(0);
+      expect(body.data.images.length).toBeGreaterThan(0);
     });
   });
 };

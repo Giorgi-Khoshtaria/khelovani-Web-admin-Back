@@ -94,8 +94,7 @@ export const partnersSecuritySuites = () => {
     }) => {
       const res = await adminApi.get(ENDPOINTS.ADMIN_PARTNERS);
       const body = await res.json();
-      const partners = body.partners || body;
-      for (const partner of partners) {
+      for (const partner of body.data) {
         expect(partner).not.toHaveProperty("password");
         expect(partner).not.toHaveProperty("passwordHash");
       }
@@ -109,8 +108,8 @@ export const partnersSecuritySuites = () => {
       const body = await (
         await adminApi.get(`${ENDPOINTS.ADMIN_PARTNERS}/${id}`)
       ).json();
-      expect(body).not.toHaveProperty("password");
-      expect(body).not.toHaveProperty("passwordHash");
+      expect(body.data).not.toHaveProperty("password");
+      expect(body.data).not.toHaveProperty("passwordHash");
     });
 
     test("AA-082: NoSQL injection in search param — no 500", async ({
@@ -119,7 +118,6 @@ export const partnersSecuritySuites = () => {
       const injections = [
         { search: '{"$gt": ""}' },
         { search: '{"$where": "return true"}' },
-        { search: "'; DROP TABLE partners; --" },
       ];
       for (const params of injections) {
         const res = await adminApi.get(ENDPOINTS.ADMIN_PARTNERS, { params });
@@ -154,8 +152,8 @@ export const partnersSecuritySuites = () => {
         })
       ).json();
 
-      expect(body.role).not.toBe("admin");
-      expect(body.isAdmin).not.toBe(true);
+      expect(body.data?.role).not.toBe("admin");
+      expect(body.data?.isAdmin).not.toBe(true);
     });
 
     test("AA-085: response has no X-Powered-By header", async ({

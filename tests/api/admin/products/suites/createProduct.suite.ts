@@ -49,8 +49,8 @@ export const createProductSuites = () => {
       const res = await postMultipart(adminApi, partnerId, data, dummyImage);
       expect(res.status()).toBe(201);
       const body = await res.json();
-      expect(body.product.titleGe).toBe(data.titleGe);
-      expect(body.product.owner).toBe(partnerId);
+      expect(body.data.titleGe).toBe(data.titleGe);
+      expect(body.data.owner).toBe(partnerId);
     });
 
     test("PR-021: Partner can create a product for themselves", async ({

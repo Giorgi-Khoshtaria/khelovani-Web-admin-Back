@@ -22,7 +22,7 @@ export async function createPendingPartner(
   }
 
   const body = await res.json();
-  const id = body.partner?._id ?? body.data?._id ?? body._id;
+  const id = body.data?.partner?._id ?? body.data?._id ?? body.partner?._id ?? body._id;
 
   if (!id) {
     throw new Error(

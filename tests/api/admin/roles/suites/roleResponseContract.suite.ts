@@ -10,7 +10,7 @@ import {
 
 export const roleResponseContractSuites = () => {
   test.describe("10. Response Shape Contract", () => {
-    test("ROL-180: POST 201 — response has role object with _id", async ({
+    test("ROL-180: POST 201 — response has data object with _id", async ({
       adminApi,
     }) => {
       const name = uniqueName();
@@ -24,17 +24,18 @@ export const roleResponseContractSuites = () => {
       });
       expect(res.status()).toBe(201);
       const body = await res.json();
-      expect(body).toHaveProperty("role");
-      expect(body.role).toHaveProperty("_id");
-      expect(body.role.name).toBe(name);
-      await deleteRole(adminApi, body.role._id);
+      expect(body).toHaveProperty("data");
+      expect(body.data).toHaveProperty("_id");
+      expect(body.data.name).toBe(name);
+      await deleteRole(adminApi, body.data._id);
     });
 
     test("ROL-181: GET list items have consistent shape", async ({
       adminApi,
     }) => {
       const body = await (await adminApi.get(ENDPOINTS.ADMIN_ROLES)).json();
-      for (const r of body) {
+      expect(Array.isArray(body.data)).toBe(true);
+      for (const r of body.data) {
         expect(r).toHaveProperty("_id");
         expect(r).toHaveProperty("name");
         expect(r).toHaveProperty("allowedPanels");
@@ -51,13 +52,13 @@ export const roleResponseContractSuites = () => {
         const body = await (
           await adminApi.get(`${ENDPOINTS.ADMIN_ROLES}/${id}`)
         ).json();
-        expect(body).toHaveProperty("_id");
-        expect(body).toHaveProperty("name");
-        expect(body).toHaveProperty("description");
-        expect(body).toHaveProperty("allowedPanels");
-        expect(body).toHaveProperty("permissions");
-        expect(body).toHaveProperty("createdAt");
-        expect(body).toHaveProperty("updatedAt");
+        expect(body.data).toHaveProperty("_id");
+        expect(body.data).toHaveProperty("name");
+        expect(body.data).toHaveProperty("description");
+        expect(body.data).toHaveProperty("allowedPanels");
+        expect(body.data).toHaveProperty("permissions");
+        expect(body.data).toHaveProperty("createdAt");
+        expect(body.data).toHaveProperty("updatedAt");
       } finally {
         await deleteRole(adminApi, id);
       }
@@ -76,8 +77,8 @@ export const roleResponseContractSuites = () => {
             },
           })
         ).json();
-        expect(body.role.description).toBe("shape PUT");
-        expect(body.role.allowedPanels).toContain("admin-organization");
+        expect(body.data.description).toBe("shape PUT");
+        expect(body.data.allowedPanels).toContain("admin-organization");
       } finally {
         await deleteRole(adminApi, id);
       }
@@ -163,7 +164,7 @@ export const roleResponseContractSuites = () => {
         const body = await (
           await adminApi.get(`${ENDPOINTS.ADMIN_ROLES}/${id}`)
         ).json();
-        expect(Array.isArray(body.permissions)).toBe(true);
+        expect(Array.isArray(body.data.permissions)).toBe(true);
       } finally {
         await deleteRole(adminApi, id);
       }
@@ -177,7 +178,7 @@ export const roleResponseContractSuites = () => {
         const body = await (
           await adminApi.get(`${ENDPOINTS.ADMIN_ROLES}/${id}`)
         ).json();
-        expect(Array.isArray(body.allowedPanels)).toBe(true);
+        expect(Array.isArray(body.data.allowedPanels)).toBe(true);
       } finally {
         await deleteRole(adminApi, id);
       }

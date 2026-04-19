@@ -46,14 +46,6 @@ export const updatePermission = asyncHandler(
 
     const updated = await permission.save();
 
-    sendResponse(
-      res,
-      200,
-      tAlerts("permission_updated_success") ||
-        "Permission updated successfully",
-      {
-        permission: updated,
-      },
-    );
+    sendResponse(res, 200, tAlerts("permission_updated_success") || "Permission updated successfully", updated);
   },
 );

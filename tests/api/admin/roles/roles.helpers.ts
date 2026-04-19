@@ -38,7 +38,7 @@ export async function createRole(
   }
 
   const body = await res.json();
-  const id = body.role?._id ?? body._id;
+  const id = body.data?._id ?? body.role?._id ?? body._id;
   if (!id)
     throw new Error(`createRole: no id in response: ${JSON.stringify(body)}`);
 
@@ -65,7 +65,7 @@ export async function createPermission(
   }
 
   const body = await res.json();
-  const id = body.permission?._id ?? body._id;
+  const id = body.data?._id ?? body.permission?._id ?? body._id;
   if (!id)
     throw new Error(
       `createPermission: no id in response: ${JSON.stringify(body)}`,

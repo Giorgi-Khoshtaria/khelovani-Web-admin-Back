@@ -17,7 +17,7 @@ export const createTranslationSuites = () => {
       });
       expect(res.status()).toBe(201);
       const body = await res.json();
-      const id = body._id || body.data?._id || body.translation?._id;
+      const id = body.data?._id ?? body._id ?? body.translation?._id;
       await deleteTranslation(adminApi, id);
     });
 

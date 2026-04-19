@@ -40,11 +40,12 @@ export const updateProduct = asyncHandler(async (req, res) => {
   const data = { ...req.body };
 
   let updatedImages = product.images;
-  if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+  const filesDict = req.files as Record<string, Express.Multer.File[]> | undefined;
+  const newImageFiles = filesDict?.["images"];
+
+  if (newImageFiles && newImageFiles.length > 0) {
     const imagesToDelete = product.images;
-    const newImages = (req.files as Express.Multer.File[]).map(
-      (file) => file.path,
-    );
+    const newImages = newImageFiles.map((file) => file.path);
 
     const cloudinary = (await import("../../utils/config/cloudinary.js")).default;
     const deletePromises = imagesToDelete.map(async (imageUrl: string) => {

@@ -18,7 +18,7 @@ export const createMenuItem = async (
     throw new Error(`Failed to create menu item. Status: ${res.status()}`);
   }
   const body = await res.json();
-  return { id: body._id || body.data?._id || body.menuItem?._id, payload, res };
+  return { id: body.data?._id ?? body._id ?? body.menuItem?._id, payload, res };
 };
 
 export const deleteMenuItem = async (adminApi: APIRequestContext, id: string) => {

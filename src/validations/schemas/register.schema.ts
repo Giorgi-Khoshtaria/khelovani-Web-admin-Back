@@ -26,22 +26,24 @@ export const registerSchema = {
         .string()
         .trim()
         .min(2, "name_ge_min_length")
-        .max(50, "name_ge_max_length")
+        .max(100, "name_ge_max_length")
         .regex(/^[\u10D0-\u10FF\s'-]+$/, "name_ge_letters_only")
-        .optional()
-        .or(z.literal("")),
+        .optional(),
 
       nameEn: z
         .string()
         .trim()
         .min(1, "name_en_required")
         .min(2, "name_en_min_length")
-        .max(50, "name_en_max_length")
+        .max(100, "name_en_max_length")
         .regex(/^[A-Za-z\s'\-’]+$/, "name_en_letters_only"),
 
       dateOfBirth: z
         .string()
         .min(1, "dob_required")
+        .refine((val) => /^\d{4}-\d{2}-\d{2}$/.test(val), {
+          message: "dob_invalid_format",
+        })
         .refine((val) => !isNaN(Date.parse(val)), { message: "dob_invalid" })
         .refine(
           (val) => {
@@ -82,12 +84,13 @@ export const registerSchema = {
         .trim()
         .min(1, "email_required")
         .email("email_invalid")
-        .max(255, "email_too_long"),
+        .max(150, "email_too_long"),
 
       phone: z
         .string()
         .trim()
         .min(1, "phone_required")
+        .max(40, "phone_too_long")
         .regex(/^5\d{2}\s?\d{3}\s?\d{3}$/, "phone_invalid"),
 
       password: z

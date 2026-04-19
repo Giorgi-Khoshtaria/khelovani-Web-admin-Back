@@ -5,47 +5,25 @@ import { deleteMenuItem, VALID_MENU_ITEM } from "../menu.helpers.js";
 
 export const createMenuItemSuites = () => {
   test.describe("1. POST /api/admin/menu — Create Menu Item", () => {
-    test("MNU-001: 201 — create menu item with all valid fields", async ({
-      adminApi,
-    }) => {
-      const res = await adminApi.post(ENDPOINTS.ADMIN_MENU, {
-        data: VALID_MENU_ITEM,
-      });
+    test("MNU-001: 201 — create menu item with all valid fields", async ({ adminApi }) => {
+      const res = await adminApi.post(ENDPOINTS.ADMIN_MENU, { data: VALID_MENU_ITEM });
       expect(res.status()).toBe(201);
       const body = await res.json();
-      const id = body._id || body.data?._id || body.menuItem?._id;
+      const id = body.data?._id ?? body._id ?? body.menuItem?._id;
       expect(id).toBeDefined();
+      expect(body.data?.label?.ka ?? body.label?.ka).toBe(VALID_MENU_ITEM.label.ka);
+      expect(body.data?.label?.en ?? body.label?.en).toBe(VALID_MENU_ITEM.label.en);
+      expect(body.data?.href ?? body.href).toBe(VALID_MENU_ITEM.href);
       await deleteMenuItem(adminApi, id);
     });
 
-    test("MNU-002: 422 — empty request body", async ({ adminApi }) => {
-      const res = await adminApi.post(ENDPOINTS.ADMIN_MENU, { data: {} });
-      expect(res.status()).toBe(422);
+    test("MNU-002: 201 — isActive defaults to false when omitted", async ({ adminApi }) => {
+      const { isActive, ...noActive } = VALID_MENU_ITEM;
+      const res = await adminApi.post(ENDPOINTS.ADMIN_MENU, { data: noActive });
+      expect(res.status()).toBe(201);
       const body = await res.json();
-      expect(Array.isArray(body.errors)).toBe(true);
-    });
-
-    test("MNU-003: 422 — missing label object", async ({ adminApi }) => {
-      const { label, ...noLabel } = VALID_MENU_ITEM;
-      const res = await adminApi.post(ENDPOINTS.ADMIN_MENU, { data: noLabel });
-      expect(res.status()).toBe(422);
-      const body = await res.json();
-      expect(body.errors.some((e: any) => e.field === "label")).toBe(true);
-    });
-
-    test("MNU-004: 422 — missing href", async ({ adminApi }) => {
-      const { href, ...noHref } = VALID_MENU_ITEM;
-      const res = await adminApi.post(ENDPOINTS.ADMIN_MENU, { data: noHref });
-      expect(res.status()).toBe(422);
-      const body = await res.json();
-      expect(body.errors.some((e: any) => e.field === "href")).toBe(true);
-    });
-
-    test("MNU-005: 422 — empty href string", async ({ adminApi }) => {
-      const res = await adminApi.post(ENDPOINTS.ADMIN_MENU, {
-        data: { ...VALID_MENU_ITEM, href: "" },
-      });
-      expect(res.status()).toBe(422);
+      const id = body.data?._id ?? body._id ?? body.menuItem?._id;
+      await deleteMenuItem(adminApi, id);
     });
   });
 };

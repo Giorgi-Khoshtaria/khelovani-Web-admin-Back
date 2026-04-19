@@ -14,7 +14,7 @@ export const listPublicPartnersSuites = (
       expect(res.status()).toBe(200);
       const body = await res.json();
 
-      expect(body.totalPartners).toBeGreaterThan(0);
+      expect(body.meta.totalCount).toBeGreaterThan(0);
       expect(body.data.some((p: any) => p.email === sharedState.approvedPartnerEmail)).toBe(
         true,
       );
@@ -39,7 +39,7 @@ export const listPublicPartnersSuites = (
       expect(res.status()).toBe(200);
 
       const body = await res.json();
-      expect(body.currentPage).toBe(1);
+      expect(body.meta.currentPage).toBe(1);
       expect(Array.isArray(body.data)).toBe(true);
       expect(body.data.length).toBeLessThanOrEqual(5);
     });

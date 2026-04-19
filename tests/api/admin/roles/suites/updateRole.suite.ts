@@ -18,7 +18,7 @@ export const updateRoleSuites = () => {
             data: { description: "Updated" },
           })
         ).json();
-        expect(body.role.description).toBe("Updated");
+        expect(body.data.description).toBe("Updated");
       } finally {
         await deleteRole(adminApi, id);
       }
@@ -32,7 +32,7 @@ export const updateRoleSuites = () => {
             data: { allowedPanels: ["admin", "admin-organization"] },
           })
         ).json();
-        expect(body.role.allowedPanels).toContain("admin-organization");
+        expect(body.data.allowedPanels).toContain("admin-organization");
       } finally {
         await deleteRole(adminApi, id);
       }
@@ -49,7 +49,7 @@ export const updateRoleSuites = () => {
         });
         expect(res.status()).toBe(200);
         const body = await res.json();
-        const permIds = body.role.permissions.map((p: any) => p._id ?? p);
+        const permIds = body.data.permissions.map((p: any) => p._id ?? p);
         expect(permIds).toContain(permId);
       } finally {
         await deleteRole(adminApi, roleId);
@@ -70,7 +70,7 @@ export const updateRoleSuites = () => {
             data: { permissions: [] },
           })
         ).json();
-        expect(body.role.permissions.length).toBe(0);
+        expect(body.data.permissions.length).toBe(0);
       } finally {
         await deleteRole(adminApi, roleId);
         await deletePermission(adminApi, permId);
@@ -167,8 +167,8 @@ export const updateRoleSuites = () => {
         const after = await (
           await adminApi.get(`${ENDPOINTS.ADMIN_ROLES}/${id}`)
         ).json();
-        expect(new Date(after.updatedAt).getTime()).toBeGreaterThan(
-          new Date(before.updatedAt).getTime(),
+        expect(new Date(after.data.updatedAt).getTime()).toBeGreaterThan(
+          new Date(before.data.updatedAt).getTime(),
         );
       } finally {
         await deleteRole(adminApi, id);
@@ -193,8 +193,8 @@ export const updateRoleSuites = () => {
         );
         expect(res1.status()).toBe(200);
         expect(res2.status()).toBe(200);
-        expect((await res1.json()).role.description).toBe(
-          (await res2.json()).role.description,
+        expect((await res1.json()).data.description).toBe(
+          (await res2.json()).data.description,
         );
       } finally {
         await deleteRole(adminApi, id);
@@ -255,7 +255,7 @@ export const updateRoleSuites = () => {
         });
         expect(res.status()).toBe(200);
         const body = await res.json();
-        expect(body.role._id).toBe(id);
+        expect(body.data._id).toBe(id);
       } finally {
         await deleteRole(adminApi, id);
       }
@@ -316,7 +316,7 @@ export const updateRoleSuites = () => {
             data: { permissions: [permId, permId] },
           })
         ).json();
-        const permIds = body.role.permissions.map((p: any) => p._id ?? p);
+        const permIds = body.data.permissions.map((p: any) => p._id ?? p);
         expect(permIds.filter((p: string) => p === permId).length).toBe(1);
       } finally {
         await deleteRole(adminApi, roleId);
@@ -361,7 +361,7 @@ export const updateRoleSuites = () => {
           })
         ).json();
 
-        const permIds = body.role.permissions.map((p: any) => p._id ?? p);
+        const permIds = body.data.permissions.map((p: any) => p._id ?? p);
         expect(permIds).toContain(permC);
         expect(permIds).not.toContain(permA);
         expect(permIds).not.toContain(permB);
@@ -383,8 +383,8 @@ export const updateRoleSuites = () => {
             data: { allowedPanels: ["admin-organization"] },
           })
         ).json();
-        expect(body.role.allowedPanels).toContain("admin-organization");
-        expect(body.role.allowedPanels).not.toContain("admin");
+        expect(body.data.allowedPanels).toContain("admin-organization");
+        expect(body.data.allowedPanels).not.toContain("admin");
       } finally {
         await deleteRole(adminApi, id);
       }

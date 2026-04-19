@@ -14,7 +14,7 @@ export const updatePermissionSuites = () => {
         });
         expect(res.status()).toBe(200);
         const body = await res.json();
-        expect(body.permission.description).toBe("Updated description");
+        expect(body.data.description).toBe("Updated description");
       } finally {
         await deletePermission(adminApi, id);
       }
@@ -29,7 +29,7 @@ export const updatePermissionSuites = () => {
         });
         expect(res.status()).toBe(200);
         const body = await res.json();
-        expect(body.permission.category).toBe("NewCategory");
+        expect(body.data.category).toBe("NewCategory");
       } finally {
         await deletePermission(adminApi, id);
       }
@@ -46,8 +46,8 @@ export const updatePermissionSuites = () => {
         });
         expect(res.status()).toBe(200);
         const body = await res.json();
-        expect(body.permission.description).toBe("Batch update");
-        expect(body.permission.category).toBe("BatchCat");
+        expect(body.data.description).toBe("Batch update");
+        expect(body.data.category).toBe("BatchCat");
       } finally {
         await deletePermission(adminApi, id);
       }
@@ -73,8 +73,8 @@ export const updatePermissionSuites = () => {
           await adminApi.get(`${ENDPOINTS.ADMIN_PERMISSIONS}/${id}`)
         ).json();
 
-        expect(new Date(after.updatedAt).getTime()).toBeGreaterThan(
-          new Date(before.updatedAt).getTime(),
+        expect(new Date(after.data.updatedAt).getTime()).toBeGreaterThan(
+          new Date(before.data.updatedAt).getTime(),
         );
       } finally {
         await deletePermission(adminApi, id);
@@ -94,7 +94,7 @@ export const updatePermissionSuites = () => {
         const body = await (
           await adminApi.get(`${ENDPOINTS.ADMIN_PERMISSIONS}/${id}`)
         ).json();
-        expect([name, "ShouldNotChange"]).toContain(body.name);
+        expect([name, "ShouldNotChange"]).toContain(body.data.name);
       } finally {
         await deletePermission(adminApi, id);
       }
@@ -174,7 +174,7 @@ export const updatePermissionSuites = () => {
         });
         expect(res.status()).toBe(200);
         const body = await res.json();
-        expect(body.permission.isAdmin).toBeUndefined();
+        expect(body.data.isAdmin).toBeUndefined();
       } finally {
         await deletePermission(adminApi, id);
       }

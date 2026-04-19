@@ -10,6 +10,22 @@ import { getCategoryPlaceholder } from "../../utils/imageFallback.js";
 
 const MAX_LIMIT = 100;
 
+const ALLOWED_SORT_FIELDS: Record<string, string> = {
+  price: "price",
+  name: "titleEn",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+  stockQuantity: "stockQuantity",
+};
+
+function buildSortOption(sortParam: unknown): Record<string, 1 | -1> {
+  if (!sortParam || typeof sortParam !== "string") return { createdAt: -1 };
+  const [field, direction] = sortParam.split(":");
+  const mongoField = ALLOWED_SORT_FIELDS[field];
+  if (!mongoField) return { createdAt: -1 };
+  return { [mongoField]: direction === "asc" ? 1 : -1 };
+}
+
 /**
  * @desc    Get all products
  * @route   GET /api/products
@@ -29,6 +45,8 @@ export const getProducts = asyncHandler(async (req, res) => {
   const limitNumber = Math.min(MAX_LIMIT, Math.max(1, parseInt(req.query.limit as string) || 15));
   const skip = (pageNumber - 1) * limitNumber;
 
+  const sortOption = buildSortOption(req.query.sort);
+
   let query: any = {};
 
   const targetPartnerId = partnerId || queryPartnerId;
@@ -41,7 +59,7 @@ export const getProducts = asyncHandler(async (req, res) => {
     if (!isAdmin && targetPartnerId !== userId) {
       throw new AppError("Forbidden: Cannot access another partner's products", 403);
     }
-    query.owner = targetPartnerId;
+    query.owner = new mongoose.Types.ObjectId(targetPartnerId as string);
   } else {
     if (!isAdmin) {
       query.isShown = true;
@@ -54,13 +72,31 @@ export const getProducts = asyncHandler(async (req, res) => {
   }
 
   if (search) {
-    const searchRegex = { $regex: escapeRegex(String(search)), $options: "i" };
+    const searchTerm = String(search).replace(/[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/g, "").slice(0, 200);
+    if (!searchTerm) return void sendResponse(res, 200, tAlerts("products_fetched_success") || "Products retrieved successfully", [], { total: 0, page: pageNumber, limit: limitNumber, totalPages: 0 });
+    const searchRegex = { $regex: escapeRegex(searchTerm), $options: "i" };
     query.$or = [{ titleGe: searchRegex }, { titleEn: searchRegex }];
   }
 
-  const [products, totalCount] = await Promise.all([
+  const rawMin = req.query.minPrice;
+  const rawMax = req.query.maxPrice;
+  const minPrice = rawMin !== undefined ? parseFloat(String(rawMin)) : NaN;
+  const maxPrice = rawMax !== undefined ? parseFloat(String(rawMax)) : NaN;
+
+  if (!Number.isNaN(minPrice) && minPrice >= 0) {
+    query.price = { ...query.price, $gte: minPrice };
+  }
+  if (!Number.isNaN(maxPrice) && maxPrice >= 0) {
+    query.price = { ...query.price, $lte: maxPrice };
+  }
+
+  if (req.query.inStock === "true") {
+    query.stockQuantity = { $gt: 0 };
+  }
+
+  const [products, total] = await Promise.all([
     Product.find(query)
-      .sort({ createdAt: -1 })
+      .sort(sortOption)
       .skip(skip)
       .limit(limitNumber)
       .select("-__v"),
@@ -75,9 +111,13 @@ export const getProducts = asyncHandler(async (req, res) => {
     return p;
   });
 
+  const searchStr = search ? String(search).slice(0, 200) : undefined;
+
   sendResponse(res, 200, tAlerts("products_fetched_success") || "Products retrieved successfully", productsWithFallbacks, {
-    totalCount,
-    totalPages: Math.ceil(totalCount / limitNumber),
-    currentPage: pageNumber,
+    total,
+    page: pageNumber,
+    limit: limitNumber,
+    totalPages: Math.ceil(total / limitNumber),
+    ...(searchStr ? { search: searchStr } : {}),
   });
 });

@@ -21,7 +21,7 @@ export const setupTestPartners = async (
 
   const regBody1 = await reg1.json();
   const approvedPartnerId =
-    regBody1.partner?._id || regBody1._id || regBody1.data?._id;
+    regBody1.data?.partner?._id || regBody1.partner?._id || regBody1._id || regBody1.data?._id;
 
   // Approve via Admin
   await adminApi.patch(
@@ -43,7 +43,7 @@ export const setupTestPartners = async (
 
   const regBody2 = await reg2.json();
   const pendingPartnerId =
-    regBody2.partner?._id || regBody2._id || regBody2.data?._id;
+    regBody2.data?.partner?._id || regBody2.partner?._id || regBody2._id || regBody2.data?._id;
 
   return {
     approvedPartnerId,

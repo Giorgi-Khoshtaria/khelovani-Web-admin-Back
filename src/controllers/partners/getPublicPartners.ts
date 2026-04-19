@@ -44,12 +44,18 @@ export const getPublicPartners = asyncHandler(async (req, res) => {
     query.rating = { $gte: Number(minRating) };
   }
 
-  const pageNum = Math.max(1, parseInt(page as string, 10) || 1);
-  const limitNum = Math.min(MAX_LIMIT, Math.max(1, parseInt(limit as string, 10) || 12));
+  const rawPage = parseInt(page as string, 10);
+  const rawLimit = parseInt(limit as string, 10);
 
-  if (pageNum < 1 || limitNum < 1) {
+  if (!isNaN(rawPage) && rawPage < 1) {
     throw new AppError(tAlerts("invalid_pagination") || "Invalid page or limit", 422);
   }
+  if (!isNaN(rawLimit) && rawLimit < 1) {
+    throw new AppError(tAlerts("invalid_pagination") || "Invalid page or limit", 422);
+  }
+
+  const pageNum = Math.max(1, rawPage || 1);
+  const limitNum = Math.min(MAX_LIMIT, Math.max(1, rawLimit || 12));
 
   const skip = (pageNum - 1) * limitNum;
 
