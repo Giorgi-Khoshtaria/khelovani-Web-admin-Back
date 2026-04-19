@@ -12,6 +12,15 @@ const app = express();
 app.disable("x-powered-by");
 app.set("trust proxy", 1);
 
+// Set Permissions-Policy before any other middleware so nothing can override it
+app.use((_req, res, next) => {
+  res.setHeader(
+    "Permissions-Policy",
+    "accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=()",
+  );
+  next();
+});
+
 // ✅ 1. cors first
 const origins = [
   process.env.FRONTEND_URL,
@@ -38,13 +47,6 @@ app.use(express.json({ limit: "5mb" }));
 // ✅ 3.1 Security Middleware (Sanitize after body parser)
 app.use(mongoSanitize());
 
-app.use((_req, res, next) => {
-  res.setHeader(
-    "Permissions-Policy",
-    "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=()",
-  );
-  next();
-});
 // ✅ 3.1 JSON Validation Middleware (400 Bad Request)
 app.use(
   (
