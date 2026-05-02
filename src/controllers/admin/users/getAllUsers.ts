@@ -10,7 +10,7 @@ const MAX_LIMIT = 100;
  * @access  Private Admin — requires users.list permission
  */
 export const getAllUsers = asyncHandler(async (req, res) => {
-  const { search, dateFrom, dateTo, page = 1, limit = 10 } = req.query;
+  const { search, dateFrom, dateTo, isVerified, page = 1, limit = 10 } = req.query;
 
   const pageNum = Math.max(1, Number(page) || 1);
   const limitNum = Math.min(MAX_LIMIT, Math.max(1, Number(limit) || 10));
@@ -26,6 +26,10 @@ export const getAllUsers = asyncHandler(async (req, res) => {
       { email: { $regex: escaped, $options: "i" } },
       { idNumber: { $regex: escaped, $options: "i" } },
     ];
+  }
+
+  if (isVerified === "true" || isVerified === "false") {
+    query.isVerified = isVerified === "true";
   }
 
   if (dateFrom || dateTo) {
