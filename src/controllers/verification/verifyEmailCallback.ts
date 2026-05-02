@@ -44,7 +44,10 @@ export const verifyEmailCallback = asyncHandler(async (req: Request, res: Respon
     });
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
-      throw new AppError(tAuth("verification_link_expired") || "Verification link expired", 400);
+      throw new AppError(
+        tAuth("verification_link_expired") || "Verification link expired. Please register again.",
+        400,
+      );
     }
     if (error instanceof jwt.JsonWebTokenError) {
       throw new AppError(tAuth("link_invalid") || "Link invalid", 400);
