@@ -62,7 +62,7 @@ export const verifyEmailHTML = (
             </tr>
             <tr>
               <td style="border-top:1px solid #eee; padding-top:16px; color:#999; font-size:12px;">
-                <p style="margin:0 0 4px;">ლინკი მოქმედებს <strong>24 საათი</strong>.</p>
+                <p style="margin:0 0 4px;">ლინკი მოქმედებს <strong>72 საათი (3 დღე)</strong>.</p>
                 <p style="margin:0;">თუ თქვენ არ მოგითხოვიათ მოქმედება, უგულებელყავით.</p>
               </td>
             </tr>
@@ -106,7 +106,7 @@ export const verifyEmailHTML = (
             </tr>
             <tr>
               <td style="border-top:1px solid #eee; padding-top:16px; color:#999; font-size:12px;">
-                <p style="margin:0 0 4px;">Link is active for <strong>24 hours</strong>.</p>
+                <p style="margin:0 0 4px;">Link is active for <strong>72 hours (3 days)</strong>.</p>
                 <p style="margin:0;">If you didn't request this action, discard this email.</p>
               </td>
             </tr>

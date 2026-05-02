@@ -1,6 +1,8 @@
 import { setDefaultResultOrder } from "dns";
 setDefaultResultOrder("ipv4first");
 import "dotenv/config";
+import dotenv from "dotenv";
+dotenv.config({ path: ".env.local", override: true });
 import mongoose from "mongoose";
 import { loadTranslationCache } from "./src/types/translate.util.js";
 import app from "./app.js";
