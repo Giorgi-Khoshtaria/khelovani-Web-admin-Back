@@ -4,7 +4,6 @@ import { randomId } from "../../../helpers/utils/generators.js";
 
 /**
  * Creates a fresh PENDING partner and returns its id + email.
- * This helper uses the public registration endpoint.
  */
 export async function createPendingPartner(
   api: APIRequestContext,
@@ -30,4 +29,42 @@ export async function createPendingPartner(
     );
   }
   return { id, email };
+}
+
+/**
+ * Approves a partner via the admin status endpoint.
+ */
+export async function approvePartner(
+  adminApi: APIRequestContext,
+  id: string,
+): Promise<void> {
+  await adminApi.patch(`${ENDPOINTS.ADMIN_PARTNERS}/${id}/status`, {
+    data: { status: "APPROVED" },
+  });
+}
+
+/**
+ * Pins or unpins a partner via the admin pin endpoint.
+ */
+export async function pinPartner(
+  adminApi: APIRequestContext,
+  id: string,
+  isPinned: boolean,
+) {
+  return adminApi.patch(`${ENDPOINTS.ADMIN_PARTNERS}/${id}/pin`, {
+    data: { isPinned },
+  });
+}
+
+/**
+ * Shows or hides a partner via the admin visibility endpoint.
+ */
+export async function setVisibility(
+  adminApi: APIRequestContext,
+  id: string,
+  isShown: boolean,
+) {
+  return adminApi.patch(`${ENDPOINTS.ADMIN_PARTNERS}/${id}/visibility`, {
+    data: { isShown },
+  });
 }

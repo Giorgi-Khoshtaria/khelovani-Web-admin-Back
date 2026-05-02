@@ -1,5 +1,4 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { ProductCategory } from "../types/itemsCategory.enum.js";
 
 export interface IItem extends Document {
   owner: mongoose.Types.ObjectId;
@@ -8,7 +7,7 @@ export interface IItem extends Document {
   titleEn?: string;
   descriptionGe: string;
   descriptionEn?: string;
-  category: ProductCategory;
+  category: string;
   tagsGe: string[];
   tagsEn?: string[];
   price: number;
@@ -40,10 +39,10 @@ const ItemSchema = new Schema<IItem>(
     descriptionGe: { type: String, required: true, trim: true },
     descriptionEn: { type: String, trim: true },
     
-    category: { 
-      type: String, 
-      enum: Object.values(ProductCategory),
-      required: true 
+    category: {
+      type: String,
+      required: true,
+      trim: true,
     },
     
     tagsGe: { type: [String], default: [] },

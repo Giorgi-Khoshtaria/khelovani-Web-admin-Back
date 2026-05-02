@@ -5,6 +5,7 @@ interface JWTPayload {
   role?: string;
   permissions?: string[];
   allowedPanels?: string[];
+  partnerType?: string;
 }
 
 export const generateJWTToken = (payload: JWTPayload): string => {

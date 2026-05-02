@@ -1,14 +1,15 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { ProductCategory } from "../types/itemsCategory.enum.js";
+import { PartnerTypeEnum, type PartnerType } from "../types/partnerTypes.js";
 
 export interface IProduct extends Document {
   owner: mongoose.Types.ObjectId;
+  ownerType: PartnerType;
   images: string[];
   titleGe: string;
   titleEn?: string;
   descriptionGe: string;
   descriptionEn?: string;
-  category: ProductCategory;
+  category: string;
   tagsGe: string[];
   tagsEn?: string[];
   price: number;
@@ -25,6 +26,8 @@ export interface IProduct extends Document {
   dimensions?: string;
   weight?: number;
   isShown: boolean;
+  isPinned: boolean;
+  pinnedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -32,6 +35,7 @@ export interface IProduct extends Document {
 const ProductSchema = new Schema<IProduct>(
   {
     owner: { type: Schema.Types.ObjectId, ref: "Organisation", required: true },
+    ownerType: { type: String, enum: Object.values(PartnerTypeEnum), required: true, index: true },
     images: { type: [String], required: true },
     
     titleGe: { 
@@ -57,10 +61,10 @@ const ProductSchema = new Schema<IProduct>(
       match: [/^[a-zA-Z0-9\s.,/\\\-()!?:;$%&*#@]+$/, "English description must be in English alphabet"]
     },
     
-    category: { 
-      type: String, 
-      enum: Object.values(ProductCategory),
-      required: true 
+    category: {
+      type: String,
+      required: true,
+      trim: true,
     },
     
     tagsGe: { type: [String], default: [] },
@@ -87,6 +91,8 @@ const ProductSchema = new Schema<IProduct>(
     dimensions: { type: String },
     weight: { type: Number, min: 0 },
     isShown: { type: Boolean, default: false },
+    isPinned: { type: Boolean, default: false, index: true },
+    pinnedAt: { type: Date, default: null },
   },
   { timestamps: true }
 );

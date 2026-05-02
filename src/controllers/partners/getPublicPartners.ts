@@ -1,4 +1,5 @@
 import Organisation from "../../modules/organization.modules.js";
+import { PartnerTypeEnum } from "../../types/partnerTypes.js";
 import { PartnerStatusEnum } from "../../types/partnerStatus.js";
 import { useTranslation } from "../../types/translate.util.js";
 import { Lang } from "../../types/lang.types.js";
@@ -15,12 +16,13 @@ const MAX_LIMIT = 100;
  * @access  Public
  */
 export const getPublicPartners = asyncHandler(async (req, res) => {
-  const { search, page = "1", limit = "12", city, category, minRating } = req.query;
+  const { search, page = "1", limit = "12", city, category, minRating, partnerType } = req.query;
   const lang = (req.query.lang as Lang) || "ge";
   const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
 
   const query: any = {
     status: PartnerStatusEnum.APPROVED,
+    isShown: true,
   };
 
   if (search) {
@@ -37,11 +39,16 @@ export const getPublicPartners = asyncHandler(async (req, res) => {
   }
 
   if (category) {
-    query.category = category;
+    const cats = Array.isArray(category) ? category : [category];
+    query.categories = { $in: cats };
   }
 
   if (minRating) {
     query.rating = { $gte: Number(minRating) };
+  }
+
+  if (partnerType === PartnerTypeEnum.ORGANIZATION || partnerType === PartnerTypeEnum.INDIVIDUAL) {
+    query.partnerType = partnerType;
   }
 
   const rawPage = parseInt(page as string, 10);
@@ -62,7 +69,7 @@ export const getPublicPartners = asyncHandler(async (req, res) => {
   const [partners, totalCount] = await Promise.all([
     Organisation.find(query)
       .select("-password")
-      .sort({ createdAt: -1 })
+      .sort({ isPinned: -1, pinnedAt: -1, createdAt: -1 })
       .skip(skip)
       .limit(limitNum),
     Organisation.countDocuments(query),

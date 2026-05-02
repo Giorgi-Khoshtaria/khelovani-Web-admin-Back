@@ -8,3 +8,6 @@ export * from "./updatePartner.js";
 export * from "./deletePartner.js";
 export * from "./updatePartnerPhoto.js";
 export * from "./bulkDeletePartners.js";
+export * from "./updatePartnerPin.js";
+export * from "./updatePartnerVisibility.js";
+export * from "./getPinnedPartners.js";

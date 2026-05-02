@@ -87,6 +87,7 @@ export const loginAdmin = asyncHandler(async (req, res) => {
       .map((p: any) => p?.name)
       .filter((n: any): n is string => typeof n === "string"),
     allowedPanels: (partner.role as any).allowedPanels || [],
+    partnerType: partner.partnerType,
   });
 
   sendResponse(res, 200, tAuth("org_login_success"), {

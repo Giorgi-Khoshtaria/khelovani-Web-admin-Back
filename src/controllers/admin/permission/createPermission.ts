@@ -5,6 +5,7 @@ import { TranslationNamespace } from "../../../types/translation.enum.js";
 import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { sendResponse } from "../../../utils/apiResponse.js";
 import { AppError } from "../../../utils/errors/AppError.js";
+import { toTitleCase } from "../../../utils/string.utils.js";
 
 /**
  * @desc    Create a new permission
@@ -19,14 +20,22 @@ export const createPermission = asyncHandler(async (req, res) => {
   // Business Logical Check: Duplicate name
   const existing = await Permission.findOne({ name });
   if (existing) {
-    throw new AppError(tAlerts("permission_already_exists") || "Permission already exists", 409);
+    throw new AppError(
+      tAlerts("permission_already_exists") || "Permission already exists",
+      409,
+    );
   }
 
   const newPermission = await Permission.create({
     name,
     description: description || "",
-    category: category || "General",
+    category: category ? toTitleCase(category) : "General",
   });
 
-  sendResponse(res, 201, tAlerts("permission_created_success") || "Permission created successfully", newPermission);
+  sendResponse(
+    res,
+    201,
+    tAlerts("permission_created_success") || "Permission created successfully",
+    newPermission,
+  );
 });

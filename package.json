@@ -11,6 +11,10 @@
     "seed:admin": "tsx src/utils/seeds/seedAdmin.ts",
     "seed:translation": "tsx src/utils/seeds/seedTranslation.ts",
     "seed:menu": "tsx src/utils/seeds/seedMenuItems.ts",
+    "seed:categories": "tsx src/utils/seeds/runSeedCategories.ts",
+    "migrate:partner-categories": "tsx src/utils/migrations/runMigratePartnerCategories.ts",
+    "migrate:partner-type": "tsx src/utils/migrations/runMigratePartnerType.ts",
+    "migrate:product-owner-type": "tsx src/utils/migrations/runMigrateProductOwnerType.ts",
     "test:registration": "npx playwright test tests/registration/registration.api.spec.ts"
   },
   "keywords": [],

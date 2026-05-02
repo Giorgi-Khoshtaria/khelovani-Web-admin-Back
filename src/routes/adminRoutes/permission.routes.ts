@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   getPermissions,
   getPermissionById,
+  getPermissionCategories,
   createPermission,
   updatePermission,
   deletePermission,
@@ -11,8 +12,11 @@ import { requirePermission } from "../../middleware/role/requirePermission.js";
 import { PERMISSIONS } from "../../middleware/role/permissions.js";
 import { twoMinutesLimiter } from "../../utils/limiters/rate-limit.js";
 import { validate } from "../../middleware/validate.js";
-import { permissionSchema, updatePermissionSchema } from "../../validations/schemas/permission.schema.js";
-import { commonParamsSchema } from "../../validations/schemas/common.schema.js";
+import {
+  permissionSchema,
+  updatePermissionSchema,
+} from "../../validations/schemas/admin/permission.schema.js";
+import { commonParamsSchema } from "../../validations/schemas/shared/common.schema.js";
 
 const router = Router();
 
@@ -20,6 +24,11 @@ const router = Router();
 router.use(authenticate);
 
 router.get("/", requirePermission(PERMISSIONS.ADMIN.ROLE_READ), getPermissions);
+router.get(
+  "/categories",
+  requirePermission(PERMISSIONS.ADMIN.ROLE_READ),
+  getPermissionCategories,
+);
 router.get(
   "/:id",
   requirePermission(PERMISSIONS.ADMIN.ROLE_READ),

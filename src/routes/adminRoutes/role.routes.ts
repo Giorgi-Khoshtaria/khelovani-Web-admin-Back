@@ -14,8 +14,8 @@ import { validate } from "../../middleware/validate.js";
 import {
   roleSchema,
   updateRoleSchema,
-} from "../../validations/schemas/role.schema.js";
-import { commonParamsSchema } from "../../validations/schemas/common.schema.js";
+} from "../../validations/schemas/admin/role.schema.js";
+import { commonParamsSchema } from "../../validations/schemas/shared/common.schema.js";
 const router = Router();
 
 // Protect all role routes with authentication

@@ -10,16 +10,29 @@ export const ENDPOINTS = {
   PROFILE: `${BASE_URL}/profile`,
   PARTNER_REGISTER: "/api/partner/register",
   PARTNER_PUBLIC: "/api/partner",
+  PARTNER_PINNED: "/api/partner/pinned",
   ADMIN_PARTNERS: "/api/admin/partners",
   ADMIN_ROLES: "/api/admin/roles",
   ADMIN_PERMISSIONS: "/api/admin/permissions",
+  ADMIN_USERS: "/api/admin/users",
   ADMIN_MENU: "/api/admin/menu",
   ADMIN_TRANSLATION: "/api/admin/translations",
   ADMIN_UPLOAD: "/api/admin/upload",
   ADMIN_PRODUCTS: "/api/products",
+  PRODUCT_PINNED: "/api/products/pinned",
   ADMIN_LOGIN: "/api/admin/auth/login",
   PUBLIC_MENU: "/api/menu",
+  ADMIN_CATEGORIES: "/api/admin/categories",
+  PUBLIC_CATEGORIES: "/api/categories",
 } as const;
+
+export const REAL_EMAILS = [
+  "xoshtagio@gmail.com",
+  "khoshtaria.g@gtu.ge",
+  "giokhos059@gmail.com",
+  "khoshtaria.gio@gmail.com",
+  "xoshtariagiorgi80@gmail.com",
+] as const;
 
 export const DEFAULT_USER = {
   idNumber: "11122233344",
@@ -33,15 +46,8 @@ export const DEFAULT_USER = {
   password: "StrongPassword123!",
 } as const;
 
-export const REAL_EMAILS = [
-  "xoshtagio@gmail.com",
-  "khoshtaria.g@gtu.ge",
-  "giokhos059@gmail.com",
-  "khoshtaria.gio@gmail.com",
-  "xoshtariagiorgi80@gmail.com",
-] as const;
-
 export const DEFAULT_PARTNER = {
+  partnerType: "organization" as const,
   companyNameGe: "კომპანია",
   companyNameEn: "Company",
   identificationCode: "123456789",
@@ -58,5 +64,25 @@ export const DEFAULT_PARTNER = {
   instagram: "https://instagram.com/example",
   tiktok: "https://tiktok.com/@example",
   terms: true,
-  category: "art",
+  categories: ["jewelry", "ceramics", "textile"],
+} as const;
+
+export const DEFAULT_INDIVIDUAL_PARTNER = {
+  partnerType: "individual" as const,
+  companyNameGe: "ინდივიდი",
+  companyNameEn: "Individual",
+  personalNumber: "12345678901",
+  phone: "599123456",
+  city: "tbilisi",
+  email: "individual.test@example.com",
+  address: "რუსთაველის გამზირი 1",
+  addressEn: "Rustaveli Ave 1",
+  description: "აღწერა",
+  descriptionEn: "Description",
+  website: "https://example.com",
+  facebook: "https://facebook.com/example",
+  instagram: "https://instagram.com/example",
+  tiktok: "https://tiktok.com/@example",
+  terms: true,
+  categories: ["jewelry", "ceramics", "textile"],
 } as const;

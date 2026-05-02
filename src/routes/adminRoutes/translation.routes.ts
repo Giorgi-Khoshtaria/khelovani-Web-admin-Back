@@ -14,7 +14,11 @@ import { requirePermission } from "../../middleware/role/requirePermission.js";
 import { PERMISSIONS } from "../../middleware/role/permissions.js";
 import { twoMinutesLimiter } from "../../utils/limiters/rate-limit.js";
 import { validate } from "../../middleware/validate.js";
-import { createTranslationSchema, updateTranslationSchema, bulkTranslationSchema } from "../../validations/schemas/translation.schema.js";
+import {
+  createTranslationSchema,
+  updateTranslationSchema,
+  bulkTranslationSchema,
+} from "../../validations/schemas/admin/translation.schema.js";
 
 const router = Router();
 

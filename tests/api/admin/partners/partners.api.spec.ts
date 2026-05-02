@@ -5,6 +5,8 @@ import { partnerStatusSuites } from "./suites/partnerStatus.suite.js";
 import { partnersSecuritySuites } from "./suites/partnersSecurity.suite.js";
 import { partnerResponseContractSuites } from "./suites/partnerResponseContract.suite.js";
 import { bulkDeletePartnersSuites } from "./suites/bulkDeletePartners.suite.js";
+import { pinPartnerSuites } from "./suites/pinPartner.suite.js";
+import { visibilityPartnerSuites } from "./suites/visibilityPartner.suite.js";
 
 /**
  * ============================================================
@@ -19,4 +21,6 @@ test.describe("Admin Partner API", () => {
   partnersSecuritySuites();
   partnerResponseContractSuites();
   bulkDeletePartnersSuites();
+  pinPartnerSuites();
+  visibilityPartnerSuites();
 });

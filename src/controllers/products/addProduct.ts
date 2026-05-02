@@ -1,4 +1,5 @@
 import Product from "../../modules/product.modules.js";
+import { PartnerTypeEnum } from "../../types/partnerTypes.js";
 import { useTranslation } from "../../types/translate.util.js";
 import { Lang } from "../../types/lang.types.js";
 import { TranslationNamespace } from "../../types/translation.enum.js";
@@ -38,10 +39,15 @@ export const addProduct = asyncHandler(async (req, res) => {
 
   const imageUrls = imageFiles.map((file) => file.path);
 
+  const ownerType = req.user?.partnerType === PartnerTypeEnum.INDIVIDUAL
+    ? PartnerTypeEnum.INDIVIDUAL
+    : PartnerTypeEnum.ORGANIZATION;
+
   const product = await Product.create({
     ...data,
     owner: targetPartnerId,
     images: imageUrls,
+    ownerType,
   });
 
   sendResponse(res, 201, tAlerts("product_created_success") || "Product added successfully", product);

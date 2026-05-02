@@ -2,24 +2,26 @@ import { expect } from "@playwright/test";
 import { test } from "../../../../../fixtures/user.fixture.js";
 import { ENDPOINTS, REAL_EMAILS, DEFAULT_USER } from "../../../../../constants/endpoints.js";
 import { randomId, randomEmail } from "../../../../../helpers/utils/generators.js";
-import { register, registerAndTrack, deleteUserByEmail } from "../../registration.helpers.js";
+import { register, registerAndTrack } from "../../registration.helpers.js";
+import { DbHelper } from "../../../../../helpers/db/db.helper.js";
 
 export const registrationHappyPathSuites = () => {
   test.describe("1. Happy Path & Localization", () => {
-    test("REG-001: 201 — new user with real email", async ({ request, createdUsers }) => {
+    test("REG-001: 201 — real email registers successfully", async ({ request, createdUsers }) => {
       const email = REAL_EMAILS[0];
-      await deleteUserByEmail(request, email);
+      // Delete any previous run so we always start clean
+      await DbHelper.deleteEndUserByEmail(email);
       const idNumber = randomId();
       const { res } = await registerAndTrack(request, createdUsers, { email, idNumber });
       expect(res.status()).toBe(201);
     });
 
-    test("REG-002: 201 — response body has success: true and message string", async ({
+    test("REG-002: 201 — response body contract with real email", async ({
       request,
       createdUsers,
     }) => {
       const email = REAL_EMAILS[1];
-      await deleteUserByEmail(request, email);
+      await DbHelper.deleteEndUserByEmail(email);
       const idNumber = randomId();
       const { res } = await registerAndTrack(request, createdUsers, { email, idNumber });
       expect(res.status()).toBe(201);
@@ -33,8 +35,7 @@ export const registrationHappyPathSuites = () => {
       request,
       createdUsers,
     }) => {
-      const email = REAL_EMAILS[2];
-      await deleteUserByEmail(request, email);
+      const email = randomEmail();
       const idNumber = randomId();
       const res = await request.post(`${ENDPOINTS.REGISTER}?lang=ge`, {
         data: { ...DEFAULT_USER, email, idNumber },
@@ -42,7 +43,7 @@ export const registrationHappyPathSuites = () => {
       });
       expect(res.status()).toBe(201);
       const body = await res.json();
-      expect(body.message, "Expected Georgian characters in lang=ge response").toMatch(/[\u10D0-\u10FF]/);
+      expect(body.message, "Expected Georgian characters in lang=ge response").toMatch(/[ა-ჿ]/);
       createdUsers.push({ email, idNumber, password: DEFAULT_USER.password });
     });
 
@@ -104,11 +105,12 @@ export const registrationHappyPathSuites = () => {
   });
 
   test.describe("2. Resend / Unverified Flow", () => {
-    test("RSN-001: 200 — re-registering an unverified address resends verification email", async ({
+    test("RSN-001: 200 — re-registering a real unverified address resends verification", async ({
       request,
       createdUsers,
     }) => {
-      const email = REAL_EMAILS[3];
+      const email = REAL_EMAILS[2];
+      await DbHelper.deleteEndUserByEmail(email);
       const idNumber = randomId();
       const payload = { ...DEFAULT_USER, email, idNumber };
 
@@ -128,11 +130,12 @@ export const registrationHappyPathSuites = () => {
       expect(body.message.trim().length).toBeGreaterThan(0);
     });
 
-    test("RSN-002: 200 — resend response has success: true", async ({
+    test("RSN-002: 200 — resend response has success: true (real email)", async ({
       request,
       createdUsers,
     }) => {
-      const email = REAL_EMAILS[4];
+      const email = REAL_EMAILS[3];
+      await DbHelper.deleteEndUserByEmail(email);
       const idNumber = randomId();
       const payload = { ...DEFAULT_USER, email, idNumber };
 
@@ -161,7 +164,6 @@ export const registrationHappyPathSuites = () => {
       await register(request, { email, idNumber }, true);
       createdUsers.push({ email, idNumber, password: DEFAULT_USER.password });
 
-      // Same email (unverified) → resend, NOT conflict
       const r2 = await request.post(ENDPOINTS.REGISTER, {
         data: payload,
         headers: { "x-test-bypass": "khelovani-test-2026" },

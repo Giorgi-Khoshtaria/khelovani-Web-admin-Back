@@ -1,21 +1,48 @@
 import { APIRequestContext } from "@playwright/test";
 import { ENDPOINTS } from "../../../constants/endpoints.js";
 import { randomId } from "../../../helpers/utils/generators.js";
-import { ProductCategory } from "../../../../src/types/itemsCategory.enum.js";
 
 import fs from "fs";
 import path from "path";
 
-const ALL_CATEGORIES = Object.values(ProductCategory);
+// Seeded slug list used as fallback if DB fetch hasn't run yet
+const FALLBACK_CATEGORIES = [
+  "jewelry", "ceramics", "textile", "woodwork", "painting",
+  "sculpture", "leatherwork", "glasswork", "embroidery", "metalwork",
+  "feltwork", "knitting", "candles", "photography", "printmaking",
+  "paper_art", "home_decor", "accessories", "toys", "other",
+];
+
+let activeSlugs: string[] = [...FALLBACK_CATEGORIES];
 let categoryIndex = 0;
 
-/** Cycles through every valid ProductCategory on each call. */
-export const nextCategory = (): ProductCategory =>
-  ALL_CATEGORIES[categoryIndex++ % ALL_CATEGORIES.length];
+/**
+ * Fetches active category slugs from the DB and caches them.
+ * Call once in a test.beforeAll so all suites use real seeded data.
+ */
+export async function loadCategorySlugs(api: APIRequestContext): Promise<void> {
+  try {
+    const res = await api.get(ENDPOINTS.PUBLIC_CATEGORIES);
+    if (res.status() === 200) {
+      const body = await res.json();
+      const slugs: string[] = (body.data as any[]).map((c) => c.slug).filter(Boolean);
+      if (slugs.length > 0) {
+        activeSlugs = slugs;
+        categoryIndex = 0;
+      }
+    }
+  } catch {
+    // fallback list stays in place
+  }
+}
+
+/** Cycles through active category slugs on each call. */
+export const nextCategory = (): string =>
+  activeSlugs[categoryIndex++ % activeSlugs.length];
 
 /**
  * Returns a valid product data object for testing.
- * Category rotates through all valid enum values unless overridden.
+ * Category rotates through all valid slugs unless overridden.
  */
 export const getTestProductData = (overrides: Record<string, any> = {}) => {
   return {
@@ -52,7 +79,6 @@ export async function createTestProduct(
 ) {
   const data = getTestProductData(overrides);
 
-  // Use actual tested asset instead of buffer
   const dummyImage = fs.readFileSync(
     path.join(process.cwd(), "tests/helpers/assets/eocB2.jpg"),
   );

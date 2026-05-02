@@ -7,6 +7,8 @@ import {
   bulkDeletePartners,
   deletePartner,
   updatePartnerPhoto,
+  updatePartnerPin,
+  updatePartnerVisibility,
 } from "../../controllers/partners/index.js";
 import upload from "../../utils/config/multer.js";
 import { authenticate } from "../../middleware/auth/authenticate.js";
@@ -16,9 +18,14 @@ import { PERMISSIONS } from "../../middleware/role/permissions.js";
 import { twoMinutesLimiter } from "../../utils/limiters/rate-limit.js";
 import { CloudinaryFolder } from "../../types/cloudinaryFolder.enum.js";
 import { validate } from "../../middleware/validate.js";
-import { orgSchema } from "../../validations/schemas/orgPartner.schema.js";
-import { statusUpdateSchema, bulkDeletePartnersSchema } from "../../validations/schemas/adminPartners.schema.js";
-import { commonParamsSchema } from "../../validations/schemas/common.schema.js";
+import { orgSchema } from "../../validations/schemas/partner/partnerAuth.schema.js";
+import {
+  statusUpdateSchema,
+  bulkDeletePartnersSchema,
+  pinPartnerSchema,
+  visibilityPartnerSchema,
+} from "../../validations/schemas/admin/adminPartners.schema.js";
+import { commonParamsSchema } from "../../validations/schemas/shared/common.schema.js";
 
 const router = Router();
 
@@ -68,6 +75,22 @@ router.patch(
   upload.single("image"),
   validate(commonParamsSchema),
   updatePartnerPhoto,
+);
+router.patch(
+  "/:id/pin",
+  twoMinutesLimiter,
+  requirePermission(PERMISSIONS.ADMIN.ORG_PIN),
+  validate(commonParamsSchema),
+  validate(pinPartnerSchema),
+  updatePartnerPin,
+);
+router.patch(
+  "/:id/visibility",
+  twoMinutesLimiter,
+  requirePermission(PERMISSIONS.ADMIN.ORG_VISIBILITY),
+  validate(commonParamsSchema),
+  validate(visibilityPartnerSchema),
+  updatePartnerVisibility,
 );
 router.post(
   "/bulk-delete",

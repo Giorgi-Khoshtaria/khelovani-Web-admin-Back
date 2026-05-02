@@ -6,7 +6,7 @@ const baseBody = z.object({
     .min(2, "name_too_short")
     .max(100, "name_too_long")
     .regex(/^[a-zA-Z0-9._\s-]+$/, "name_invalid_characters"),
-  allowedPanels: z.array(z.enum(["web", "admin", "admin-organization"]))
+  allowedPanels: z.array(z.enum(["admin", "admin-organization"]))
     .min(1, "at_least_one_panel_required")
     .optional(),
   permissions: z.array(z.string().regex(/^[0-9a-fA-F]{24}$/, "invalid_permission_id"))

@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import mongoose from "mongoose";
 import Permission from "../../../modules/permission.modules.js";
+import { toTitleCase } from "../../../utils/string.utils.js";
 import { useTranslation } from "../../../types/translate.util.js";
 import { Lang } from "../../../types/lang.types.js";
 import { TranslationNamespace } from "../../../types/translation.enum.js";
@@ -42,7 +43,7 @@ export const updatePermission = asyncHandler(
     }
 
     if (description !== undefined) permission.description = description;
-    if (category) permission.category = category;
+    if (category) permission.category = toTitleCase(category);
 
     const updated = await permission.save();
 

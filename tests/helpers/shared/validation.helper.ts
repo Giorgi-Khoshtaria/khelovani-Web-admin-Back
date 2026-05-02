@@ -332,8 +332,38 @@ export const partnerUrlScenarios: ValidationScenario[] = [
   { id: "PRT-VAL-034", field: "tiktok",    value: "not-a-url",        note: "invalid URL format" },
 ];
 
-// category — required string, min 1
+// categories — required array, min 1 element, max 5
 export const partnerCategoryScenarios: ValidationScenario[] = [
-  { id: "PRT-VAL-040", field: "category", value: "",   note: "empty string" },
-  { id: "PRT-VAL-041", field: "category", value: null, note: "null value" },
+  { id: "PRT-VAL-040", field: "categories", value: [],   note: "empty array" },
+  { id: "PRT-VAL-041", field: "categories", value: null, note: "null value" },
+];
+
+// personalNumber (INDIVIDUAL only) — must be exactly 11 digits
+export const partnerPersonalNumberScenarios: ValidationScenario[] = [
+  { id: "PRT-VAL-015", field: "personalNumber", value: "",              note: "empty string" },
+  { id: "PRT-VAL-016", field: "personalNumber", value: "1234567890",   note: "too short (10 digits)" },
+  { id: "PRT-VAL-017", field: "personalNumber", value: "123456789012", note: "too long (12 digits)" },
+  { id: "PRT-VAL-018", field: "personalNumber", value: "1234567890a",  note: "contains letter" },
+  { id: "PRT-VAL-019", field: "personalNumber", value: null,           note: "null value" },
+];
+
+// Required field scenarios for ORGANIZATION registration
+export const partnerOrgRequiredFieldScenarios: ValidationScenario[] = [
+  { id: "PRT-REQ-001", field: "companyNameGe",      value: "",    note: "empty companyNameGe" },
+  { id: "PRT-REQ-002", field: "companyNameEn",      value: "",    note: "empty companyNameEn" },
+  { id: "PRT-REQ-003", field: "identificationCode", value: "",    note: "empty identificationCode" },
+  { id: "PRT-REQ-004", field: "contactPerson",      value: "",    note: "empty contactPerson" },
+  { id: "PRT-REQ-005", field: "categories",         value: [],    note: "empty categories array" },
+  { id: "PRT-REQ-006", field: "terms",              value: false, note: "terms not accepted" },
+  { id: "PRT-REQ-007", field: "terms",              value: null,  note: "terms = null" },
+];
+
+// Required field scenarios for INDIVIDUAL registration
+export const partnerIndRequiredFieldScenarios: ValidationScenario[] = [
+  { id: "PRT-IND-REQ-001", field: "companyNameGe",  value: "",    note: "empty companyNameGe" },
+  { id: "PRT-IND-REQ-002", field: "companyNameEn",  value: "",    note: "empty companyNameEn" },
+  { id: "PRT-IND-REQ-003", field: "personalNumber", value: "",    note: "empty personalNumber" },
+  { id: "PRT-IND-REQ-004", field: "categories",     value: [],    note: "empty categories array" },
+  { id: "PRT-IND-REQ-005", field: "terms",          value: false, note: "terms not accepted" },
+  { id: "PRT-IND-REQ-006", field: "terms",          value: null,  note: "terms = null" },
 ];

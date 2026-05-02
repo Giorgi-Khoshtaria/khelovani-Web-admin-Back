@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { PartnerStatusEnum } from "../types/partnerStatus.js";
+import { PartnerTypeEnum } from "../types/partnerTypes.js";
 
 const OrganisationSchema = new mongoose.Schema(
   {
@@ -13,16 +14,28 @@ const OrganisationSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    partnerType: {
+      type: String,
+      enum: Object.values(PartnerTypeEnum),
+      default: PartnerTypeEnum.ORGANIZATION,
+      required: true,
+      index: true,
+    },
     identificationCode: {
       type: String,
-      required: true,
+      required: false,
       unique: true,
-      minlength: 9,
-      maxlength: 9,
+      sparse: true,
+    },
+    personalNumber: {
+      type: String,
+      required: false,
+      unique: true,
+      sparse: true,
     },
     contactPerson: {
       type: String,
-      required: true,
+      required: false,
       trim: true,
     },
     phone: {
@@ -87,21 +100,10 @@ const OrganisationSchema = new mongoose.Schema(
       required: false,
       trim: true,
     },
-    category: {
-      type: String,
-      required: false,
-      trim: true,
-      enum: [
-        "handcraft",
-        "jewelry",
-        "ceramics",
-        "textile",
-        "wood",
-        "food",
-        "art",
-        "leather",
-        "enamel",
-      ],
+    categories: {
+      type: [String],
+      default: [],
+      index: true,
     },
     rating: {
       type: Number,
@@ -121,6 +123,20 @@ const OrganisationSchema = new mongoose.Schema(
       type: String,
       enum: Object.values(PartnerStatusEnum),
       default: PartnerStatusEnum.PENDING,
+    },
+    isPinned: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+    pinnedAt: {
+      type: Date,
+      default: null,
+    },
+    isShown: {
+      type: Boolean,
+      default: true,
+      index: true,
     },
     role: {
       type: mongoose.Schema.Types.ObjectId,

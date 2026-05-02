@@ -15,13 +15,13 @@ import { authenticate } from "../middleware/auth/authenticate.js";
 
 import { verifyEmailCallback } from "../controllers/verification/index.js";
 import { validate } from "../middleware/validate.js";
-import { loginSchema } from "../validations/schemas/login.schema.js";
-import { registerSchema } from "../validations/schemas/register.schema.js";
+import { loginSchema } from "../validations/schemas/userAuth/login.schema.js";
+import { registerSchema } from "../validations/schemas/userAuth/register.schema.js";
 import {
   forgotPasswordSchema,
   resetPasswordSchema,
-} from "../validations/schemas/forgotPassword.schema.js";
-import { emailOnlySchema } from "../validations/schemas/user.schema.js";
+} from "../validations/schemas/userAuth/forgotPassword.schema.js";
+import { emailOnlySchema } from "../validations/schemas/user/user.schema.js";
 
 const router = Router();
 

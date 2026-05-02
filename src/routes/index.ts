@@ -11,6 +11,9 @@ import permissionRoutes from "./adminRoutes/permission.routes.js";
 import adminMenuRoutes from "./adminRoutes/menu.routes.js";
 import publicMenuRoutes from "./menu.routes.js";
 import uploadRoutes from "./adminRoutes/upload.routes.js";
+import adminUsersRoutes from "./adminRoutes/adminUsers.routes.js";
+import categoryRoutes from "./adminRoutes/category.routes.js";
+import publicCategoryRoutes from "./categories.routes.js";
 
 const apiRouter = Router();
 
@@ -26,5 +29,8 @@ apiRouter.use("/admin/roles", roleRoutes);
 apiRouter.use("/admin/permissions", permissionRoutes);
 apiRouter.use("/admin/menu", adminMenuRoutes);
 apiRouter.use("/admin/upload", uploadRoutes);
+apiRouter.use("/admin/users", adminUsersRoutes);
+apiRouter.use("/admin/categories", categoryRoutes);
+apiRouter.use("/categories", publicCategoryRoutes);
 
 export default apiRouter;

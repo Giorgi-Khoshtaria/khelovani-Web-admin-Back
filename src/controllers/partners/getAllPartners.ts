@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Organisation from "../../modules/organization.modules.js";
+import { PartnerTypeEnum } from "../../types/partnerTypes.js";
 import { PartnerStatusEnum } from "../../types/partnerStatus.js";
 import { useTranslation } from "../../types/translate.util.js";
 import { Lang } from "../../types/lang.types.js";
@@ -14,7 +15,7 @@ const MAX_LIMIT = 100;
 // @route   GET /api/partners
 // @access  Private Admin
 export const getAllPartners = asyncHandler(async (req: Request, res: Response) => {
-  const { search, status } = req.query;
+  const { search, status, partnerType } = req.query;
   const lang = (req.query.lang as Lang) || "ge";
   const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
   const query: any = {};
@@ -35,6 +36,10 @@ export const getAllPartners = asyncHandler(async (req: Request, res: Response) =
     query.status = status;
   }
 
+  if (partnerType === PartnerTypeEnum.ORGANIZATION || partnerType === PartnerTypeEnum.INDIVIDUAL) {
+    query.partnerType = partnerType;
+  }
+
   const pageNum = Math.max(1, parseInt(req.query.page as string) || 1);
   const limitNum = Math.min(MAX_LIMIT, Math.max(1, parseInt(req.query.limit as string) || 20));
   const skip = (pageNum - 1) * limitNum;
@@ -42,7 +47,7 @@ export const getAllPartners = asyncHandler(async (req: Request, res: Response) =
   const [partners, totalCount] = await Promise.all([
     Organisation.find(query)
       .select("-password")
-      .sort({ createdAt: -1 })
+      .sort({ isPinned: -1, pinnedAt: -1, createdAt: -1 })
       .skip(skip)
       .limit(limitNum),
     Organisation.countDocuments(query),

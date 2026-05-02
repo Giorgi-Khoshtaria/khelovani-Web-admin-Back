@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { ProductCategory } from "../../types/itemsCategory.enum.js";
 
 const georgianRegex = /^[ა-ჰ0-9\s.,/\\\-()!?:;$%&*#@]+$/;
 const englishRegex = /^[a-zA-Z0-9\s.,/\\\-()!?:;$%&*#@]+$/;
@@ -39,7 +38,7 @@ export const productSchema = {
         .max(2000, "descriptionEn_max")
         .regex(englishRegex, "descriptionEn_english"),
 
-      category: z.nativeEnum(ProductCategory),
+      category: z.string().trim().min(1, "category_required"),
 
       price: z.number().positive("invalid_price"),
 
@@ -127,4 +126,8 @@ export const productSchema = {
  */
 export const updateProductSchema = {
   body: productSchema.body.partial(),
+};
+
+export const pinProductSchema = {
+  body: z.object({ isPinned: z.boolean() }),
 };

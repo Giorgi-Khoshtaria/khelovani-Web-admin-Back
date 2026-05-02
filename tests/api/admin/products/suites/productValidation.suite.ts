@@ -209,11 +209,9 @@ export const productValidationSuites = () => {
 
     // ── category ──────────────────────────────────────────────────────
     test.describe("category field", () => {
-      test("PRD-VAL-060: 422 — category invalid enum value", async ({ adminApi }) => {
-        const res = await postProduct(adminApi, { category: "invalid_cat" });
-        expect(res.status()).toBe(422);
-        const body = await res.json();
-        expect(body.errors.some((e: any) => e.field === "category")).toBe(true);
+      test("PRD-VAL-060: 201 — category accepts any non-empty slug string", async ({ adminApi }) => {
+        const res = await postProduct(adminApi, { category: "jewelry" });
+        expect(res.status()).toBe(201);
       });
 
       test("PRD-VAL-061: 422 — category empty string", async ({ adminApi }) => {
@@ -221,9 +219,9 @@ export const productValidationSuites = () => {
         expect(res.status()).toBe(422);
       });
 
-      test("PRD-VAL-062: 422 — category wrong case", async ({ adminApi }) => {
-        const res = await postProduct(adminApi, { category: "JEWELRY" });
-        expect(res.status()).toBe(422);
+      test("PRD-VAL-062: 201 — category accepts mixed case strings", async ({ adminApi }) => {
+        const res = await postProduct(adminApi, { category: "Ceramics" });
+        expect(res.status()).toBe(201);
       });
 
       test("PRD-VAL-063: 422 — category missing", async ({ adminApi }) => {

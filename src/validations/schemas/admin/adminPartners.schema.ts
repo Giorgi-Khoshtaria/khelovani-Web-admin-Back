@@ -13,6 +13,14 @@ export const statusUpdateSchema = {
 /**
  * Bulk delete partners schema.
  */
+export const pinPartnerSchema = {
+  body: z.object({ isPinned: z.boolean() }),
+};
+
+export const visibilityPartnerSchema = {
+  body: z.object({ isShown: z.boolean() }),
+};
+
 export const bulkDeletePartnersSchema = {
   body: z
     .object({

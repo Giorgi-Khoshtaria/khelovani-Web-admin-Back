@@ -125,8 +125,8 @@ export const createProductSuites = () => {
       {
         id: "PR-030",
         field: "category",
-        value: "invalid_cat",
-        desc: "category: Must be valid enum",
+        value: "",
+        desc: "category: Must not be empty",
       },
       {
         id: "PR-031",

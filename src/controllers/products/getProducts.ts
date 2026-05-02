@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Product from "../../modules/product.modules.js";
+import { PartnerTypeEnum } from "../../types/partnerTypes.js";
 import { useTranslation } from "../../types/translate.util.js";
 import { Lang } from "../../types/lang.types.js";
 import { TranslationNamespace } from "../../types/translation.enum.js";
@@ -39,7 +40,7 @@ export const getProducts = asyncHandler(async (req, res) => {
   const userRole = req.user?.role?.toLowerCase();
   const userId = req.user?.id;
 
-  const { search, category, partnerId: queryPartnerId } = req.query;
+  const { search, category, partnerId: queryPartnerId, ownerType } = req.query;
 
   const pageNumber = Math.max(1, parseInt(req.query.page as string) || 1);
   const limitNumber = Math.min(MAX_LIMIT, Math.max(1, parseInt(req.query.limit as string) || 15));
@@ -94,9 +95,13 @@ export const getProducts = asyncHandler(async (req, res) => {
     query.stockQuantity = { $gt: 0 };
   }
 
+  if (ownerType === PartnerTypeEnum.ORGANIZATION || ownerType === PartnerTypeEnum.INDIVIDUAL) {
+    query.ownerType = ownerType;
+  }
+
   const [products, total] = await Promise.all([
     Product.find(query)
-      .sort(sortOption)
+      .sort({ isPinned: -1, pinnedAt: -1, ...sortOption })
       .skip(skip)
       .limit(limitNumber)
       .select("-__v"),

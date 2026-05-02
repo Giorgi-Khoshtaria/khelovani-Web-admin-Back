@@ -1,61 +1,47 @@
 import { test, PartnerFixtures } from "../../../../fixtures/partner.fixture.js";
 import { expect } from "@playwright/test";
-import { ENDPOINTS, DEFAULT_PARTNER } from "../../../../constants/endpoints.js";
+import {
+  ENDPOINTS,
+  DEFAULT_PARTNER,
+  DEFAULT_INDIVIDUAL_PARTNER,
+  REAL_EMAILS,
+} from "../../../../constants/endpoints.js";
 import { randomId, randomEmail } from "../../../../helpers/utils/generators.js";
-import { registerPartner, registerPartnerAndTrack } from "../registration.helpers.js";
+import {
+  registerPartnerAndTrack,
+  registerIndividualAndTrack,
+} from "../registration.helpers.js";
+import { DbHelper } from "../../../../helpers/db/db.helper.js";
 
 export const partnerRegistrationHappyPathSuites = () => {
-  test.describe("1. Happy Path", () => {
-    test("PRT-001: 201 — new partner registration returns 201", async ({
-      api,
-      createdPartners,
-    }: PartnerFixtures) => {
-      const { res } = await registerPartnerAndTrack(api, createdPartners);
-      expect(res.status()).toBe(201);
-    });
-
-    test("PRT-002: 201 — response contains success message string", async ({
-      api,
-      createdPartners,
-    }: PartnerFixtures) => {
-      const { res } = await registerPartnerAndTrack(api, createdPartners);
-      const body = await res.json();
-      expect(body).toHaveProperty("message");
-      expect(typeof body.message).toBe("string");
-      expect(body.message.length).toBeGreaterThan(5);
-    });
-
-    test("PRT-003: 201 — response body has success: true", async ({
-      api,
-      createdPartners,
-    }: PartnerFixtures) => {
-      const { res } = await registerPartnerAndTrack(api, createdPartners);
-      const body = await res.json();
-      expect(body.success).toBe(true);
-    });
-
-    test("PRT-004: 201 — response data contains partner _id and email", async ({
+  // ─── Organization happy path ──────────────────────────────────────
+  test.describe("1. Happy Path — Organization", () => {
+    test("PRT-001: 201 — org registers with a real  email, full response contract", async ({
       api,
       createdPartners,
     }: PartnerFixtures) => {
       const email = randomEmail();
-      const { res } = await registerPartnerAndTrack(api, createdPartners, { email });
-      const body = await res.json();
-      expect(body.data).toBeDefined();
-      expect(body.data.partner).toBeDefined();
-      expect(typeof body.data.partner._id).toBe("string");
-      expect(body.data.partner._id.length).toBeGreaterThan(0);
-      expect(body.data.partner.email).toBe(email.toLowerCase());
-    });
 
-    test("PRT-005: 201 — password is never echoed in response", async ({
-      api,
-      createdPartners,
-    }: PartnerFixtures) => {
-      const { res } = await registerPartnerAndTrack(api, createdPartners);
-      const text = await res.text();
-      // auto-generated password should not appear; no plaintext password in payload
-      expect(text).not.toMatch(/password/i);
+      await DbHelper.deletePartnerByEmail(email);
+
+      const { res } = await registerPartnerAndTrack(api, createdPartners, {
+        email,
+      });
+
+      expect(res.status()).toBe(201);
+      expect(res.headers()["content-type"]).toContain("application/json");
+
+      const body = await res.json();
+      expect(body.success).toBe(true);
+      expect(typeof body.message).toBe("string");
+      expect(body.message.length).toBeGreaterThan(5);
+
+      const partner = body.data?.partner;
+      expect(partner).toBeDefined();
+      expect(typeof partner._id).toBe("string");
+      expect(partner._id.length).toBeGreaterThan(0);
+      expect(partner.email).toBe(email.toLowerCase());
+      expect(JSON.stringify(body)).not.toMatch(/password/i);
     });
 
     test("PRT-006: 201 — lang=ge returns Georgian message", async ({
@@ -69,9 +55,7 @@ export const partnerRegistrationHappyPathSuites = () => {
         data: { ...DEFAULT_PARTNER, email, identificationCode },
       });
       expect(res.status()).toBe(201);
-      const body = await res.json();
-      expect(body.message).toMatch(/[\u10D0-\u10FF]/);
-
+      expect((await res.json()).message).toMatch(/[ა-ჿ]/);
       createdPartners.push({ email, identificationCode });
     });
 
@@ -86,13 +70,11 @@ export const partnerRegistrationHappyPathSuites = () => {
         data: { ...DEFAULT_PARTNER, email, identificationCode },
       });
       expect(res.status()).toBe(201);
-      const body = await res.json();
-      expect(body.message).toMatch(/[a-zA-Z]/);
-
+      expect((await res.json()).message).toMatch(/[a-zA-Z]/);
       createdPartners.push({ email, identificationCode });
     });
 
-    test("PRT-008: 201 — optional fields (website, facebook, description) accepted", async ({
+    test("PRT-008: 201 — optional social fields provided", async ({
       api,
       createdPartners,
     }: PartnerFixtures) => {
@@ -107,7 +89,7 @@ export const partnerRegistrationHappyPathSuites = () => {
       expect(res.status()).toBe(201);
     });
 
-    test("PRT-009: 201 — optional social fields omitted still succeeds", async ({
+    test("PRT-009: 201 — optional social fields omitted", async ({
       api,
       createdPartners,
     }: PartnerFixtures) => {
@@ -128,6 +110,95 @@ export const partnerRegistrationHappyPathSuites = () => {
     }: PartnerFixtures) => {
       const { res } = await registerPartnerAndTrack(api, createdPartners);
       expect(res.headers()["content-type"]).toContain("application/json");
+    });
+  });
+
+  // ─── Individual (physical person) happy path ──────────────────────
+  test.describe("2. Happy Path — Individual (Physical Person)", () => {
+    test("PRT-IND-001: 201 — individual registers with a fresh test email, full response contract", async ({
+      api,
+      createdPartners,
+    }: PartnerFixtures) => {
+      const email = randomEmail();
+      await DbHelper.deletePartnerByEmail(email);
+
+      const { res } = await registerIndividualAndTrack(api, createdPartners, {
+        email,
+      });
+
+      expect(res.status()).toBe(201);
+      expect(res.headers()["content-type"]).toContain("application/json");
+
+      const body = await res.json();
+      expect(body.success).toBe(true);
+      expect(typeof body.message).toBe("string");
+
+      const partner = body.data?.partner;
+      expect(partner).toBeDefined();
+      expect(typeof partner._id).toBe("string");
+      expect(partner.email).toBe(email.toLowerCase());
+      expect(JSON.stringify(body)).not.toMatch(/password/i);
+    });
+
+    test("PRT-IND-002: 201 — DB row has correct type, personalNumber, status and bcrypt hash", async ({
+      api,
+      createdPartners,
+    }: PartnerFixtures) => {
+      const { res, email, personalNumber } = await registerIndividualAndTrack(
+        api,
+        createdPartners,
+      );
+      expect(res.status()).toBe(201);
+
+      const doc = await DbHelper.getPartnerByEmail(email);
+      expect(doc).not.toBeNull();
+      expect(doc.partnerType).toBe("individual");
+      expect(doc.personalNumber).toBe(personalNumber);
+      expect(doc.identificationCode).toBeUndefined();
+      expect(doc.contactPerson).toBeUndefined();
+      expect(doc.status).toBe("PENDING");
+      expect(doc.password).toMatch(/^\$2[aby]\$/);
+    });
+
+    test("PRT-IND-010: 201 — personalNumber with leading zeros is accepted", async ({
+      api,
+      createdPartners,
+    }: PartnerFixtures) => {
+      const { res } = await registerIndividualAndTrack(api, createdPartners, {
+        personalNumber: "00123456789",
+      });
+      expect(res.status()).toBe(201);
+    });
+
+    test("PRT-IND-011: 201 — individual without optional social fields succeeds", async ({
+      api,
+      createdPartners,
+    }: PartnerFixtures) => {
+      const { res } = await registerIndividualAndTrack(api, createdPartners, {
+        website: undefined,
+        facebook: undefined,
+        instagram: undefined,
+        tiktok: undefined,
+        description: undefined,
+        descriptionEn: undefined,
+      });
+      expect(res.status()).toBe(201);
+    });
+
+    test("PRT-IND-013: 201 — lang=ge individual returns Georgian message", async ({
+      api,
+      createdPartners,
+    }: PartnerFixtures) => {
+      const email = randomEmail();
+      await DbHelper.deletePartnerByEmail(email);
+      const personalNumber = randomId();
+
+      const res = await api.post(`${ENDPOINTS.PARTNER_REGISTER}?lang=ge`, {
+        data: { ...DEFAULT_INDIVIDUAL_PARTNER, email, personalNumber },
+      });
+      expect(res.status()).toBe(201);
+      expect((await res.json()).message).toMatch(/[ა-ჿ]/);
+      createdPartners.push({ email, identificationCode: "" });
     });
   });
 };

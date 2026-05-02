@@ -10,6 +10,7 @@ declare global {
         role: string;
         permissions: string[];
         allowedPanels: string[];
+        partnerType?: string;
       };
     }
   }

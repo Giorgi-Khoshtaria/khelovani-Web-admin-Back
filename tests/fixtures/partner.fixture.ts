@@ -1,4 +1,4 @@
-import { test as base, APIRequestContext, expect } from "@playwright/test";
+import { test as base, APIRequestContext } from "@playwright/test";
 import { DbHelper } from "../helpers/db/db.helper.js";
 import { ENDPOINTS } from "../constants/endpoints.js";
 import { randomId } from "../helpers/utils/generators.js";
@@ -22,6 +22,9 @@ export const partnerTest = base.extend<PartnerFixtures>({
   createdPartners: async ({}, use) => {
     const partners: CreatedPartner[] = [];
     await use(partners);
+    for (const p of partners) {
+      await DbHelper.deletePartnerByEmail(p.email).catch(() => {});
+    }
   },
 
   createPartnerUser: async ({ createdPartners }, use) => {
@@ -88,10 +91,3 @@ export const partnerTest = base.extend<PartnerFixtures>({
 });
 
 export const test = partnerTest;
-
-partnerTest.afterEach(async ({ createdPartners }) => {
-  for (const p of createdPartners) {
-    await DbHelper.deletePartnerByEmail(p.email).catch(() => {});
-  }
-  createdPartners.length = 0;
-});

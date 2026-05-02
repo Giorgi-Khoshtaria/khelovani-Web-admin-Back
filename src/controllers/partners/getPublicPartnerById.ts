@@ -25,6 +25,7 @@ export const getPublicPartnerById = asyncHandler(async (req, res) => {
   const partner = await Organisation.findOne({
     _id: id,
     status: PartnerStatusEnum.APPROVED,
+    isShown: true,
   }).select("-password");
 
   if (!partner) {

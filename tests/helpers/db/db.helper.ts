@@ -224,6 +224,7 @@ export class DbHelper {
       password: hashedPassword,
       status: "APPROVED", // MUST BE UPPERCASE to match new PartnerStatusEnum.APPROVED
       role: role._id,
+      partnerType: "organization",
       companyNameGe: "QA Partner Ge",
       companyNameEn: "QA Partner En",
       identificationCode: Math.random().toString().slice(2, 11),
@@ -231,7 +232,7 @@ export class DbHelper {
       phone: "555123456",
       city: "tbilisi",
       address: "QA Address",
-      category: "art",
+      categories: ["painting"],
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -249,6 +250,76 @@ export class DbHelper {
       email: email.toLowerCase().trim(),
     });
     return result.deletedCount > 0;
+  }
+
+  /**
+   * Delete a partner from the database by id string.
+   */
+  static async deletePartnerById(id: string): Promise<boolean> {
+    const { ObjectId } = await import("mongodb");
+    const client = await this.getClient();
+    const db = client.db();
+    const result = await db.collection("organisations").deleteOne({
+      _id: new ObjectId(id),
+    });
+    return result.deletedCount > 0;
+  }
+
+  static async createEndUser(email: string, password: string): Promise<string> {
+    const client = await this.getClient();
+    const db = client.db();
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const idNumber = String(Date.now()).slice(0, 11).padEnd(11, "0");
+    const result = await db.collection("users").insertOne({
+      email: email.toLowerCase().trim(),
+      password: hashedPassword,
+      nameEn: "QA Test User",
+      idNumber,
+      dateOfBirth: new Date("1990-01-01"),
+      city: "tbilisi",
+      address: "QA Address",
+      phone: "555000000",
+      isVerified: true,
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    return result.insertedId.toString();
+  }
+
+  static async deleteEndUserByEmail(email: string): Promise<void> {
+    const client = await this.getClient();
+    const db = client.db();
+    await db.collection("users").deleteOne({ email: email.toLowerCase().trim() });
+  }
+
+  static async getEndUserByEmail(email: string): Promise<any> {
+    const client = await this.getClient();
+    const db = client.db();
+    return db.collection("users").findOne({ email: email.toLowerCase().trim() });
+  }
+
+  /**
+   * Get a partner directly from DB by string id.
+   */
+  static async getPartnerById(id: string): Promise<any> {
+    const { ObjectId } = await import("mongodb");
+    const client = await this.getClient();
+    const db = client.db();
+    return db.collection("organisations").findOne({ _id: new ObjectId(id) });
+  }
+
+  /**
+   * Unpin all partners that match the given ids (test cleanup for pin tests).
+   */
+  static async unpinPartnersByIds(ids: string[]): Promise<void> {
+    const { ObjectId } = await import("mongodb");
+    const client = await this.getClient();
+    const db = client.db();
+    await db.collection("organisations").updateMany(
+      { _id: { $in: ids.map((id) => new ObjectId(id)) } },
+      { $set: { isPinned: false, pinnedAt: null } },
+    );
   }
 
   static async disconnect() {

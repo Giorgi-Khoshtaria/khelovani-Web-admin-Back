@@ -4,6 +4,7 @@ import Organisation from "../../modules/organization.modules.js";
 import Role from "../../modules/role.modules.js";
 import { ROLES } from "../../middleware/role/permissions.js";
 import { PartnerStatusEnum } from "../../types/partnerStatus.js";
+import { PartnerTypeEnum } from "../../types/partnerTypes.js";
 import { useTranslation } from "../../types/translate.util.js";
 import { Lang } from "../../types/lang.types.js";
 import { TranslationNamespace } from "../../types/translation.enum.js";
@@ -23,7 +24,6 @@ export const registerPartner = asyncHandler(async (req, res) => {
   const data = req.body;
 
   const trimmedEmail = data.email.toLowerCase();
-  const trimmedIdCode = data.identificationCode;
 
   // 1. Check email duplicate
   const existingByEmail = await Organisation.findOne({ email: trimmedEmail });
@@ -31,12 +31,21 @@ export const registerPartner = asyncHandler(async (req, res) => {
     throw new AppError(tAuth("email_already_exists"), 409);
   }
 
-  // 2. Check identificationCode duplicate
-  const existingByIdCode = await Organisation.findOne({
-    identificationCode: trimmedIdCode,
-  });
-  if (existingByIdCode) {
-    throw new AppError(tAlerts("org_code_exists") || "Organization code already exists", 409);
+  const partnerType = data.partnerType === PartnerTypeEnum.INDIVIDUAL
+    ? PartnerTypeEnum.INDIVIDUAL
+    : PartnerTypeEnum.ORGANIZATION;
+
+  // 2. Check ID uniqueness per type
+  if (partnerType === PartnerTypeEnum.ORGANIZATION) {
+    const existing = await Organisation.findOne({ identificationCode: data.identificationCode });
+    if (existing) {
+      throw new AppError(tAlerts("org_code_exists") || "Organization code already exists", 409);
+    }
+  } else {
+    const existing = await Organisation.findOne({ personalNumber: data.personalNumber });
+    if (existing) {
+      throw new AppError(tAlerts("personal_number_exists") || "Personal number already registered", 409);
+    }
   }
 
   // 3. Get Partner Role
@@ -51,27 +60,31 @@ export const registerPartner = asyncHandler(async (req, res) => {
 
   // 5. Create Organisation
   const newOrg = await Organisation.create({
+    partnerType,
     companyNameGe: data.companyNameGe.trim(),
     companyNameEn: data.companyNameEn.trim(),
-    identificationCode: data.identificationCode.trim(),
-    contactPerson: data.contactPerson.trim(),
+    ...(partnerType === PartnerTypeEnum.ORGANIZATION
+      ? { identificationCode: data.identificationCode.trim(), contactPerson: data.contactPerson.trim() }
+      : { personalNumber: data.personalNumber.trim() }),
     phone: data.phone.trim(),
     city: data.city.trim().toLowerCase(),
     email: data.email.trim().toLowerCase(),
     address: data.address.trim(),
-    addressEn: data.addressEn.trim(),
+    addressEn: data.addressEn?.trim(),
     description: data.description?.trim(),
     descriptionEn: data.descriptionEn?.trim(),
     website: data.website?.trim(),
     facebook: data.facebook?.trim(),
     instagram: data.instagram?.trim(),
     tiktok: data.tiktok?.trim(),
+    categories: Array.isArray(data.categories) ? data.categories : [],
     status: PartnerStatusEnum.PENDING,
     password: hashedPassword,
     role: partnerRole._id,
   });
 
-  sendResponse(res, 201, tAuth("partner_registered"), {
+  const successKey = partnerType === PartnerTypeEnum.INDIVIDUAL ? "individual_registered" : "partner_registered";
+  sendResponse(res, 201, tAuth(successKey) || tAuth("partner_registered"), {
     partner: {
       _id: (newOrg as any)._id,
       email: newOrg.email,
