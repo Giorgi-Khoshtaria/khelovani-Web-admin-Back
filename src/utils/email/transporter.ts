@@ -1,17 +1,16 @@
-import nodemailer from "nodemailer";
-import { resolve4 } from "dns/promises";
+import { BrevoClient } from "@getbrevo/brevo";
 
-const [smtpIp] = await resolve4("smtp.gmail.com");
+const client = new BrevoClient({ apiKey: process.env.BREVO_API_KEY! });
 
-export const transporter = nodemailer.createTransport({
-  host: smtpIp,
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  tls: {
-    servername: "smtp.gmail.com",
-  },
-});
+export const sendEmail = async (options: {
+  to: string;
+  subject: string;
+  html: string;
+}): Promise<void> => {
+  await client.transactionalEmails.sendTransacEmail({
+    sender: { email: process.env.BREVO_FROM_EMAIL },
+    to: [{ email: options.to }],
+    subject: options.subject,
+    htmlContent: options.html,
+  });
+};

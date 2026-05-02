@@ -1,4 +1,4 @@
-import { transporter } from "./transporter.js";
+import { sendEmail } from "./transporter.js";
 import {
   notifyEmailHtml,
   NotifyEmailData,
@@ -47,8 +47,7 @@ export const sendNotificationEmail = async (
       ? "თქვენი პაროლი / Your Password"
       : subject;
 
-  await transporter.sendMail({
-    from: process.env.EMAIL_USER,
+  await sendEmail({
     to: email,
     subject: bilingualSubject,
     html: notifyEmailHtml(

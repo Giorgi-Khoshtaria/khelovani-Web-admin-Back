@@ -1,4 +1,4 @@
-import { transporter } from "./transporter.js";
+import { sendEmail } from "./transporter.js";
 import { verifyEmailHTML } from "./templates/verifyEmailHTML.js";
 
 const checkEmailType = (
@@ -35,8 +35,7 @@ export const sendVerificationEmail = async (
   subject: string,
   emailType: string,
 ): Promise<void> => {
-  await transporter.sendMail({
-    from: process.env.EMAIL_USER,
+  await sendEmail({
     to: email,
     subject,
     html: verifyEmailHTML(verificationLink, checkEmailType(emailType)),
