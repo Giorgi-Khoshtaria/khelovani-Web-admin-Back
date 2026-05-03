@@ -331,13 +331,74 @@ const translations = [
   { namespace: "validation", key: "validation.phone_required",                translations: { ge: "ტელეფონის ნომერი სავალდებულოა",                                                                 en: "Phone number is required" } },
   { namespace: "validation", key: "validation.required",                      translations: { ge: "სავალდებულო ველი",                                                                              en: "This field is required" } },
   { namespace: "validation", key: "validation.terms_required",                translations: { ge: "წესებზე და პირობებზე დათანხმება აუცილებელია",                                                  en: "You must agree to the terms and conditions" } },
+
+  // ─── profile (new) ──────────────────────────────────────────────────────────
+  { namespace: "common",     key: "update",                                translations: { ge: "განახლება",                                          en: "Update" } },
+
+  { namespace: "alerts",     key: "profile_updated",                       translations: { ge: "პროფილი განახლდა",                                   en: "Profile updated" } },
+  { namespace: "alerts",     key: "password_updated",                      translations: { ge: "პაროლი წარმატებით შეიცვალა",                         en: "Password changed successfully" } },
+  { namespace: "alerts",     key: "image_uploaded",                        translations: { ge: "ფოტო წარმატებით აიტვირთა",                           en: "Photo uploaded successfully" } },
+  { namespace: "alerts",     key: "image_removed",                         translations: { ge: "ფოტო წაიშალა",                                        en: "Photo removed" } },
+  { namespace: "alerts",     key: "account_deleted",                       translations: { ge: "ანგარიში წარმატებით წაიშალა",                         en: "Account deleted successfully" } },
+  { namespace: "alerts",     key: "old_password_incorrect",                translations: { ge: "ძველი პაროლი არასწორია",                              en: "Old password is incorrect" } },
+
+  { namespace: "validation", key: "old_password_required",                 translations: { ge: "ძველი პაროლის შეყვანა სავალდებულოა",                 en: "Old password is required" } },
+  { namespace: "validation", key: "new_password_same_as_old",              translations: { ge: "ახალი პაროლი უნდა განსხვავდებოდეს ძველისგან",        en: "New password must differ from the old one" } },
+
+  { namespace: "inputs",     key: "label.old_password",                    translations: { ge: "ძველი პაროლი",                                        en: "Old Password" } },
+  { namespace: "inputs",     key: "placeholder.old_password",              translations: { ge: "შეიყვანე ძველი პაროლი",                               en: "Enter old password" } },
+
+  { namespace: "pages",      key: "profile.title",                         translations: { ge: "ჩემი პროფილი",                                        en: "My Profile" } },
+  { namespace: "pages",      key: "profile.subtitle",                      translations: { ge: "მართე შენი ანგარიში",                                 en: "Manage your account" } },
+  { namespace: "pages",      key: "profile.section.info",                  translations: { ge: "პირადი მონაცემები",                                   en: "Personal Information" } },
+  { namespace: "pages",      key: "profile.section.password",              translations: { ge: "პაროლის შეცვლა",                                      en: "Change Password" } },
+  { namespace: "pages",      key: "profile.section.danger",                translations: { ge: "სახიფათო ზონა",                                       en: "Danger Zone" } },
+  { namespace: "pages",      key: "profile.danger.warning",                translations: { ge: "ანგარიშის წაშლა შეუქცევადია",                         en: "Account deletion is permanent and cannot be undone" } },
+  { namespace: "pages",      key: "profile.delete.confirm_title",          translations: { ge: "დაადასტურე წაშლა",                                    en: "Confirm Deletion" } },
+  { namespace: "pages",      key: "profile.delete.confirm_text",           translations: { ge: "შეიყვანე პაროლი ანგარიშის წასაშლელად",                en: "Enter your password to delete the account" } },
+  { namespace: "pages",      key: "profile.image.change",                  translations: { ge: "ფოტოს შეცვლა",                                        en: "Change photo" } },
+  { namespace: "pages",      key: "profile.image.remove",                  translations: { ge: "ფოტოს წაშლა",                                         en: "Remove photo" } },
+  { namespace: "pages",      key: "profile.image.uploading",               translations: { ge: "იტვირთება...",                                        en: "Uploading..." } },
+
+  // ─── missing keys (2026-05-03) ──────────────────────────────────────────────
+  { namespace: "pages",      key: "partner_profile.contact_btn",          translations: { ge: "დაკავშირება",                                         en: "Contact" } },
+
+  { namespace: "alerts",     key: "error",                                 translations: { ge: "შეცდომა",                                             en: "Error" } },
+
+  { namespace: "validation", key: "name_ge_min_length",                   translations: { ge: "სახელი (ქართულად) უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს",  en: "Name (Georgian) must be at least 2 characters" } },
+  { namespace: "validation", key: "name_ge_max_length",                   translations: { ge: "სახელი (ქართულად) არ უნდა აღემატებოდეს 50 სიმბოლოს",   en: "Name (Georgian) must not exceed 50 characters" } },
+  { namespace: "validation", key: "name_ge_letters_only",                 translations: { ge: "სახელი (ქართულად) უნდა შეიცავდეს მხოლოდ ქართულ ასოებს", en: "Name (Georgian) must contain only Georgian letters" } },
+  { namespace: "validation", key: "idNumber_required",                    translations: { ge: "პირადი ნომერი სავალდებულოა",                            en: "ID number is required" } },
+  { namespace: "validation", key: "idNumber_invalid",                     translations: { ge: "პირადი ნომერი უნდა შეიცავდეს ზუსტად 11 ციფრს",          en: "ID number must be exactly 11 digits" } },
+  { namespace: "validation", key: "name_en_min_length",                   translations: { ge: "სახელი (ინგლისურად) უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს", en: "Name (English) must be at least 2 characters" } },
+  { namespace: "validation", key: "name_en_max_length",                   translations: { ge: "სახელი (ინგლისურად) არ უნდა აღემატებოდეს 50 სიმბოლოს",  en: "Name (English) must not exceed 50 characters" } },
+  { namespace: "validation", key: "name_en_letters_only",                 translations: { ge: "სახელი (ინგლისურად) უნდა შეიცავდეს მხოლოდ ლათინურ ასოებს", en: "Name (English) must contain only Latin letters" } },
+  { namespace: "validation", key: "address_min_length",                   translations: { ge: "მისამართი უნდა შეიცავდეს მინიმუმ 5 სიმბოლოს",           en: "Address must be at least 5 characters" } },
+  { namespace: "validation", key: "address_max_length",                   translations: { ge: "მისამართი არ უნდა აღემატებოდეს 200 სიმბოლოს",            en: "Address must not exceed 200 characters" } },
+  { namespace: "validation", key: "phone_too_long",                       translations: { ge: "ტელეფონის ნომერი ძალიან გრძელია",                        en: "Phone number is too long" } },
+  { namespace: "validation", key: "dob_invalid_format",                   translations: { ge: "დაბადების თარიღი არასწორი ფორმატისაა",                   en: "Date of birth is in an invalid format" } },
+  { namespace: "validation", key: "age_limit_16",                         translations: { ge: "მომხმარებელი უნდა იყოს მინიმუმ 16 წლის",                 en: "User must be at least 16 years old" } },
+  { namespace: "validation", key: "age_limit_120",                        translations: { ge: "მომხმარებელი არ შეიძლება იყოს 120 წელზე მეტი",            en: "User cannot be older than 120 years" } },
+  { namespace: "validation", key: "companyNameGe_max_length",             translations: { ge: "კომპანიის ქართული სახელი არ უნდა აღემატებოდეს 100 სიმბოლოს", en: "Company Georgian name must not exceed 100 characters" } },
+  { namespace: "validation", key: "companyNameEn_max_length",             translations: { ge: "კომპანიის ინგლისური სახელი არ უნდა აღემატებოდეს 100 სიმბოლოს", en: "Company English name must not exceed 100 characters" } },
+  { namespace: "validation", key: "addressEn_max_length",                 translations: { ge: "მისამართი (ინგლისურად) არ უნდა აღემატებოდეს 200 სიმბოლოს", en: "Address (English) must not exceed 200 characters" } },
+  { namespace: "validation", key: "contactPerson_max_length",             translations: { ge: "საკონტაქტო პირი არ უნდა აღემატებოდეს 100 სიმბოლოს",     en: "Contact person must not exceed 100 characters" } },
+  { namespace: "validation", key: "password_too_long",                    translations: { ge: "პაროლი არ უნდა აღემატებოდეს 64 სიმბოლოს",               en: "Password must not exceed 64 characters" } },
+  { namespace: "validation", key: "email_too_long",                       translations: { ge: "ელ. ფოსტა არ უნდა აღემატებოდეს 254 სიმბოლოს",            en: "Email must not exceed 254 characters" } },
+  { namespace: "validation", key: "password_max_length",                  translations: { ge: "პაროლი არ უნდა აღემატებოდეს 64 სიმბოლოს",               en: "Password must not exceed 64 characters" } },
+  { namespace: "validation", key: "password_needs_uppercase",             translations: { ge: "პაროლი უნდა შეიცავდეს მინიმუმ ერთ დიდ ასოს (A-Z)",      en: "Password must contain at least one uppercase letter (A-Z)" } },
+  { namespace: "validation", key: "password_needs_lowercase",             translations: { ge: "პაროლი უნდა შეიცავდეს მინიმუმ ერთ პატარა ასოს (a-z)",   en: "Password must contain at least one lowercase letter (a-z)" } },
+  { namespace: "validation", key: "password_needs_digit",                 translations: { ge: "პაროლი უნდა შეიცავდეს მინიმუმ ერთ ციფრს (0-9)",         en: "Password must contain at least one digit (0-9)" } },
+  { namespace: "validation", key: "password_needs_special",               translations: { ge: "პაროლი უნდა შეიცავდეს მინიმუმ ერთ სპეციალურ სიმბოლოს (!@#$%...)", en: "Password must contain at least one special character (!@#$%...)" } },
+  { namespace: "validation", key: "idNumber_only_numbers",                translations: { ge: "პირადი ნომერი უნდა შეიცავდეს მხოლოდ ციფრებს",           en: "ID number must contain only digits" } },
+  { namespace: "validation", key: "id_number_only_numbers",               translations: { ge: "პირადი ნომერი უნდა შეიცავდეს მხოლოდ ციფრებს",           en: "ID number must contain only digits" } },
+  { namespace: "validation", key: "personal_number_only_numbers",         translations: { ge: "პირადი ნომერი უნდა შეიცავდეს მხოლოდ ციფრებს",           en: "ID number must contain only digits" } },
+  { namespace: "validation", key: "id_code_only_numbers_org",             translations: { ge: "საიდენტიფიკაციო კოდი უნდა შეიცავდეს მხოლოდ ციფრებს",   en: "Identification code must contain only digits" } },
 ];
 
 async function seed() {
   try {
-    const MONGO_URI =
-      process.env.MONGODB_URL ||
-      "mongodb+srv://khoshtariagiorgi0:Khelovani-123!@khelovanicluster.bxzgarf.mongodb.net/khelovani";
+    const MONGO_URI = process.env.MONGODB_URL_TEST || process.env.MONGODB_URL!;
     await mongoose.connect(MONGO_URI);
     console.log("Connected to MongoDB...");
 

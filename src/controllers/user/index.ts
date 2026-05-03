@@ -4,3 +4,8 @@ export * from "./forgotPassword.js";
 export * from "./resetPassword.js";
 export * from "./deleteUserByEmail.js";
 export * from "./getProfile.js";
+export * from "./updateProfile.js";
+export * from "./uploadProfileImage.js";
+export * from "./deleteProfileImage.js";
+export * from "./changePassword.js";
+export * from "./deleteAccount.js";
