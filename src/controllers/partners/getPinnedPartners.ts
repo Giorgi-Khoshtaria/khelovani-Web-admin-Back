@@ -4,7 +4,7 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import { sendResponse } from "../../utils/apiResponse.js";
 
 /**
- * @desc    Get pinned partners for home page (max 4)
+ * @desc    Get pinned partners for home page (max 7)
  * @route   GET /api/partner/pinned
  * @access  Public
  */
@@ -16,7 +16,7 @@ export const getPinnedPartners = asyncHandler(async (_req, res) => {
   })
     .select("-password")
     .sort({ pinnedAt: -1 })
-    .limit(4);
+    .limit(7);
 
   sendResponse(res, 200, "Pinned partners retrieved successfully", partners);
 });

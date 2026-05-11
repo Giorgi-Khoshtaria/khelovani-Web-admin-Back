@@ -4,6 +4,7 @@ import Item from "../../../modules/item.modules.js";
 import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { sendResponse } from "../../../utils/apiResponse.js";
 import { AppError } from "../../../utils/errors/AppError.js";
+import { invalidateCategories } from "../../../utils/cache/invalidators.js";
 
 /**
  * @desc    Delete a category (hard delete — only if no items reference it)
@@ -32,5 +33,6 @@ export const deleteCategory = asyncHandler(async (req, res) => {
 
   await Category.findByIdAndDelete(id);
 
+  void invalidateCategories();
   sendResponse(res, 200, "Category deleted successfully", { _id: id });
 });

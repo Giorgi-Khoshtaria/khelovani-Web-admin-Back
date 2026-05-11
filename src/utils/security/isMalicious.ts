@@ -5,7 +5,7 @@
  */
 export const isMalicious = (text: string): boolean => {
   if (!text || typeof text !== "string") return false;
-  
+
   const patterns = [
     /<script.*?>.*?<\/script>/gi,
     /javascript:/gi,

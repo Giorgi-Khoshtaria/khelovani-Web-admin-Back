@@ -5,6 +5,7 @@ import { TranslationNamespace } from "../../../types/translation.enum.js";
 import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { sendResponse } from "../../../utils/apiResponse.js";
 import { AppError } from "../../../utils/errors/AppError.js";
+import { invalidateTranslations } from "../../../utils/cache/invalidators.js";
 
 /**
  * @desc    Bulk delete translations
@@ -27,6 +28,7 @@ export const bulkDeleteTranslations = asyncHandler(async (req, res) => {
   await Translation.deleteMany({ _id: { $in: ids } });
 
   loadTranslationCache();
+  void invalidateTranslations();
 
   sendResponse(res, 200, tAlerts("translations_bulk_delete_success") || "Translations deleted successfully");
 });

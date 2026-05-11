@@ -7,6 +7,7 @@ import { TranslationNamespace } from "../../types/translation.enum.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { sendResponse } from "../../utils/apiResponse.js";
 import { AppError } from "../../utils/errors/AppError.js";
+import { invalidatePartners } from "../../utils/cache/invalidators.js";
 
 /**
  * @desc    Delete partner
@@ -34,6 +35,8 @@ export const deletePartner = asyncHandler(async (req, res) => {
   }
 
   await partner.deleteOne();
+
+  void invalidatePartners();
 
   sendResponse(
     res,

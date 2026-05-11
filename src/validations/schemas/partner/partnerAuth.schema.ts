@@ -60,11 +60,6 @@ const sharedFields = {
   facebook: z.string().url("facebook_invalid").optional().or(z.literal("")),
   instagram: z.string().url("instagram_invalid").optional().or(z.literal("")),
   tiktok: z.string().url("tiktok_invalid").optional().or(z.literal("")),
-  categories: z
-    .array(z.string().trim().min(1))
-    .min(1, "category_required")
-    .max(5, "category_too_many")
-    .optional(),
   password: z.string().min(6, "password_min_length").optional(),
   role: z.string().regex(/^[a-f\d]{24}$/i, "invalid_role_id").optional(),
 };
@@ -107,10 +102,6 @@ const sharedRegistrationFields = {
     .min(1, "phone_required")
     .regex(/^5\d{2}\s?\d{3}\s?\d{3}$/, "phone_invalid"),
   city: z.enum(VALID_CITIES),
-  categories: z
-    .array(z.string().trim().min(1))
-    .min(1, "category_required")
-    .max(5, "category_too_many"),
   email: z.string().trim().min(1, "email_required").email("email_invalid").max(254, "email_too_long"),
   address: z
     .string()

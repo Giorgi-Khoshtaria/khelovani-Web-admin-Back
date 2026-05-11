@@ -10,6 +10,7 @@ import { TranslationNamespace } from "../../../types/translation.enum.js";
 import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { sendResponse } from "../../../utils/apiResponse.js";
 import { AppError } from "../../../utils/errors/AppError.js";
+import { invalidateTranslations } from "../../../utils/cache/invalidators.js";
 
 /**
  * @desc    Bulk create/update translations
@@ -70,6 +71,7 @@ export const bulkTranslation = asyncHandler(async (req, res) => {
   await Translation.bulkWrite(bulkOps);
 
   loadTranslationCache();
+  void invalidateTranslations();
 
   sendResponse(
     res,

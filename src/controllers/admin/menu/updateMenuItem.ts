@@ -6,6 +6,7 @@ import { TranslationNamespace } from "../../../types/translation.enum.js";
 import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { sendResponse } from "../../../utils/apiResponse.js";
 import { AppError } from "../../../utils/errors/AppError.js";
+import { invalidateMenu } from "../../../utils/cache/invalidators.js";
 
 /**
  * @desc    Update menu item
@@ -40,5 +41,6 @@ export const updateMenuItem = asyncHandler(async (req, res) => {
     throw new AppError(tAlerts("menu_item_not_found"), 404);
   }
 
+  void invalidateMenu();
   sendResponse(res, 200, "Menu item updated successfully", item);
 });

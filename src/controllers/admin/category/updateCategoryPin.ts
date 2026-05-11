@@ -3,8 +3,9 @@ import Category from "../../../modules/category.modules.js";
 import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { sendResponse } from "../../../utils/apiResponse.js";
 import { AppError } from "../../../utils/errors/AppError.js";
+import { invalidateCategories } from "../../../utils/cache/invalidators.js";
 
-const PIN_CAP = 4;
+const PIN_CAP = 5;
 
 /**
  * @desc    Pin or unpin a category (max 4 pinned; FIFO eviction)
@@ -12,7 +13,7 @@ const PIN_CAP = 4;
  * @access  Private Admin
  */
 export const updateCategoryPin = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const { isPinned } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -28,6 +29,7 @@ export const updateCategoryPin = asyncHandler(async (req, res) => {
 
     if (!updated) throw new AppError("Category not found", 404);
 
+    void invalidateCategories();
     return sendResponse(res, 200, "Category unpinned", updated, { evicted: [] });
   }
 
@@ -73,5 +75,6 @@ export const updateCategoryPin = asyncHandler(async (req, res) => {
     session.endSession();
   }
 
+  void invalidateCategories();
   sendResponse(res, 200, "Category pinned", result, { evicted });
 });

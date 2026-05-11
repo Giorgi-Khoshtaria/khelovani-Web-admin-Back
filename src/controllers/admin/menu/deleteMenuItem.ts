@@ -6,6 +6,7 @@ import { TranslationNamespace } from "../../../types/translation.enum.js";
 import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { sendResponse } from "../../../utils/apiResponse.js";
 import { AppError } from "../../../utils/errors/AppError.js";
+import { invalidateMenu } from "../../../utils/cache/invalidators.js";
 
 /**
  * @desc    Delete menu item
@@ -29,6 +30,8 @@ export const deleteMenuItem = asyncHandler(async (req, res) => {
   if (!item) {
     throw new AppError(tAlerts("menu_item_not_found"), 404);
   }
+
+  void invalidateMenu();
 
   sendResponse(
     res,

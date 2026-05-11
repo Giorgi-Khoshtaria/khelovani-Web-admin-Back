@@ -2,6 +2,7 @@ import Category from "../../../modules/category.modules.js";
 import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { sendResponse } from "../../../utils/apiResponse.js";
 import { AppError } from "../../../utils/errors/AppError.js";
+import { invalidateCategories } from "../../../utils/cache/invalidators.js";
 
 /**
  * @desc    Create a new category
@@ -33,5 +34,6 @@ export const createCategory = asyncHandler(async (req, res) => {
     isActive: isActive ?? true,
   });
 
+  void invalidateCategories();
   sendResponse(res, 201, "Category created successfully", category);
 });

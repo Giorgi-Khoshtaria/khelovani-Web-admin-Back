@@ -29,18 +29,38 @@ import {
   commonParamsSchema,
   productIdParamsSchema,
 } from "../validations/schemas/shared/common.schema.js";
+import { cacheRoute } from "../middleware/cache.js";
+import { CacheKey, CacheTTL } from "../utils/cache/keys.js";
 
 const router = Router();
 
 // ✅ Public fetching routes (with optional auth for admin/owner view)
-router.get("/pinned", twoMinutesLimiter, getPinnedProducts);
+router.get(
+  "/pinned",
+  twoMinutesLimiter,
+  cacheRoute(() => CacheKey.pinnedProducts(), CacheTTL.pinnedProducts),
+  getPinnedProducts,
+);
 
-router.get("/", twoMinutesLimiter, optionalAuthenticate, getProducts);
+router.get(
+  "/",
+  twoMinutesLimiter,
+  optionalAuthenticate,
+  cacheRoute(
+    (req) => CacheKey.productsList(CacheKey.helper.stable(req.query)),
+    CacheTTL.productsList,
+  ),
+  getProducts,
+);
 
 router.get(
   "/:productId",
   optionalAuthenticate,
   validate(productIdParamsSchema),
+  cacheRoute(
+    (req) => CacheKey.productById(req.params.productId),
+    CacheTTL.productById,
+  ),
   getProductById,
 );
 

@@ -1,5 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { PartnerTypeEnum, type PartnerType } from "../types/partnerTypes.js";
+import { PIN_SECTIONS, type PinSection } from "../types/productPin.js";
+import { ProductCondition, PRODUCT_CONDITIONS } from "../types/productCondition.enum.js";
 
 export interface IProduct extends Document {
   owner: mongoose.Types.ObjectId;
@@ -20,13 +22,15 @@ export interface IProduct extends Document {
   shippingPrice?: number;
   locationGe: string;
   locationEn?: string;
-  condition: "new" | "handmade" | "vintage";
+  condition: ProductCondition;
   materialsGe: string[];
   materialsEn?: string[];
   dimensions?: string;
   weight?: number;
+  isOnSale: boolean;
+  discountPercent?: number;
   isShown: boolean;
-  isPinned: boolean;
+  pinSection: PinSection | null;
   pinnedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
@@ -49,16 +53,14 @@ const ProductSchema = new Schema<IProduct>(
       trim: true,
       match: [/^[a-zA-Z0-9\s.,/\\\-()!?:;$%&*#@]+$/, "English title must be in English alphabet"]
     },
-    descriptionGe: { 
-      type: String, 
-      required: true, 
+    descriptionGe: {
+      type: String,
+      required: true,
       trim: true,
-      match: [/^[ა-ჰ0-9\s.,/\\\-()!?:;$%&*#@]+$/, "Georgian description must be in Georgian alphabet"]
     },
-    descriptionEn: { 
-      type: String, 
+    descriptionEn: {
+      type: String,
       trim: true,
-      match: [/^[a-zA-Z0-9\s.,/\\\-()!?:;$%&*#@]+$/, "English description must be in English alphabet"]
     },
     
     category: {
@@ -81,17 +83,19 @@ const ProductSchema = new Schema<IProduct>(
     locationGe: { type: String },
     locationEn: { type: String },
     
-    condition: { 
-      type: String, 
-      enum: ["new", "handmade", "vintage"], 
-      required: true 
+    condition: {
+      type: String,
+      enum: PRODUCT_CONDITIONS,
+      required: true
     },
     materialsGe: { type: [String], default: [] },
     materialsEn: { type: [String], default: [] },
     dimensions: { type: String },
     weight: { type: Number, min: 0 },
+    isOnSale: { type: Boolean, default: false, index: true },
+    discountPercent: { type: Number, min: 1, max: 99, default: null },
     isShown: { type: Boolean, default: false },
-    isPinned: { type: Boolean, default: false, index: true },
+    pinSection: { type: String, enum: [...PIN_SECTIONS, null], default: null, index: true },
     pinnedAt: { type: Date, default: null },
   },
   { timestamps: true }

@@ -11,6 +11,7 @@ import { TranslationNamespace } from "../../../types/translation.enum.js";
 import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { sendResponse } from "../../../utils/apiResponse.js";
 import { AppError } from "../../../utils/errors/AppError.js";
+import { invalidateTranslations } from "../../../utils/cache/invalidators.js";
 
 /**
  * @desc    Update a translation
@@ -80,6 +81,7 @@ export const updateTranslation = asyncHandler(async (req, res) => {
   await translation.save();
 
   loadTranslationCache();
+  void invalidateTranslations();
 
   sendResponse(
     res,

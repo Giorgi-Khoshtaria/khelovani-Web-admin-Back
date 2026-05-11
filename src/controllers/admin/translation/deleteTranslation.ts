@@ -9,6 +9,7 @@ import { TranslationNamespace } from "../../../types/translation.enum.js";
 import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { sendResponse } from "../../../utils/apiResponse.js";
 import { AppError } from "../../../utils/errors/AppError.js";
+import { invalidateTranslations } from "../../../utils/cache/invalidators.js";
 
 /**
  * @desc    Delete a translation
@@ -30,6 +31,7 @@ export const deleteTranslation = asyncHandler(async (req, res) => {
   }
 
   loadTranslationCache();
+  void invalidateTranslations();
 
   sendResponse(
     res,

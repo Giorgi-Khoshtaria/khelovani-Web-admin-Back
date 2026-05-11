@@ -7,6 +7,7 @@ import { TranslationNamespace } from "../../types/translation.enum.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { sendResponse } from "../../utils/apiResponse.js";
 import { AppError } from "../../utils/errors/AppError.js";
+import { invalidatePartners } from "../../utils/cache/invalidators.js";
 
 /**
  * @desc    Update partner photo
@@ -44,6 +45,8 @@ export const updatePartnerPhoto = asyncHandler(async (req, res) => {
     { $set: { profilePhoto: imageUrl } },
     { new: true },
   ).select("-password");
+
+  void invalidatePartners();
 
   sendResponse(
     res,

@@ -11,6 +11,7 @@ import { TranslationNamespace } from "../../types/translation.enum.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { sendResponse } from "../../utils/apiResponse.js";
 import { AppError } from "../../utils/errors/AppError.js";
+import { invalidatePartners } from "../../utils/cache/invalidators.js";
 
 /**
  * @desc    Register partner
@@ -77,11 +78,12 @@ export const registerPartner = asyncHandler(async (req, res) => {
     facebook: data.facebook?.trim(),
     instagram: data.instagram?.trim(),
     tiktok: data.tiktok?.trim(),
-    categories: Array.isArray(data.categories) ? data.categories : [],
     status: PartnerStatusEnum.PENDING,
     password: hashedPassword,
     role: partnerRole._id,
   });
+
+  void invalidatePartners();
 
   const successKey = partnerType === PartnerTypeEnum.INDIVIDUAL ? "individual_registered" : "partner_registered";
   sendResponse(res, 201, tAuth(successKey) || tAuth("partner_registered"), {

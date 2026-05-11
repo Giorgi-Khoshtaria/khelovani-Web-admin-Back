@@ -16,7 +16,7 @@ const MAX_LIMIT = 100;
  * @access  Public
  */
 export const getPublicPartners = asyncHandler(async (req, res) => {
-  const { search, page = "1", limit = "12", city, category, minRating, partnerType } = req.query;
+  const { search, page = "1", limit = "12", city, minRating, partnerType } = req.query;
   const lang = (req.query.lang as Lang) || "ge";
   const { t: tAlerts } = useTranslation(lang, TranslationNamespace.Alerts);
 
@@ -36,11 +36,6 @@ export const getPublicPartners = asyncHandler(async (req, res) => {
 
   if (city) {
     query.city = city;
-  }
-
-  if (category) {
-    const cats = Array.isArray(category) ? category : [category];
-    query.categories = { $in: cats };
   }
 
   if (minRating) {

@@ -64,7 +64,6 @@ export const DEFAULT_PARTNER = {
   instagram: "https://instagram.com/example",
   tiktok: "https://tiktok.com/@example",
   terms: true,
-  categories: ["jewelry", "ceramics", "textile"],
 } as const;
 
 export const DEFAULT_INDIVIDUAL_PARTNER = {
@@ -84,5 +83,4 @@ export const DEFAULT_INDIVIDUAL_PARTNER = {
   instagram: "https://instagram.com/example",
   tiktok: "https://tiktok.com/@example",
   terms: true,
-  categories: ["jewelry", "ceramics", "textile"],
 } as const;

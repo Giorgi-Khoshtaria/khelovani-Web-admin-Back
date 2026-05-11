@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
+import { ProductCondition, PRODUCT_CONDITIONS } from "../types/productCondition.enum.js";
 
 export interface IItem extends Document {
   owner: mongoose.Types.ObjectId;
@@ -18,7 +19,7 @@ export interface IItem extends Document {
   shippingPrice?: number;
   locationGe: string;
   locationEn?: string;
-  condition: "new" | "handmade" | "vintage";
+  condition: ProductCondition;
   materialsGe: string[];
   materialsEn?: string[];
   dimensions?: string;
@@ -59,10 +60,10 @@ const ItemSchema = new Schema<IItem>(
     locationGe: { type: String },
     locationEn: { type: String },
     
-    condition: { 
-      type: String, 
-      enum: ["new", "handmade", "vintage"], 
-      required: true 
+    condition: {
+      type: String,
+      enum: PRODUCT_CONDITIONS,
+      required: true
     },
     materialsGe: { type: [String], default: [] },
     materialsEn: { type: [String], default: [] },

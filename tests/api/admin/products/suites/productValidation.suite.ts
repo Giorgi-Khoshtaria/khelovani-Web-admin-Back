@@ -153,8 +153,18 @@ export const productValidationSuites = () => {
         expect(res.status()).toBe(422);
       });
 
-      test("PRD-VAL-032: 422 — descriptionGe contains Latin chars", async ({ adminApi }) => {
-        const res = await postProduct(adminApi, { descriptionGe: "This is English description text here" });
+      test("PRD-VAL-032: 201 — descriptionGe with Georgian text and special chars", async ({ adminApi }) => {
+        const res = await postProduct(adminApi, { descriptionGe: `ხელნაკეთი ნივთი — "ექსკლუზიური" დიზაინი! ფასი: 50₾ (გადასახადის გარეშე). ზომა: 20×30სმ.` });
+        expect(res.status()).toBe(201);
+      });
+
+      test("PRD-VAL-032b: 422 — descriptionGe with no Georgian letters at all", async ({ adminApi }) => {
+        const res = await postProduct(adminApi, { descriptionGe: "This is all English text here!!!" });
+        expect(res.status()).toBe(422);
+      });
+
+      test("PRD-VAL-032c: 422 — descriptionGe contains HTML tags", async ({ adminApi }) => {
+        const res = await postProduct(adminApi, { descriptionGe: "ქართული ტექსტი <script>alert(1)</script>" });
         expect(res.status()).toBe(422);
       });
     });
@@ -173,8 +183,18 @@ export const productValidationSuites = () => {
         expect(res.status()).toBe(422);
       });
 
-      test("PRD-VAL-035: 422 — descriptionEn contains Georgian chars", async ({ adminApi }) => {
-        const res = await postProduct(adminApi, { descriptionEn: "ეს არის ქართული ტექსტი" });
+      test("PRD-VAL-035: 201 — descriptionEn with English text and special chars", async ({ adminApi }) => {
+        const res = await postProduct(adminApi, { descriptionEn: `Handmade item — "exclusive" design! Price: $50 (tax-free). Size: 20×30cm. 100% cotton & leather.` });
+        expect(res.status()).toBe(201);
+      });
+
+      test("PRD-VAL-035b: 422 — descriptionEn with no English letters at all", async ({ adminApi }) => {
+        const res = await postProduct(adminApi, { descriptionEn: "ეს არის ქართული ტექსტი მხოლოდ" });
+        expect(res.status()).toBe(422);
+      });
+
+      test("PRD-VAL-035c: 422 — descriptionEn contains HTML tags", async ({ adminApi }) => {
+        const res = await postProduct(adminApi, { descriptionEn: "English product description <b>bold text</b>" });
         expect(res.status()).toBe(422);
       });
     });

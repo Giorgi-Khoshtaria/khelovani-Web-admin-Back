@@ -40,7 +40,7 @@ export const getProducts = asyncHandler(async (req, res) => {
   const userRole = req.user?.role?.toLowerCase();
   const userId = req.user?.id;
 
-  const { search, category, partnerId: queryPartnerId, ownerType } = req.query;
+  const { search, category, partnerId: queryPartnerId, ownerType, condition } = req.query;
 
   const pageNumber = Math.max(1, parseInt(req.query.page as string) || 1);
   const limitNumber = Math.min(MAX_LIMIT, Math.max(1, parseInt(req.query.limit as string) || 15));
@@ -99,11 +99,17 @@ export const getProducts = asyncHandler(async (req, res) => {
     query.ownerType = ownerType;
   }
 
-  const [products, total] = await Promise.all([
+  if (condition && typeof condition === "string") {
+    query.condition = condition;
+  }
+
+  const [products, totalCount] = await Promise.all([
     Product.find(query)
-      .sort({ isPinned: -1, pinnedAt: -1, ...sortOption })
+      // pinSection !== null sorts above null (ascending puts nulls last in Mongo)
+      .sort({ pinSection: 1, pinnedAt: -1, ...sortOption })
       .skip(skip)
       .limit(limitNumber)
+      .populate({ path: "owner", select: "companyNameGe companyNameEn" })
       .select("-__v"),
     Product.countDocuments(query),
   ]);
@@ -119,10 +125,10 @@ export const getProducts = asyncHandler(async (req, res) => {
   const searchStr = search ? String(search).slice(0, 200) : undefined;
 
   sendResponse(res, 200, tAlerts("products_fetched_success") || "Products retrieved successfully", productsWithFallbacks, {
-    total,
-    page: pageNumber,
+    totalCount,
+    currentPage: pageNumber,
     limit: limitNumber,
-    totalPages: Math.ceil(total / limitNumber),
+    totalPages: Math.ceil(totalCount / limitNumber),
     ...(searchStr ? { search: searchStr } : {}),
   });
 });

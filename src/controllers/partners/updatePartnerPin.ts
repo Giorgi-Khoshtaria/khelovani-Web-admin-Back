@@ -3,11 +3,12 @@ import Organisation from "../../modules/organization.modules.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { sendResponse } from "../../utils/apiResponse.js";
 import { AppError } from "../../utils/errors/AppError.js";
+import { invalidatePartners } from "../../utils/cache/invalidators.js";
 
-const PIN_CAP = 4;
+const PIN_CAP = 7;
 
 /**
- * @desc    Pin or unpin a partner (max 4 pinned; FIFO eviction)
+ * @desc    Pin or unpin a partner (max 7 pinned; FIFO eviction)
  * @route   PATCH /api/admin/partners/:id/pin
  * @access  Private Admin
  */
@@ -28,6 +29,7 @@ export const updatePartnerPin = asyncHandler(async (req, res) => {
 
     if (!updated) throw new AppError("Partner not found", 404);
 
+    void invalidatePartners();
     return sendResponse(res, 200, "Partner unpinned", updated, { evicted: [] });
   }
 
@@ -73,5 +75,6 @@ export const updatePartnerPin = asyncHandler(async (req, res) => {
     session.endSession();
   }
 
+  void invalidatePartners();
   sendResponse(res, 200, "Partner pinned", result, { evicted });
 });

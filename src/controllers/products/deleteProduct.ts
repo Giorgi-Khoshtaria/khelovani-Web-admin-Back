@@ -6,6 +6,7 @@ import { TranslationNamespace } from "../../types/translation.enum.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { sendResponse, getCloudinaryPublicId } from "../../utils/apiResponse.js";
 import { AppError } from "../../utils/errors/AppError.js";
+import { invalidateProducts } from "../../utils/cache/invalidators.js";
 
 /**
  * @desc    Delete a product
@@ -53,6 +54,8 @@ export const deleteProduct = asyncHandler(async (req, res) => {
   }
 
   await product.deleteOne();
+
+  void invalidateProducts();
 
   sendResponse(res, 200, tAlerts("product_deleted_success") || "Product deleted successfully");
 });

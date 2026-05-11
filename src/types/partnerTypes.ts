@@ -24,5 +24,4 @@ export interface PartnerRegisterData {
   instagram?: string;
   tiktok?: string;
   terms: boolean;
-  categories?: string[];
 }

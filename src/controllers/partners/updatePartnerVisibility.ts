@@ -3,6 +3,7 @@ import Organisation from "../../modules/organization.modules.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { sendResponse } from "../../utils/apiResponse.js";
 import { AppError } from "../../utils/errors/AppError.js";
+import { invalidatePartners } from "../../utils/cache/invalidators.js";
 
 /**
  * @desc    Show or hide a partner from public listings
@@ -25,5 +26,6 @@ export const updatePartnerVisibility = asyncHandler(async (req, res) => {
 
   if (!updated) throw new AppError("Partner not found", 404);
 
+  void invalidatePartners();
   sendResponse(res, 200, `Partner ${isShown ? "shown" : "hidden"}`, updated);
 });

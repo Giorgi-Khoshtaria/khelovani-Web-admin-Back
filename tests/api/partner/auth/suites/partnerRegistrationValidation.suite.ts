@@ -175,11 +175,6 @@ export const partnerRegistrationValidationSuites = () => {
       expect(res.status()).toBe(422);
     });
 
-    test("PRT-MIS-003: 422 — missing categories", async ({ api }: PartnerFixtures) => {
-      const res = await registerOrgWith(api, { categories: undefined as any });
-      expect(res.status()).toBe(422);
-    });
-
     test("PRT-MIS-004: 422 — missing terms", async ({ api }: PartnerFixtures) => {
       const res = await registerOrgWith(api, { terms: undefined as any });
       expect(res.status()).toBe(422);

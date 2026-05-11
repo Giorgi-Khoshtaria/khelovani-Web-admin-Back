@@ -6,6 +6,7 @@ import { TranslationNamespace } from "../../types/translation.enum.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { sendResponse } from "../../utils/apiResponse.js";
 import { AppError } from "../../utils/errors/AppError.js";
+import { invalidateProducts } from "../../utils/cache/invalidators.js";
 
 /**
  * @desc    Add a new product
@@ -49,6 +50,8 @@ export const addProduct = asyncHandler(async (req, res) => {
     images: imageUrls,
     ownerType,
   });
+
+  void invalidateProducts();
 
   sendResponse(res, 201, tAlerts("product_created_success") || "Product added successfully", product);
 });

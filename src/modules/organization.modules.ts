@@ -100,11 +100,6 @@ const OrganisationSchema = new mongoose.Schema(
       required: false,
       trim: true,
     },
-    categories: {
-      type: [String],
-      default: [],
-      index: true,
-    },
     rating: {
       type: Number,
       default: 0,

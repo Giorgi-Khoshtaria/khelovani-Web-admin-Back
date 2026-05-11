@@ -1,6 +1,7 @@
 import MenuItem from "../../../modules/menu.modules.js";
 import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { sendResponse } from "../../../utils/apiResponse.js";
+import { invalidateMenu } from "../../../utils/cache/invalidators.js";
 
 /**
  * @desc    Create menu item
@@ -20,5 +21,6 @@ export const createMenuItem = asyncHandler(async (req, res) => {
   }
 
   const item = await MenuItem.create(itemData);
+  void invalidateMenu();
   sendResponse(res, 201, "Menu item created successfully", item);
 });

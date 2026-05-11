@@ -3,34 +3,37 @@ import Product from "../../modules/product.modules.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { sendResponse } from "../../utils/apiResponse.js";
 import { AppError } from "../../utils/errors/AppError.js";
-
-const PIN_CAP = 4;
+import { PIN_CAP_PER_SECTION, type PinSection } from "../../types/productPin.js";
+import { isPinSectionCompatible } from "../../utils/pinCompatibility.js";
+import { invalidateProducts } from "../../utils/cache/invalidators.js";
 
 /**
- * @desc    Pin or unpin a product (max 4 pinned; FIFO eviction)
+ * @desc    Pin or unpin a product per section (max 4 per section; FIFO eviction)
  * @route   PATCH /api/products/:productId/pin
  * @access  Private Admin
+ * @body    { pinSection: "regular" | "new" | "sale" | "oneOfAKind" | null }
  */
 export const updateProductPin = asyncHandler(async (req, res) => {
   const { productId } = req.params;
-  const { isPinned } = req.body;
+  const { pinSection } = req.body as { pinSection: PinSection | null };
 
   if (!mongoose.Types.ObjectId.isValid(productId)) {
     throw new AppError("Invalid product id", 422);
   }
 
-  if (!isPinned) {
+  // ── Unpin ─────────────────────────────────────────────────
+  if (pinSection === null) {
     const updated = await Product.findByIdAndUpdate(
       productId,
-      { $set: { isPinned: false, pinnedAt: null } },
+      { $set: { pinSection: null, pinnedAt: null } },
       { new: true },
     );
-
     if (!updated) throw new AppError("Product not found", 404);
-
+    void invalidateProducts();
     return sendResponse(res, 200, "Product unpinned", updated, { evicted: [] });
   }
 
+  // ── Pin ───────────────────────────────────────────────────
   const session = await mongoose.startSession();
   let result: any;
   let evicted: string[] = [];
@@ -42,17 +45,22 @@ export const updateProductPin = asyncHandler(async (req, res) => {
 
       if (!target.isShown) throw new AppError("Cannot pin a hidden product", 422);
 
-      if (target.isPinned) {
-        result = await Product.findById(productId).session(session);
+      if (!isPinSectionCompatible(pinSection, target)) {
+        throw new AppError("pin_section_incompatible", 400);
+      }
+
+      // Already pinned to this same section — no-op
+      if (target.pinSection === pinSection) {
+        result = target;
         return;
       }
 
-      const pinnedCount = await Product.countDocuments({ isPinned: true }).session(session);
+      const sectionCount = await Product.countDocuments({ pinSection }).session(session);
 
-      if (pinnedCount >= PIN_CAP) {
-        const toEvict = await Product.find({ isPinned: true })
+      if (sectionCount >= PIN_CAP_PER_SECTION) {
+        const toEvict = await Product.find({ pinSection })
           .sort({ pinnedAt: 1 })
-          .limit(pinnedCount - PIN_CAP + 1)
+          .limit(sectionCount - PIN_CAP_PER_SECTION + 1)
           .select("_id")
           .session(session);
 
@@ -60,20 +68,22 @@ export const updateProductPin = asyncHandler(async (req, res) => {
 
         await Product.updateMany(
           { _id: { $in: evicted } },
-          { $set: { isPinned: false, pinnedAt: null } },
+          { $set: { pinSection: null, pinnedAt: null } },
           { session },
         );
       }
 
       result = await Product.findByIdAndUpdate(
         productId,
-        { $set: { isPinned: true, pinnedAt: new Date() } },
+        { $set: { pinSection, pinnedAt: new Date() } },
         { new: true, session },
       );
     });
   } finally {
     session.endSession();
   }
+
+  void invalidateProducts();
 
   sendResponse(res, 200, "Product pinned", result, { evicted });
 });

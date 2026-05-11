@@ -20,9 +20,19 @@ export const parseProductData = (
       "stockQuantity",
       "shippingPrice",
       "weight",
+      "discountPercent",
       "isOneOfAKind",
       "shippingAvailable",
       "isShown",
+      "isOnSale",
+    ];
+
+    const NUMERIC_FIELDS = [
+      "price",
+      "stockQuantity",
+      "shippingPrice",
+      "weight",
+      "discountPercent",
     ];
 
     fieldsToParse.forEach((field) => {
@@ -31,9 +41,7 @@ export const parseProductData = (
 
         // Coerce numbers specifically if they are strings after customParse fails to JSON.parse
         if (
-          ["price", "stockQuantity", "shippingPrice", "weight"].includes(
-            field,
-          ) &&
+          NUMERIC_FIELDS.includes(field) &&
           typeof req.body[field] === "string"
         ) {
           const num = Number(req.body[field]);

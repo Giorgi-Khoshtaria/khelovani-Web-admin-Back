@@ -9,7 +9,6 @@ import {
   partnerAddressScenarios,
   partnerAddressEnScenarios,
   partnerUrlScenarios,
-  partnerCategoryScenarios,
   partnerPersonalNumberScenarios,
   LIMITS,
 } from "../../../../helpers/shared/validation.helper.js";
@@ -136,18 +135,6 @@ export const partnerFieldValidationSuites = () => {
       }
     });
 
-    // ── categories ────────────────────────────────────────────────────
-    test.describe("categories", () => {
-      for (const { id, value, note } of partnerCategoryScenarios) {
-        test(`${id}: 422 — categories: ${note}`, async ({ api }: PartnerFixtures) => {
-          const res = await registerOrgWith(api, { categories: value });
-          expect(res.status(), `${id}: ${note}`).toBe(422);
-          const body = await res.json();
-          expect(body.errors).toContainEqual(expect.objectContaining({ field: "categories" }));
-        });
-      }
-    });
-
     // ── description / descriptionEn (optional) ────────────────────────
     test.describe("description fields (optional)", () => {
       test("PRT-VAL-060: 422 — description too long (>500 chars)", async ({ api }: PartnerFixtures) => {
@@ -225,17 +212,6 @@ export const partnerFieldValidationSuites = () => {
           expect(res.status(), `${id}: ${note}`).toBe(422);
           const body = await res.json();
           expect(body.errors).toContainEqual(expect.objectContaining({ field: "addressEn" }));
-        });
-      }
-    });
-
-    test.describe("categories", () => {
-      for (const { id, value, note } of partnerCategoryScenarios) {
-        test(`${id}-IND: 422 — individual categories: ${note}`, async ({ api }: PartnerFixtures) => {
-          const res = await registerIndWith(api, { categories: value });
-          expect(res.status(), `${id}: ${note}`).toBe(422);
-          const body = await res.json();
-          expect(body.errors).toContainEqual(expect.objectContaining({ field: "categories" }));
         });
       }
     });

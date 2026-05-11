@@ -3,6 +3,7 @@ import Category from "../../../modules/category.modules.js";
 import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { sendResponse } from "../../../utils/apiResponse.js";
 import { AppError } from "../../../utils/errors/AppError.js";
+import { invalidateCategories } from "../../../utils/cache/invalidators.js";
 
 /**
  * @desc    Update a category
@@ -44,5 +45,6 @@ export const updateCategory = asyncHandler(async (req, res) => {
 
   const updated = await category.save();
 
+  void invalidateCategories();
   sendResponse(res, 200, "Category updated successfully", updated);
 });
