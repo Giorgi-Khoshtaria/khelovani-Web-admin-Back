@@ -27,7 +27,10 @@ const router = Router();
 // ✅ Public Routes (needed by frontend to load translations before login)
 router.get(
   "/",
-  cacheRoute(() => CacheKey.translations(), CacheTTL.translations),
+  cacheRoute(
+    (req) => CacheKey.translations(CacheKey.helper.stable(req.query)),
+    CacheTTL.translations,
+  ),
   getTranslations,
 );
 router.get("/namespaces", getNamespaces);

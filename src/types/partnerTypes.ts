@@ -23,5 +23,6 @@ export interface PartnerRegisterData {
   facebook?: string;
   instagram?: string;
   tiktok?: string;
+  categories?: string[];
   terms: boolean;
 }

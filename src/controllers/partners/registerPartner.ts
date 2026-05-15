@@ -78,6 +78,7 @@ export const registerPartner = asyncHandler(async (req, res) => {
     facebook: data.facebook?.trim(),
     instagram: data.instagram?.trim(),
     tiktok: data.tiktok?.trim(),
+    categories: Array.isArray(data.categories) ? data.categories : [],
     status: PartnerStatusEnum.PENDING,
     password: hashedPassword,
     role: partnerRole._id,

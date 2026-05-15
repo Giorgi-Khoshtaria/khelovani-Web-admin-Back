@@ -1445,6 +1445,30 @@ const translations = [
   },
   {
     namespace: "validation",
+    key: "categories_required",
+    translations: {
+      ge: "მინიმუმ ერთი კატეგორია სავალდებულოა",
+      en: "At least one category is required",
+    },
+  },
+  {
+    namespace: "validation",
+    key: "categories_max_org",
+    translations: {
+      ge: "კომპანიას შეუძლია მაქსიმუმ 5 კატეგორიის არჩევა",
+      en: "Companies can select up to 5 categories",
+    },
+  },
+  {
+    namespace: "validation",
+    key: "categories_max_individual",
+    translations: {
+      ge: "ბრენდს შეუძლია მაქსიმუმ 3 კატეგორიის არჩევა",
+      en: "Brands can select up to 3 categories",
+    },
+  },
+  {
+    namespace: "validation",
     key: "companyNameEn_invalid",
     translations: {
       ge: "კომპანიის სახელი მხოლოდ ლათინურ სიმბოლოებს უნდა შეიცავდეს",

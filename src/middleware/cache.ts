@@ -11,8 +11,8 @@ import { getRedis } from "../utils/cache/redis.js";
  *
  * Skips caching for:
  *   - Non-GET requests
- *   - Authenticated admin requests (req.user / req.admin set) — admins
- *     should always see fresh data after their writes.
+ *   - Authenticated admin requests (Authorization header or req.user /
+ *     req.admin set) — admins should always see fresh data after writes.
  *
  * Usage:
  *   router.get("/", cacheRoute(() => CacheKey.menu(), CacheTTL.menu), handler)
@@ -27,7 +27,7 @@ export const cacheRoute = (keyBuilder: KeyBuilder, ttlSeconds: number) => {
     // see additional fields (e.g. unpublished products) that would
     // poison the public cache key.
     const reqAny = req as Request & { user?: unknown; admin?: unknown };
-    if (reqAny.user || reqAny.admin) return next();
+    if (req.headers.authorization || reqAny.user || reqAny.admin) return next();
 
     const redis = getRedis();
     if (!redis) return next();

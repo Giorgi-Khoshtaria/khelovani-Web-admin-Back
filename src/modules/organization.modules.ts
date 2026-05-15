@@ -138,6 +138,10 @@ const OrganisationSchema = new mongoose.Schema(
       ref: "Role",
       required: true,
     },
+    categories: {
+      type: [String],
+      default: [],
+    },
   },
   { timestamps: true },
 );

@@ -20,7 +20,7 @@ const stable = (input: unknown) => {
 
 export const CacheKey = {
   // Translations
-  translations: () => `translations:${V}`,
+  translations: (queryString = "") => `translations:list:${queryString}:${V}`,
   translationsPattern: () => `translations:*`,
 
   // Categories

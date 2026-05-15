@@ -124,6 +124,11 @@ const sharedRegistrationFields = {
   terms: z.boolean().refine((val) => val === true, { message: "terms_required" }),
 };
 
+export const PARTNER_CATEGORY_LIMITS = {
+  [PartnerTypeEnum.ORGANIZATION]: { min: 1, max: 5 },
+  [PartnerTypeEnum.INDIVIDUAL]: { min: 1, max: 3 },
+} as const;
+
 const organizationBranch = z.object({
   partnerType: z.literal(PartnerTypeEnum.ORGANIZATION),
   identificationCode: z
@@ -134,6 +139,10 @@ const organizationBranch = z.object({
     .length(9, "id_code_invalid_org"),
   contactPerson: z.string().trim().min(1, "contactPerson_required").max(100, "contactPerson_max_length"),
   ...sharedRegistrationFields,
+  categories: z
+    .array(z.string())
+    .min(PARTNER_CATEGORY_LIMITS[PartnerTypeEnum.ORGANIZATION].min, "categories_required")
+    .max(PARTNER_CATEGORY_LIMITS[PartnerTypeEnum.ORGANIZATION].max, "categories_max_org"),
 });
 
 const individualBranch = z.object({
@@ -145,6 +154,10 @@ const individualBranch = z.object({
     .regex(/^\d+$/, "id_number_only_numbers")
     .length(11, "id_number_invalid"),
   ...sharedRegistrationFields,
+  categories: z
+    .array(z.string())
+    .min(PARTNER_CATEGORY_LIMITS[PartnerTypeEnum.INDIVIDUAL].min, "categories_required")
+    .max(PARTNER_CATEGORY_LIMITS[PartnerTypeEnum.INDIVIDUAL].max, "categories_max_individual"),
 });
 
 /**

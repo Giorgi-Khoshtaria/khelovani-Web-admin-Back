@@ -1,4 +1,7 @@
-import { ProductCondition, PRODUCT_CONDITIONS } from "./productCondition.enum.js";
+import {
+  ProductCondition,
+  PRODUCT_CONDITIONS,
+} from "./productCondition.enum.js";
 
 export type PinSection = ProductCondition;
 

@@ -14,6 +14,7 @@ import uploadRoutes from "./adminRoutes/upload.routes.js";
 import adminUsersRoutes from "./adminRoutes/adminUsers.routes.js";
 import categoryRoutes from "./adminRoutes/category.routes.js";
 import publicCategoryRoutes from "./categories.routes.js";
+import favoritesRoutes from "./favorites.routes.js";
 
 const apiRouter = Router();
 
@@ -32,5 +33,6 @@ apiRouter.use("/admin/upload", uploadRoutes);
 apiRouter.use("/admin/users", adminUsersRoutes);
 apiRouter.use("/admin/categories", categoryRoutes);
 apiRouter.use("/categories", publicCategoryRoutes);
+apiRouter.use("/favorites", favoritesRoutes);
 
 export default apiRouter;
