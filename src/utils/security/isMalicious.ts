@@ -6,19 +6,13 @@
 export const isMalicious = (text: string): boolean => {
   if (!text || typeof text !== "string") return false;
 
+  // XSS patterns only — SQL patterns removed (project uses MongoDB, not SQL)
   const patterns = [
-    /<script.*?>.*?<\/script>/gi,
-    /javascript:/gi,
-    /onerror=/gi,
-    /onload=/gi,
-    /alert\(/gi,
+    /<script[\s\S]*?>[\s\S]*?<\/script>/gi,
+    /javascript\s*:/gi,
+    /on(?:error|load|click|mouse\w+)\s*=/gi,
     /document\.cookie/gi,
-    /SELECT\s+\*\s+FROM/gi,
-    /INSERT\s+INTO/gi,
-    /DROP\s+TABLE/gi,
-    /UNION\s+SELECT/gi,
-    /--/gi,
-    /OR\s+1=1/gi,
+    /eval\s*\(/gi,
   ];
 
   return patterns.some((pattern) => pattern.test(text));

@@ -5,6 +5,8 @@ import { randomId, randomEmail } from "../../../../helpers/utils/generators.js";
 import {
   registerPartner,
   registerPartnerAndTrack,
+  registerOrgWith,
+  registerIndWith,
 } from "../registration.helpers.js";
 
 export const partnerRegistrationSecuritySuites = () => {
@@ -153,6 +155,63 @@ export const partnerRegistrationSecuritySuites = () => {
         const res = await registerPartner(api, { identificationCode });
         expect(res.status()).not.toBe(500);
       }
+    });
+  });
+
+  // ─── Malicious content (isMalicious refinement on text fields) ────
+  test.describe("8. Malicious Content — isMalicious refinement", () => {
+    const xssPayloads: Array<[string, string]> = [
+      ["script tag", "<script>alert(1)</script>"],
+      ["javascript: scheme", "javascript:alert(document.cookie)"],
+      ["onerror handler", "<img src=x onerror=alert(1)>"],
+      ["onload handler", "<svg onload=alert(1)>"],
+      ["document.cookie access", "steal document.cookie now"],
+      ["eval call", "eval(atob('YWxlcnQoMSk='))"],
+    ];
+
+    for (const [label, payload] of xssPayloads) {
+      test(`PRT-050 (${label}): 422 — org description rejects ${label}`, async ({
+        api,
+      }: PartnerFixtures) => {
+        const res = await registerOrgWith(api, { description: payload });
+        expect(res.status(), label).toBe(422);
+      });
+
+      test(`PRT-051 (${label}): 422 — org descriptionEn rejects ${label}`, async ({
+        api,
+      }: PartnerFixtures) => {
+        const res = await registerOrgWith(api, { descriptionEn: payload });
+        expect(res.status(), label).toBe(422);
+      });
+
+      test(`PRT-052 (${label}): 422 — individual description rejects ${label}`, async ({
+        api,
+      }: PartnerFixtures) => {
+        const res = await registerIndWith(api, { description: payload });
+        expect(res.status(), label).toBe(422);
+      });
+    }
+
+    test("PRT-055: 422 — malicious content in address field", async ({
+      api,
+    }: PartnerFixtures) => {
+      const res = await registerOrgWith(api, {
+        address: "<script>alert(1)</script>",
+      });
+      expect(res.status()).toBe(422);
+    });
+
+    test("PRT-056: 422 — error response names the offending field", async ({
+      api,
+    }: PartnerFixtures) => {
+      const res = await registerOrgWith(api, {
+        description: "<script>alert(1)</script>",
+      });
+      expect(res.status()).toBe(422);
+      const body = await res.json();
+      expect(
+        body.errors.some((e: any) => e.field === "description"),
+      ).toBe(true);
     });
   });
 };

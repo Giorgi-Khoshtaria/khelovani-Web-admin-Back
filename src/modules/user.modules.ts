@@ -19,20 +19,6 @@ const UserSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    dateOfBirth: {
-      type: Date,
-      required: true,
-    },
-    city: {
-      type: String,
-      required: true,
-      enum: ["tbilisi", "batumi", "kutaisi", "rustavi", "gori", "zugdidi"],
-    },
-    address: {
-      type: String,
-      required: true,
-      trim: true,
-    },
     email: {
       type: String,
       required: true,

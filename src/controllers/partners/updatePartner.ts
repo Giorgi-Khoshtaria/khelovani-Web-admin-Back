@@ -8,7 +8,7 @@ import { TranslationNamespace } from "../../types/translation.enum.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { sendResponse } from "../../utils/apiResponse.js";
 import { AppError } from "../../utils/errors/AppError.js";
-import { invalidatePartners } from "../../utils/cache/invalidators.js";
+import { invalidatePartnerById } from "../../utils/cache/invalidators.js";
 
 /**
  * @desc    Update partner info
@@ -71,7 +71,7 @@ export const updatePartner = asyncHandler(async (req, res) => {
     { new: true, runValidators: true },
   ).select("-password");
 
-  void invalidatePartners();
+  invalidatePartnerById(id as string);
 
   sendResponse(
     res,

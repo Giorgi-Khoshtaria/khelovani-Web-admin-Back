@@ -9,7 +9,7 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import { sendResponse, escapeRegex } from "../../utils/apiResponse.js";
 import { AppError } from "../../utils/errors/AppError.js";
 
-const MAX_LIMIT = 100;
+const MAX_LIMIT = 50;
 
 // @desc    Get all partners
 // @route   GET /api/partners

@@ -1,19 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { ROLES } from "./permissions.js";
 
-declare global {
-  namespace Express {
-    interface Request {
-      user?: {
-        id: string;
-        role: string;
-        permissions: string[];
-        allowedPanels: string[];
-      };
-    }
-  }
-}
-
 export const requirePermission = (...permissions: string[]) => {
   return (req: Request, res: Response, next: NextFunction): void => {
     if (!req.user) {

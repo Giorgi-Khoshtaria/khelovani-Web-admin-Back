@@ -1,8 +1,17 @@
 import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 import { ROLES } from "../../middleware/role/permissions.js";
 
 dotenv.config();
+
+const adminEmail = process.env.SEED_ADMIN_EMAIL;
+const adminPassword = process.env.SEED_ADMIN_PASSWORD;
+
+if (!adminEmail || !adminPassword) {
+  console.error("❌ SEED_ADMIN_EMAIL and SEED_ADMIN_PASSWORD env vars are required.");
+  process.exit(1);
+}
 
 console.log("Connecting to MongoDB...");
 mongoose
@@ -11,34 +20,28 @@ mongoose
     const Role = (await import("../../modules/role.modules.js")).default;
     const Admin = (await import("../../modules/admin.modules.js")).default;
 
-    // 1. Find the admin role
-    // Role names are seeded from `src/middleware/role/permissions.ts`.
     const adminRole = await Role.findOne({ name: ROLES.ADMIN });
     if (!adminRole) {
       console.log("admin role not found! Run `npm run seed:roles` first.");
       process.exit(1);
     }
 
-    // 2. Check if admin already exists
-    const existingAdmin = await Admin.findOne({ email: "admin@example.com" });
+    const existingAdmin = await Admin.findOne({ email: adminEmail });
     if (existingAdmin) {
-      // If the admin exists but has an old/bad role ref, fix it.
       existingAdmin.role = adminRole._id;
       await existingAdmin.save();
-      console.log("✅ Admin already existed, but role was updated to `admin`.");
+      console.log("✅ Admin already existed — role reference updated.");
       process.exit(0);
     }
 
-    // 3. Create the admin user (admin123 hashed)
+    const hashedPassword = await bcrypt.hash(adminPassword, 10);
     await Admin.create({
-      email: "admin@example.com",
-      password: "$2b$10$HcdLcU.xmeoM/ccWfxb/dOL6NjaqM2m7IDC2qV2mTPOa0arDW8nWC",
+      email: adminEmail,
+      password: hashedPassword,
       role: adminRole._id,
     });
 
-    console.log(
-      "✅ Admin user successfully created! (admin@example.com / admin123)",
-    );
+    console.log(`✅ Admin user created: ${adminEmail}`);
     process.exit(0);
   })
   .catch(console.error);

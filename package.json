@@ -15,6 +15,7 @@
     "migrate:partner-categories": "tsx src/utils/migrations/runMigratePartnerCategories.ts",
     "migrate:partner-type": "tsx src/utils/migrations/runMigratePartnerType.ts",
     "migrate:product-owner-type": "tsx src/utils/migrations/runMigrateProductOwnerType.ts",
+    "migrate:images-to-org-folders": "tsx src/utils/migrations/runMigrateImagesToOrgFolders.ts",
     "test:registration": "npx playwright test tests/registration/registration.api.spec.ts"
   },
   "keywords": [],

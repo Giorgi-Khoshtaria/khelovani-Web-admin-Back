@@ -13,7 +13,7 @@ const PIN_CAP = 7;
  * @access  Private Admin
  */
 export const updatePartnerPin = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const { isPinned } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {

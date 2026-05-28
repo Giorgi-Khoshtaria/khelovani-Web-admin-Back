@@ -1,14 +1,5 @@
 import { z } from "zod";
 
-const VALID_CITIES = [
-  "tbilisi",
-  "batumi",
-  "kutaisi",
-  "rustavi",
-  "gori",
-  "zugdidi",
-] as const;
-
 export const profileUpdateSchema = {
   body: z
     .object({
@@ -34,46 +25,6 @@ export const profileUpdateSchema = {
         .min(2, "name_en_min_length")
         .max(100, "name_en_max_length")
         .regex(/^[A-Za-z\s'\-']+$/, "name_en_letters_only"),
-
-      dateOfBirth: z
-        .string()
-        .min(1, "dob_required")
-        .refine((val) => /^\d{4}-\d{2}-\d{2}$/.test(val), {
-          message: "dob_invalid_format",
-        })
-        .refine((val) => !isNaN(Date.parse(val)), { message: "dob_invalid" })
-        .refine(
-          (val) => {
-            const dob = new Date(val);
-            const today = new Date();
-            let age = today.getFullYear() - dob.getFullYear();
-            const monthDiff = today.getMonth() - dob.getMonth();
-            if (
-              monthDiff < 0 ||
-              (monthDiff === 0 && today.getDate() < dob.getDate())
-            )
-              age--;
-            return age >= 16;
-          },
-          { message: "age_limit_16" },
-        )
-        .refine(
-          (val) => {
-            const dob = new Date(val);
-            const today = new Date();
-            return today.getFullYear() - dob.getFullYear() <= 120;
-          },
-          { message: "age_limit_120" },
-        ),
-
-      city: z.enum(VALID_CITIES, { message: "city_invalid" }),
-
-      address: z
-        .string()
-        .trim()
-        .min(1, "address_required")
-        .min(5, "address_min_length")
-        .max(200, "address_max_length"),
 
       email: z
         .string()

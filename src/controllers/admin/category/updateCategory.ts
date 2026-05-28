@@ -11,10 +11,10 @@ import { invalidateCategories } from "../../../utils/cache/invalidators.js";
  * @access  Private Admin
  */
 export const updateCategory = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const { slug, nameGe, nameEn, isActive } = req.body;
 
-  if (!mongoose.Types.ObjectId.isValid(id as string)) {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new AppError("Invalid ID format", 422);
   }
 

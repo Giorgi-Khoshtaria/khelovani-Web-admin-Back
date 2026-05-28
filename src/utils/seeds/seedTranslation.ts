@@ -2558,6 +2558,423 @@ const translations = [
     key: "home.popularProducts.tab_oneofone",
     translations: { ge: "უნიკალური", en: "One of One" },
   },
+
+  // ─── addresses feature ──────────────────────────────────────────────────────
+  {
+    namespace: "pages",
+    key: "profile.tabs.addresses",
+    translations: { ge: "მისამართები", en: "Addresses" },
+  },
+  {
+    namespace: "pages",
+    key: "profile.addresses.title",
+    translations: { ge: "ჩემი მისამართები", en: "My addresses" },
+  },
+  {
+    namespace: "pages",
+    key: "profile.addresses.add",
+    translations: { ge: "მისამართის დამატება", en: "Add address" },
+  },
+  {
+    namespace: "pages",
+    key: "profile.addresses.empty",
+    translations: {
+      ge: "შენახული მისამართები არ გაქვს",
+      en: "You have no saved addresses",
+    },
+  },
+  {
+    namespace: "pages",
+    key: "profile.addresses.default",
+    translations: { ge: "ნაგულისხმევი", en: "Default" },
+  },
+  {
+    namespace: "pages",
+    key: "profile.addresses.set_default",
+    translations: { ge: "ნაგულისხმევად დაყენება", en: "Set as default" },
+  },
+  {
+    namespace: "pages",
+    key: "profile.addresses.edit",
+    translations: { ge: "რედაქტირება", en: "Edit" },
+  },
+  {
+    namespace: "pages",
+    key: "profile.addresses.delete",
+    translations: { ge: "წაშლა", en: "Delete" },
+  },
+  {
+    namespace: "pages",
+    key: "profile.addresses.delete_confirm",
+    translations: { ge: "წავშალო ეს მისამართი?", en: "Delete this address?" },
+  },
+  {
+    namespace: "pages",
+    key: "profile.addresses.modal_add_title",
+    translations: { ge: "ახალი მისამართის დამატება", en: "Add a new address" },
+  },
+  {
+    namespace: "pages",
+    key: "profile.addresses.modal_edit_title",
+    translations: { ge: "მისამართის რედაქტირება", en: "Edit address" },
+  },
+  {
+    namespace: "pages",
+    key: "profile.addresses.save",
+    translations: { ge: "ცვლილების შენახვა", en: "Save changes" },
+  },
+  {
+    namespace: "pages",
+    key: "profile.addresses.close",
+    translations: { ge: "დახურვა", en: "Close" },
+  },
+  {
+    namespace: "pages",
+    key: "profile.addresses.type_home",
+    translations: { ge: "სახლი", en: "Home" },
+  },
+  {
+    namespace: "pages",
+    key: "profile.addresses.type_work",
+    translations: { ge: "სამსახური", en: "Work" },
+  },
+  {
+    namespace: "pages",
+    key: "profile.addresses.type_other",
+    translations: { ge: "სხვა", en: "Other" },
+  },
+  {
+    namespace: "pages",
+    key: "profile.addresses.label_placeholder",
+    translations: { ge: "მისამართის დასახელება", en: "Address name" },
+  },
+  {
+    namespace: "pages",
+    key: "profile.addresses.line_placeholder",
+    translations: {
+      ge: "კორპუსი, ბინა, სადარბაზო, სართული და ა.შ.",
+      en: "Building, apartment, entrance, floor, etc.",
+    },
+  },
+  {
+    namespace: "pages",
+    key: "profile.addresses.comment_placeholder",
+    translations: {
+      ge: "დამატებითი კომენტარი (არასავალდებულო)",
+      en: "Additional comment (optional)",
+    },
+  },
+  {
+    namespace: "pages",
+    key: "profile.addresses.map_no_key",
+    translations: {
+      ge: "რუკის API გასაღები არ არის კონფიგურირებული",
+      en: "Map API key is not configured",
+    },
+  },
+  {
+    namespace: "pages",
+    key: "profile.addresses.map_error",
+    translations: {
+      ge: "რუკის ჩატვირთვა ვერ მოხერხდა",
+      en: "Failed to load the map",
+    },
+  },
+  {
+    namespace: "alerts",
+    key: "address_added",
+    translations: { ge: "მისამართი დაემატა", en: "Address added" },
+  },
+  {
+    namespace: "alerts",
+    key: "address_updated",
+    translations: { ge: "მისამართი განახლდა", en: "Address updated" },
+  },
+  {
+    namespace: "alerts",
+    key: "address_deleted",
+    translations: { ge: "მისამართი წაიშალა", en: "Address deleted" },
+  },
+  {
+    namespace: "validation",
+    key: "address_type_invalid",
+    translations: {
+      ge: "აირჩიეთ მისამართის ტიპი",
+      en: "Select an address type",
+    },
+  },
+  {
+    namespace: "validation",
+    key: "address_label_required",
+    translations: {
+      ge: "შეავსეთ მისამართის დასახელება",
+      en: "Address name is required",
+    },
+  },
+  {
+    namespace: "validation",
+    key: "address_label_min_length",
+    translations: {
+      ge: "დასახელება ძალიან მოკლეა",
+      en: "Address name is too short",
+    },
+  },
+  {
+    namespace: "validation",
+    key: "address_label_max_length",
+    translations: {
+      ge: "დასახელება ძალიან გრძელია",
+      en: "Address name is too long",
+    },
+  },
+  {
+    namespace: "validation",
+    key: "address_line_required",
+    translations: {
+      ge: "შეავსეთ მისამართის დეტალები",
+      en: "Address details are required",
+    },
+  },
+  {
+    namespace: "validation",
+    key: "address_line_min_length",
+    translations: { ge: "მისამართი ძალიან მოკლეა", en: "Address is too short" },
+  },
+  {
+    namespace: "validation",
+    key: "address_line_max_length",
+    translations: { ge: "მისამართი ძალიან გრძელია", en: "Address is too long" },
+  },
+  {
+    namespace: "validation",
+    key: "address_comment_max_length",
+    translations: {
+      ge: "კომენტარი ძალიან გრძელია",
+      en: "Comment is too long",
+    },
+  },
+  {
+    namespace: "validation",
+    key: "address_location_required",
+    translations: {
+      ge: "აირჩიეთ მდებარეობა რუკაზე",
+      en: "Pick a location on the map",
+    },
+  },
+  {
+    namespace: "validation",
+    key: "address_location_invalid",
+    translations: { ge: "მდებარეობა არასწორია", en: "Invalid location" },
+  },
+
+  // ─── cart feature ───────────────────────────────────────────────────────────
+  {
+    namespace: "pages",
+    key: "cart.title_prefix",
+    translations: { ge: "შენი", en: "Your" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.title_word",
+    translations: { ge: "კალათა", en: "cart" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.pieces",
+    translations: { ge: "ნივთი", en: "pieces" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.empty",
+    translations: { ge: "თქვენი კალათა ცარიელია", en: "Your cart is empty" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.added",
+    translations: { ge: "კალათაში დაემატა", en: "Added to cart" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.one_of_one",
+    translations: { ge: "1 / 1", en: "1 OF 1" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.by",
+    translations: { ge: "ავტორი", en: "By" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.remove",
+    translations: { ge: "ნივთის წაშლა", en: "Remove item" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.decrease",
+    translations: { ge: "შემცირება", en: "Decrease" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.increase",
+    translations: { ge: "გაზრდა", en: "Increase" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.each",
+    translations: { ge: "თითო", en: "each" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.only",
+    translations: { ge: "მხოლოდ", en: "Only" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.left_order_soon",
+    translations: {
+      ge: "დარჩა — სასწრაფოდ",
+      en: "left — order soon",
+    },
+  },
+  {
+    namespace: "pages",
+    key: "cart.headers.product",
+    translations: { ge: "ნივთი", en: "Product" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.headers.quantity",
+    translations: { ge: "რაოდენობა", en: "Quantity" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.headers.price",
+    translations: { ge: "ფასი", en: "Price" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.step.cart",
+    translations: { ge: "კალათა", en: "Cart" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.step.shipping",
+    translations: { ge: "მიწოდება", en: "Shipping" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.step.payment",
+    translations: { ge: "გადახდა", en: "Payment" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.step.done",
+    translations: { ge: "მზადაა", en: "Done" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.summary.title",
+    translations: { ge: "შეკვეთის ჯამი", en: "Order summary" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.summary.subtotal",
+    translations: { ge: "ჯამი", en: "Subtotal" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.summary.items",
+    translations: { ge: "ნივთი", en: "items" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.summary.you_save",
+    translations: { ge: "დაზოგავ", en: "You save" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.summary.shipping",
+    translations: { ge: "მიწოდება", en: "Shipping" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.summary.free",
+    translations: { ge: "უფასო", en: "Free" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.summary.total",
+    translations: { ge: "ჯამური", en: "Total" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.shipping.unlocked",
+    translations: {
+      ge: "უფასო მიწოდება გააქტიურდა",
+      en: "You've unlocked free shipping",
+    },
+  },
+  {
+    namespace: "pages",
+    key: "cart.shipping.add_more",
+    translations: { ge: "დაამატე", en: "Add" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.shipping.for_free",
+    translations: {
+      ge: "უფასო მიწოდებისთვის",
+      en: "more for free shipping",
+    },
+  },
+  {
+    namespace: "pages",
+    key: "cart.promo.label",
+    translations: { ge: "პრომო კოდი", en: "Promo code" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.promo.placeholder",
+    translations: { ge: "შეიყვანე კოდი", en: "Enter code" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.promo.apply",
+    translations: { ge: "გამოყენება", en: "Apply" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.promo.applied",
+    translations: { ge: "დადასტურდა", en: "Applied" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.promo.invalid",
+    translations: { ge: "კოდი არასწორია", en: "Invalid code" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.checkout",
+    translations: { ge: "უსაფრთხო გადახდა", en: "Secure checkout" },
+  },
+  {
+    namespace: "pages",
+    key: "cart.checkout_soon",
+    translations: {
+      ge: "მალე ხელმისაწვდომი იქნება",
+      en: "Coming soon",
+    },
+  },
+  {
+    namespace: "pages",
+    key: "cart.we_accept",
+    translations: { ge: "ვიღებთ", en: "We accept" },
+  },
+  {
+    namespace: "navigation",
+    key: "continue_shopping",
+    translations: { ge: "შოპინგის გაგრძელება", en: "Continue shopping" },
+  },
 ];
 
 async function seed() {

@@ -68,10 +68,13 @@ export const globalErrorHandler = (
     console.error("Global Error:", err.message);
   }
 
+  // Expose error info to request logger middleware (read in res.on("finish"))
+  res.locals.errorMessage = message;
+  res.locals.errorStack = err?.stack || null;
+
   res.status(statusCode).json({
     success: false,
     message,
     ...(errors && { errors }),
-    ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
   });
 };

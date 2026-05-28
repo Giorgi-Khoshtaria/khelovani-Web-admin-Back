@@ -96,9 +96,13 @@ const ProductSchema = new Schema<IProduct>(
     discountPercent: { type: Number, min: 1, max: 99, default: null },
     isShown: { type: Boolean, default: false },
     pinSection: { type: String, enum: [...PIN_SECTIONS, null], default: null, index: true },
-    pinnedAt: { type: Date, default: null },
+    pinnedAt: { type: Date, default: null, sparse: true },
   },
   { timestamps: true }
 );
+
+ProductSchema.index({ ownerType: 1, status: 1, createdAt: -1 });
+ProductSchema.index({ pinSection: 1, pinnedAt: -1 }, { sparse: true });
+ProductSchema.index({ titleGe: "text", titleEn: "text", tagsGe: "text" });
 
 export default mongoose.model<IProduct>("Product", ProductSchema, "items");

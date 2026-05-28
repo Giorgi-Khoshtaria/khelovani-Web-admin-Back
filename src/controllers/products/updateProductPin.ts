@@ -14,7 +14,7 @@ import { invalidateProducts } from "../../utils/cache/invalidators.js";
  * @body    { pinSection: "regular" | "new" | "sale" | "oneOfAKind" | null }
  */
 export const updateProductPin = asyncHandler(async (req, res) => {
-  const { productId } = req.params;
+  const productId = req.params.productId as string;
   const { pinSection } = req.body as { pinSection: PinSection | null };
 
   if (!mongoose.Types.ObjectId.isValid(productId)) {

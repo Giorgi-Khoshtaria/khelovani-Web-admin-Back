@@ -146,5 +146,7 @@ const OrganisationSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+OrganisationSchema.index({ status: 1, partnerType: 1, createdAt: -1 });
+
 const Organisation = mongoose.model("Organisation", OrganisationSchema);
 export default Organisation;

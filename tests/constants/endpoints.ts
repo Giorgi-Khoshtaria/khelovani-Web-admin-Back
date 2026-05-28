@@ -24,6 +24,12 @@ export const ENDPOINTS = {
   PUBLIC_MENU: "/api/menu",
   ADMIN_CATEGORIES: "/api/admin/categories",
   PUBLIC_CATEGORIES: "/api/categories",
+  CARDS: `${BASE_URL}/cards`,
+  ADDRESSES: `${BASE_URL}/addresses`,
+  PARTNER_FORGOT_PASSWORD: "/api/partner/forgot-password",
+  PARTNER_RESET_PASSWORD: "/api/partner/reset-password",
+  ADMIN_CACHE: "/api/admin/cache",
+  ADMIN_LOGS: "/api/admin/logs",
 } as const;
 
 export const REAL_EMAILS = [
@@ -38,9 +44,6 @@ export const DEFAULT_USER = {
   idNumber: "11122233344",
   nameGe: "გიორგი",
   nameEn: "Giorgi",
-  dateOfBirth: "1990-01-01",
-  city: "tbilisi",
-  address: "Rustaveli Ave 1",
   email: "giorgi.test@example.com",
   phone: "599123456",
   password: "StrongPassword123!",
@@ -63,6 +66,7 @@ export const DEFAULT_PARTNER = {
   facebook: "https://facebook.com/example",
   instagram: "https://instagram.com/example",
   tiktok: "https://tiktok.com/@example",
+  categories: ["painting"],
   terms: true,
 } as const;
 
@@ -82,5 +86,6 @@ export const DEFAULT_INDIVIDUAL_PARTNER = {
   facebook: "https://facebook.com/example",
   instagram: "https://instagram.com/example",
   tiktok: "https://tiktok.com/@example",
+  categories: ["painting"],
   terms: true,
 } as const;

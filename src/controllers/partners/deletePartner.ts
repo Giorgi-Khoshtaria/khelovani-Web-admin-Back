@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Organisation from "../../modules/organization.modules.js";
+import Product from "../../modules/product.modules.js";
 import { ROLES } from "../../middleware/role/permissions.js";
 import { useTranslation } from "../../types/translate.util.js";
 import { Lang } from "../../types/lang.types.js";
@@ -8,6 +9,7 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import { sendResponse } from "../../utils/apiResponse.js";
 import { AppError } from "../../utils/errors/AppError.js";
 import { invalidatePartners } from "../../utils/cache/invalidators.js";
+import { logAdminAction } from "../../utils/audit/logAdminAction.js";
 
 /**
  * @desc    Delete partner
@@ -34,9 +36,20 @@ export const deletePartner = asyncHandler(async (req, res) => {
     throw new AppError(tAuth("partner_not_found"), 404);
   }
 
-  await partner.deleteOne();
+  const session = await mongoose.startSession();
+  try {
+    await session.withTransaction(async () => {
+      await partner.deleteOne({ session });
+      await Product.deleteMany({ owner: partner._id }, { session });
+    });
+  } finally {
+    await session.endSession();
+  }
 
   void invalidatePartners();
+  logAdminAction(req, "PARTNER_DELETED", "Organisation", id as string, {
+    email: partner.email,
+  });
 
   sendResponse(
     res,

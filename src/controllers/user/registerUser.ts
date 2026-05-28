@@ -15,17 +15,8 @@ import { AppError } from "../../utils/errors/AppError.js";
 // @access  Public
 export const registerUser = asyncHandler(
   async (req: Request, res: Response) => {
-    const {
-      idNumber,
-      nameGe,
-      nameEn,
-      dateOfBirth,
-      city,
-      address,
-      email,
-      phone,
-      password,
-    }: UserTypes = req.body;
+    const { idNumber, nameGe, nameEn, email, phone, password }: UserTypes =
+      req.body;
     const lang = (req.query.lang as Lang) || "ge";
     const { t: tAuth } = useTranslation(lang, TranslationNamespace.Auth);
 
@@ -84,9 +75,6 @@ export const registerUser = asyncHandler(
       idNumber: trimmedIdNumber,
       nameGe: nameGe?.trim(),
       nameEn: nameEn.trim(),
-      dateOfBirth,
-      city: city.trim().toLowerCase(),
-      address: address.trim(),
       email: trimmedEmail,
       phone: phone.trim(),
       password: hashedPassword,

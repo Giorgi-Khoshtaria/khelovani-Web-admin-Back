@@ -3,7 +3,7 @@ import Organisation from "../../modules/organization.modules.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { sendResponse } from "../../utils/apiResponse.js";
 import { AppError } from "../../utils/errors/AppError.js";
-import { invalidatePartners } from "../../utils/cache/invalidators.js";
+import { invalidatePartnerById } from "../../utils/cache/invalidators.js";
 
 /**
  * @desc    Show or hide a partner from public listings
@@ -11,7 +11,7 @@ import { invalidatePartners } from "../../utils/cache/invalidators.js";
  * @access  Private Admin
  */
 export const updatePartnerVisibility = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const { isShown } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -26,6 +26,6 @@ export const updatePartnerVisibility = asyncHandler(async (req, res) => {
 
   if (!updated) throw new AppError("Partner not found", 404);
 
-  void invalidatePartners();
+  invalidatePartnerById(id as string);
   sendResponse(res, 200, `Partner ${isShown ? "shown" : "hidden"}`, updated);
 });

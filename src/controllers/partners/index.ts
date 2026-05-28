@@ -11,3 +11,5 @@ export * from "./bulkDeletePartners.js";
 export * from "./updatePartnerPin.js";
 export * from "./updatePartnerVisibility.js";
 export * from "./getPinnedPartners.js";
+export * from "./partnerForgotPassword.js";
+export * from "./partnerResetPassword.js";

@@ -7,11 +7,11 @@ import { sendPartnerPasswordEmail } from "../../utils/email/sendPartnerEmail.js"
 import { useTranslation } from "../../types/translate.util.js";
 import { Lang } from "../../types/lang.types.js";
 import { TranslationNamespace } from "../../types/translation.enum.js";
-import mongoose from "mongoose";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { sendResponse } from "../../utils/apiResponse.js";
 import { AppError } from "../../utils/errors/AppError.js";
-import { invalidatePartners } from "../../utils/cache/invalidators.js";
+import { invalidatePartnerById } from "../../utils/cache/invalidators.js";
+import { logAdminAction } from "../../utils/audit/logAdminAction.js";
 
 // @desc    Update partner status
 // @route   PUT /api/partners/:id/status
@@ -32,7 +32,8 @@ export const updatePartnerStatus = asyncHandler(async (req: Request, res: Respon
   if (status === PartnerStatusEnum.BANNED) {
     partner.status = PartnerStatusEnum.BANNED;
     await partner.save();
-    void invalidatePartners();
+    invalidatePartnerById(id as string);
+    logAdminAction(req, "PARTNER_BANNED", "Organisation", id as string, { email: partner.email });
     return sendResponse(res, 200, tAlerts("partner_status_updated") || "Partner status updated");
   }
 
@@ -63,7 +64,8 @@ export const updatePartnerStatus = asyncHandler(async (req: Request, res: Respon
   partner.status = status;
   await partner.save();
 
-  void invalidatePartners();
+  invalidatePartnerById(id as string);
+  logAdminAction(req, "PARTNER_STATUS_UPDATED", "Organisation", id as string, { status, email: partner.email });
 
   sendResponse(res, 200, tAlerts("partner_status_updated") || "Partner status updated", {
     _id: partner._id,

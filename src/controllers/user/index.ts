@@ -9,3 +9,6 @@ export * from "./uploadProfileImage.js";
 export * from "./deleteProfileImage.js";
 export * from "./changePassword.js";
 export * from "./deleteAccount.js";
+export * from "./paymentCards/index.js";
+export * from "./addresses/index.js";
+export * from "./cart/index.js";

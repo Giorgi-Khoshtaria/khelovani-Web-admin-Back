@@ -67,7 +67,7 @@ export const registrationValidationSuites = () => {
     test("ERR-003: 422 — all required fields missing individually produce field errors", async ({
       request,
     }) => {
-      for (const field of ["email", "password", "idNumber", "nameEn", "phone", "city", "address", "dateOfBirth"]) {
+      for (const field of ["email", "password", "idNumber", "nameEn", "phone"]) {
         const overrides: Record<string, any> = { [field]: undefined };
         const res = await register(request, overrides, true);
         expect(res.status(), `Missing field: ${field}`).toBe(422);

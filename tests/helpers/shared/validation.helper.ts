@@ -20,7 +20,6 @@ export const LIMITS = {
   register: {
     nameGe: { min: 2, max: 100 },
     nameEn: { min: 2, max: 100 },
-    address: { min: 5, max: 200 },
     email: { max: 150 },
     phone: { max: 40 },
     password: { min: 8, max: 64 },
@@ -73,6 +72,20 @@ export const LIMITS = {
     address: { max: 200 }, // Georgian regex required
     addressEn: { max: 200 }, // English regex required
     description: { max: 500 },
+  },
+  // paymentCard.schema.ts
+  card: {
+    holderName: { min: 1, max: 60 },
+    last4: { len: 4 },
+    expMonth: { min: 1, max: 12 },
+  },
+  // address.schema.ts
+  address: {
+    label: { min: 2, max: 100 },
+    addressLine: { min: 5, max: 200 },
+    additionalComment: { max: 300 },
+    lat: { min: -90, max: 90 },
+    lng: { min: -180, max: 180 },
   },
 } as const;
 
@@ -217,24 +230,6 @@ export const passwordValidationScenarios: ValidationScenario[] = [
   },
 ];
 
-// ─── Address (shared) ─────────────────────────────────────────────────────────
-
-export const addressValidationScenarios: ValidationScenario[] = [
-  { id: "VAL-ADDR-001", field: "address", value: "", note: "empty string" },
-  {
-    id: "VAL-ADDR-002",
-    field: "address",
-    value: "AB",
-    note: "too short (<5 chars)",
-  },
-  {
-    id: "VAL-ADDR-003",
-    field: "address",
-    value: "A".repeat(201),
-    note: "over max length (201 chars)",
-  },
-];
-
 // ─── User name (registration) ─────────────────────────────────────────────────
 
 export const nameEnValidationScenarios: ValidationScenario[] = [
@@ -285,36 +280,6 @@ export const nameGeValidationScenarios: ValidationScenario[] = [
     field: "nameGe",
     value: "123",
     note: "digits only rejected",
-  },
-];
-
-// ─── Date of Birth (registration) ─────────────────────────────────────────────
-
-export const dateOfBirthValidationScenarios: ValidationScenario[] = [
-  {
-    id: "VAL-DOB-001",
-    field: "dateOfBirth",
-    value: "01-01-1990",
-    note: "non-ISO format (DD-MM-YYYY)",
-  },
-  {
-    id: "VAL-DOB-002",
-    field: "dateOfBirth",
-    value: "1990/01/01",
-    note: "slash-separated format",
-  },
-  {
-    id: "VAL-DOB-003",
-    field: "dateOfBirth",
-    value: "not-a-date",
-    note: "invalid string",
-  },
-  { id: "VAL-DOB-004", field: "dateOfBirth", value: "", note: "empty string" },
-  {
-    id: "VAL-DOB-005",
-    field: "dateOfBirth",
-    value: "9999-12-31",
-    note: "future date (far future)",
   },
 ];
 
@@ -906,4 +871,169 @@ export const partnerIndRequiredFieldScenarios: ValidationScenario[] = [
     note: "terms not accepted",
   },
   { id: "PRT-IND-REQ-006", field: "terms", value: null, note: "terms = null" },
+];
+
+// ─── Payment Card (paymentCard.schema.ts) ─────────────────────────────────────
+
+export const cardHolderNameScenarios: ValidationScenario[] = [
+  { id: "CARD-VAL-001", field: "holderName", value: "", note: "empty string" },
+  { id: "CARD-VAL-002", field: "holderName", value: null, note: "null value" },
+  {
+    id: "CARD-VAL-003",
+    field: "holderName",
+    value: "A".repeat(LIMITS.card.holderName.max + 1),
+    note: "over max length (61 chars)",
+  },
+];
+
+export const cardBrandScenarios: ValidationScenario[] = [
+  { id: "CARD-VAL-010", field: "brand", value: "", note: "empty string" },
+  {
+    id: "CARD-VAL-011",
+    field: "brand",
+    value: "discover",
+    note: "brand not in allowed list",
+  },
+  { id: "CARD-VAL-012", field: "brand", value: "VISA", note: "wrong case" },
+  {
+    id: "CARD-VAL-013",
+    field: "brand",
+    value: 123,
+    note: "number instead of string",
+  },
+];
+
+export const cardLast4Scenarios: ValidationScenario[] = [
+  { id: "CARD-VAL-020", field: "last4", value: "", note: "empty string" },
+  {
+    id: "CARD-VAL-021",
+    field: "last4",
+    value: "abcd",
+    note: "non-numeric characters",
+  },
+  {
+    id: "CARD-VAL-022",
+    field: "last4",
+    value: "123",
+    note: "too short (3 digits)",
+  },
+  {
+    id: "CARD-VAL-023",
+    field: "last4",
+    value: "12345",
+    note: "too long (5 digits)",
+  },
+  {
+    id: "CARD-VAL-024",
+    field: "last4",
+    value: "12 4",
+    note: "contains a space",
+  },
+];
+
+export const cardExpMonthScenarios: ValidationScenario[] = [
+  { id: "CARD-VAL-030", field: "expMonth", value: 0, note: "below min (0)" },
+  { id: "CARD-VAL-031", field: "expMonth", value: 13, note: "above max (13)" },
+  {
+    id: "CARD-VAL-032",
+    field: "expMonth",
+    value: "12",
+    note: "string instead of number",
+  },
+  {
+    id: "CARD-VAL-033",
+    field: "expMonth",
+    value: 6.5,
+    note: "non-integer value",
+  },
+];
+
+export const cardExpYearScenarios: ValidationScenario[] = [
+  {
+    id: "CARD-VAL-040",
+    field: "expYear",
+    value: 2000,
+    note: "year in the past",
+  },
+  {
+    id: "CARD-VAL-041",
+    field: "expYear",
+    value: new Date().getFullYear() + 50,
+    note: "year too far ahead",
+  },
+  {
+    id: "CARD-VAL-042",
+    field: "expYear",
+    value: "2030",
+    note: "string instead of number",
+  },
+];
+
+// ─── Address (address.schema.ts) ──────────────────────────────────────────────
+
+export const addressTypeScenarios: ValidationScenario[] = [
+  { id: "ADDR-VAL-001", field: "type", value: "", note: "empty string" },
+  {
+    id: "ADDR-VAL-002",
+    field: "type",
+    value: "garage",
+    note: "type not in allowed list",
+  },
+  { id: "ADDR-VAL-003", field: "type", value: "Home", note: "wrong case" },
+];
+
+export const addressLabelScenarios: ValidationScenario[] = [
+  { id: "ADDR-VAL-010", field: "label", value: "", note: "empty string" },
+  {
+    id: "ADDR-VAL-011",
+    field: "label",
+    value: "x",
+    note: "too short (1 char)",
+  },
+  {
+    id: "ADDR-VAL-012",
+    field: "label",
+    value: "x".repeat(LIMITS.address.label.max + 1),
+    note: "over max length (101 chars)",
+  },
+  { id: "ADDR-VAL-013", field: "label", value: null, note: "null value" },
+];
+
+export const addressLineScenarios: ValidationScenario[] = [
+  { id: "ADDR-VAL-020", field: "addressLine", value: "", note: "empty string" },
+  {
+    id: "ADDR-VAL-021",
+    field: "addressLine",
+    value: "abc",
+    note: "too short (<5 chars)",
+  },
+  {
+    id: "ADDR-VAL-022",
+    field: "addressLine",
+    value: "x".repeat(LIMITS.address.addressLine.max + 1),
+    note: "over max length (201 chars)",
+  },
+];
+
+export const addressLatScenarios: ValidationScenario[] = [
+  { id: "ADDR-VAL-030", field: "lat", value: 200, note: "above max (90)" },
+  { id: "ADDR-VAL-031", field: "lat", value: -91, note: "below min (-90)" },
+  {
+    id: "ADDR-VAL-032",
+    field: "lat",
+    value: "41.7",
+    note: "string instead of number",
+  },
+  { id: "ADDR-VAL-033", field: "lat", value: null, note: "null value" },
+];
+
+export const addressLngScenarios: ValidationScenario[] = [
+  { id: "ADDR-VAL-040", field: "lng", value: 200, note: "above max (180)" },
+  { id: "ADDR-VAL-041", field: "lng", value: -181, note: "below min (-180)" },
+  {
+    id: "ADDR-VAL-042",
+    field: "lng",
+    value: "44.8",
+    note: "string instead of number",
+  },
 ];

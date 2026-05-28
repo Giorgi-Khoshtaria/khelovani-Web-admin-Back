@@ -6,6 +6,7 @@ import mongoSanitize from "express-mongo-sanitize";
 import apiRouter from "./src/routes/index.js";
 import { globalLimiter } from "./src/utils/limiters/rate-limit.js";
 import { globalErrorHandler } from "./src/middleware/error/globalErrorHandler.js";
+import { requestLogger } from "./src/middleware/logger/requestLogger.js";
 
 const app = express();
 
@@ -66,6 +67,9 @@ app.use(
 
 // ✅ 4. rate limiter
 app.use(globalLimiter);
+
+// ✅ 4.1 Request logger (persists every /api/* request to MongoDB; auto-deleted after 3 days)
+app.use(requestLogger);
 
 // Root Status Route
 app.get("/", (_req, res) => {

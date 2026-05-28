@@ -7,7 +7,7 @@ import { AppError } from "../../utils/errors/AppError.js";
 export const updateProfile = asyncHandler(async (req: Request, res: Response) => {
   if (!req.user?.id) throw new AppError("Unauthorized", 401);
 
-  const { idNumber, nameGe, nameEn, dateOfBirth, city, address, email, phone } = req.body;
+  const { idNumber, nameGe, nameEn, email, phone } = req.body;
 
   const existing = await User.findOne({ email, _id: { $ne: req.user.id } });
   if (existing) throw new AppError("email_already_in_use", 409);
@@ -19,7 +19,7 @@ export const updateProfile = asyncHandler(async (req: Request, res: Response) =>
 
   const user = await User.findByIdAndUpdate(
     req.user.id,
-    { idNumber, nameGe, nameEn, dateOfBirth, city, address, email, phone: phone_normalized },
+    { idNumber, nameGe, nameEn, email, phone: phone_normalized },
     { new: true, runValidators: true },
   ).select("-password");
 

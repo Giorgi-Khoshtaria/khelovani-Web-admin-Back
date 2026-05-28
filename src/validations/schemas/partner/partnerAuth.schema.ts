@@ -1,5 +1,8 @@
 import { z } from "zod";
 import { PartnerTypeEnum } from "../../../types/partnerTypes.js";
+import { isMalicious } from "../../../utils/security/isMalicious.js";
+
+const noMalicious = (v: string) => !isMalicious(v);
 
 const VALID_CITIES = [
   "tbilisi",
@@ -16,7 +19,7 @@ const sharedFields = {
     .trim()
     .min(2, "name_ge_min_length")
     .max(100, "name_ge_max_length")
-    .regex(/^[ა-ჿ\s'-]+$/, "name_ge_letters_only"),
+    .regex(/^[ა-ჿ0-9\s&.,'-]+$/, "companyNameGe_invalid"),
 
   companyNameEn: z
     .string()
@@ -45,17 +48,19 @@ const sharedFields = {
     .trim()
     .min(1, "address_required")
     .min(5, "address_min_length")
-    .max(200, "address_max_length"),
+    .max(200, "address_max_length")
+    .refine(noMalicious, "invalid_content"),
 
   addressEn: z
     .string()
     .trim()
     .max(200, "addressEn_max_length")
+    .refine(noMalicious, "invalid_content")
     .optional()
     .or(z.literal("")),
 
-  description: z.string().max(500, "description_max_length").optional().or(z.literal("")),
-  descriptionEn: z.string().max(500, "descriptionEn_max_length").optional().or(z.literal("")),
+  description: z.string().max(500, "description_max_length").refine(noMalicious, "invalid_content").optional().or(z.literal("")),
+  descriptionEn: z.string().max(500, "descriptionEn_max_length").refine(noMalicious, "invalid_content").optional().or(z.literal("")),
   website: z.string().url("website_invalid").optional().or(z.literal("")),
   facebook: z.string().url("facebook_invalid").optional().or(z.literal("")),
   instagram: z.string().url("instagram_invalid").optional().or(z.literal("")),
@@ -94,8 +99,18 @@ export const orgSchema = {
 };
 
 const sharedRegistrationFields = {
-  companyNameGe: z.string().trim().min(1, "companyNameGe_required").max(100, "companyNameGe_max_length"),
-  companyNameEn: z.string().trim().min(1, "companyNameEn_required").max(100, "companyNameEn_max_length"),
+  companyNameGe: z
+    .string()
+    .trim()
+    .min(1, "companyNameGe_required")
+    .max(100, "companyNameGe_max_length")
+    .regex(/^[ა-ჿ0-9\s&.,'-]+$/, "companyNameGe_invalid"),
+  companyNameEn: z
+    .string()
+    .trim()
+    .min(1, "companyNameEn_required")
+    .max(100, "companyNameEn_max_length")
+    .regex(/^[A-Za-z0-9\s&.,'-]+$/, "companyNameEn_invalid"),
   phone: z
     .string()
     .trim()
@@ -108,15 +123,17 @@ const sharedRegistrationFields = {
     .trim()
     .min(1, "address_required")
     .max(200, "address_max_length")
-    .regex(/^[ა-ჰ0-9\s.,/\\\-()]+$/, "address_needs_georgian"),
+    .regex(/^[ა-ჰ0-9\s.,/\\\-()]+$/, "address_needs_georgian")
+    .refine(noMalicious, "invalid_content"),
   addressEn: z
     .string()
     .trim()
     .min(1, "addressEn_required")
     .max(200, "addressEn_max_length")
-    .regex(/^[a-zA-Z0-9\s.,/\\\-()]+$/, "addressEn_needs_english"),
-  description: z.string().max(500, "description_max_length").optional().or(z.literal("")),
-  descriptionEn: z.string().max(500, "description_max_length").optional().or(z.literal("")),
+    .regex(/^[a-zA-Z0-9\s.,/\\\-()]+$/, "addressEn_needs_english")
+    .refine(noMalicious, "invalid_content"),
+  description: z.string().max(500, "description_max_length").refine(noMalicious, "invalid_content").optional().or(z.literal("")),
+  descriptionEn: z.string().max(500, "description_max_length").refine(noMalicious, "invalid_content").optional().or(z.literal("")),
   website: z.string().url("website_invalid").regex(/^https?:\/\//, "website_invalid").optional().or(z.literal("")),
   facebook: z.string().url("facebook_invalid").optional().or(z.literal("")),
   instagram: z.string().url("instagram_invalid").optional().or(z.literal("")),

@@ -1,4 +1,4 @@
-import { invalidatePattern } from "./redis.js";
+import { invalidate, invalidatePattern } from "./redis.js";
 import { CacheKey } from "./keys.js";
 
 /**
@@ -17,8 +17,24 @@ export const invalidateCategories = () =>
 
 export const invalidateMenu = () => invalidatePattern(CacheKey.menuPattern());
 
+/** Full wipe — use after create/delete where list counts change. */
 export const invalidateProducts = () =>
   invalidatePattern(CacheKey.productsPattern());
 
+/** Targeted — use after a single-product edit (updates byId + list caches, not other byId caches). */
+export const invalidateProductById = (id: string): void => {
+  void invalidate(CacheKey.productById(id));
+  void invalidatePattern("products:list:*");
+  void invalidate(CacheKey.pinnedProducts());
+};
+
+/** Full wipe — use after create/delete where list counts change. */
 export const invalidatePartners = () =>
   invalidatePattern(CacheKey.partnersPattern());
+
+/** Targeted — use after a single-partner edit (updates byId + list caches, not other byId caches). */
+export const invalidatePartnerById = (id: string): void => {
+  void invalidate(CacheKey.partnerById(id));
+  void invalidatePattern("partners:list:*");
+  void invalidate(CacheKey.pinnedPartners());
+};

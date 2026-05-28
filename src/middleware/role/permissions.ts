@@ -30,6 +30,10 @@ export const PERMISSIONS = {
     TRANSLATION_DELETE: "translations.delete",
     MENU_MANAGE: "menu.manage",
     SETTINGS_EDIT: "settings.edit",
+    LOGS_VIEW: "logs.view",
+    LOGS_DELETE: "logs.delete",
+    MEDIA_VIEW: "media.view",
+    MEDIA_MANAGE: "media.manage",
   },
   PARTNER: {
     PROFILE_VIEW: "organization.profile.view",
@@ -45,6 +49,8 @@ export const PERMISSIONS = {
     SERVICE_DELETE: "organization.services.delete",
     PRICE_EDIT: "organization.prices.edit",
     ANALYTICS_VIEW: "organization.analytics.view",
+    MEDIA_VIEW: "organization.media.view",
+    MEDIA_MANAGE: "organization.media.manage",
   },
 } as const;
 

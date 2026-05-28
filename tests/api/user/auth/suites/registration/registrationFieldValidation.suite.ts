@@ -5,13 +5,10 @@ import { register, registerAndTrack } from "../../registration.helpers.js";
 import {
   nameGeValidationScenarios,
   nameEnValidationScenarios,
-  dateOfBirthValidationScenarios,
   idNumberValidationScenarios,
   emailValidationScenarios,
   phoneValidationScenarios,
-  cityValidationScenarios,
   passwordValidationScenarios,
-  addressValidationScenarios,
   LIMITS,
 } from "../../../../../helpers/shared/validation.helper.js";
 
@@ -163,73 +160,6 @@ export const registrationFieldValidationSuites = () => {
       });
     });
 
-    // ── city ──────────────────────────────────────────────────────────
-    test.describe("city field", () => {
-      for (const { id, value, note } of cityValidationScenarios) {
-        test(`${id}: 422 — city: ${note}`, async ({ request }) => {
-          const res = await register(request, { city: value, email: randomEmail() }, true);
-          expect(res.status(), `${id}: ${note}`).toBe(422);
-          const body = await res.json();
-          expect(Array.isArray(body.errors)).toBe(true);
-          expect(body.errors).toContainEqual(expect.objectContaining({ field: "city" }));
-        });
-      }
-
-      test("REG-VAL-060: 422 — city is null", async ({ request }) => {
-        const res = await register(request, { city: null, email: randomEmail() }, true);
-        expect(res.status()).toBe(422);
-        const body = await res.json();
-        expect(body.errors).toContainEqual(expect.objectContaining({ field: "city" }));
-      });
-
-      test("REG-VAL-061: 422 — city missing entirely", async ({ request }) => {
-        const res = await register(request, { city: undefined, email: randomEmail() }, true);
-        expect(res.status()).toBe(422);
-      });
-
-      test("REG-VAL-062: 201 — all valid city values accepted", async ({ request, createdUsers }) => {
-        for (const city of ["tbilisi", "batumi", "kutaisi", "rustavi", "gori", "zugdidi"]) {
-          const { res } = await registerAndTrack(request, createdUsers, { city }, true);
-          expect(res.status(), `city '${city}' should be accepted`).toBe(201);
-        }
-      });
-    });
-
-    // ── address ───────────────────────────────────────────────────────
-    test.describe("address field", () => {
-      for (const { id, value, note } of addressValidationScenarios) {
-        test(`${id}: 422 — address: ${note}`, async ({ request }) => {
-          const res = await register(request, { address: value, email: randomEmail() }, true);
-          expect(res.status(), `${id}: ${note}`).toBe(422);
-          const body = await res.json();
-          expect(Array.isArray(body.errors)).toBe(true);
-          expect(body.errors).toContainEqual(expect.objectContaining({ field: "address" }));
-        });
-      }
-
-      test("REG-VAL-070: 422 — address is null", async ({ request }) => {
-        const res = await register(request, { address: null, email: randomEmail() }, true);
-        expect(res.status()).toBe(422);
-        const body = await res.json();
-        expect(body.errors).toContainEqual(expect.objectContaining({ field: "address" }));
-      });
-
-      test("REG-VAL-071: 422 — address missing entirely", async ({ request }) => {
-        const res = await register(request, { address: undefined, email: randomEmail() }, true);
-        expect(res.status()).toBe(422);
-      });
-
-      test("REG-VAL-072: 201 — address at max boundary (200 chars)", async ({ request, createdUsers }) => {
-        const { res } = await registerAndTrack(
-          request,
-          createdUsers,
-          { address: "A".repeat(LIMITS.register.address.max) },
-          true,
-        );
-        expect(res.status()).toBe(201);
-      });
-    });
-
     // ── password ──────────────────────────────────────────────────────
     test.describe("password field", () => {
       for (const { id, value, note } of passwordValidationScenarios) {
@@ -273,55 +203,6 @@ export const registrationFieldValidationSuites = () => {
           request,
           createdUsers,
           { password: base.repeat(Math.floor(LIMITS.register.password.max / base.length)) },
-          true,
-        );
-        expect(res.status()).toBe(201);
-      });
-    });
-
-    // ── dateOfBirth ───────────────────────────────────────────────────
-    test.describe("dateOfBirth field", () => {
-      for (const { id, value, note } of dateOfBirthValidationScenarios) {
-        test(`${id}: 422 — dateOfBirth: ${note}`, async ({ request }) => {
-          const res = await register(request, { dateOfBirth: value, email: randomEmail() }, true);
-          expect(res.status(), `${id}: ${note}`).toBe(422);
-          const body = await res.json();
-          expect(Array.isArray(body.errors)).toBe(true);
-          expect(body.errors).toContainEqual(expect.objectContaining({ field: "dateOfBirth" }));
-        });
-      }
-
-      test("REG-VAL-020: 422 — user under 16 years old", async ({ request }) => {
-        const d = new Date();
-        d.setFullYear(d.getFullYear() - 15);
-        const res = await register(request, { dateOfBirth: d.toISOString().split("T")[0], email: randomEmail() }, true);
-        expect(res.status()).toBe(422);
-      });
-
-      test("REG-VAL-021: 422 — age over 120 years", async ({ request }) => {
-        const res = await register(request, { dateOfBirth: "1900-01-01", email: randomEmail() }, true);
-        expect(res.status()).toBe(422);
-      });
-
-      test("REG-VAL-022: 422 — dateOfBirth is null", async ({ request }) => {
-        const res = await register(request, { dateOfBirth: null, email: randomEmail() }, true);
-        expect(res.status()).toBe(422);
-        const body = await res.json();
-        expect(body.errors).toContainEqual(expect.objectContaining({ field: "dateOfBirth" }));
-      });
-
-      test("REG-VAL-023: 422 — dateOfBirth missing entirely", async ({ request }) => {
-        const res = await register(request, { dateOfBirth: undefined, email: randomEmail() }, true);
-        expect(res.status()).toBe(422);
-      });
-
-      test("REG-VAL-024: 201 — user exactly 16 years old accepted", async ({ request, createdUsers }) => {
-        const d = new Date();
-        d.setFullYear(d.getFullYear() - 16);
-        const { res } = await registerAndTrack(
-          request,
-          createdUsers,
-          { dateOfBirth: d.toISOString().split("T")[0] },
           true,
         );
         expect(res.status()).toBe(201);

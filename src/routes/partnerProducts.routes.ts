@@ -16,10 +16,11 @@ import {
 import { requirePermission } from "../middleware/role/requirePermission.js";
 import { PERMISSIONS } from "../middleware/role/permissions.js";
 import { twoMinutesLimiter } from "../utils/limiters/rate-limit.js";
-import { CloudinaryFolder } from "../types/cloudinaryFolder.enum.js";
 import { handleMulterError } from "../middleware/error/handleMulterError.js";
 import { validate } from "../middleware/validate.js";
 import { parseProductData } from "../middleware/parseProduct.js";
+import { setProductMediaFolder } from "../middleware/media/setProductMediaFolder.js";
+import { orgFolderRelative } from "../utils/config/mediaFolders.js";
 import {
   productSchema,
   updateProductSchema,
@@ -58,7 +59,7 @@ router.get(
   optionalAuthenticate,
   validate(productIdParamsSchema),
   cacheRoute(
-    (req) => CacheKey.productById(req.params.productId),
+    (req) => CacheKey.productById(req.params.productId as string),
     CacheTTL.productById,
   ),
   getProductById,
@@ -91,6 +92,7 @@ router.patch(
     PERMISSIONS.ADMIN.PRODUCT_EDIT,
     PERMISSIONS.PARTNER.PRODUCT_EDIT,
   ),
+  setProductMediaFolder,
   upload.fields([{ name: "images", maxCount: 5 }]),
   handleMulterError,
   parseProductData,
@@ -127,7 +129,7 @@ router.post(
     PERMISSIONS.PARTNER.PRODUCT_CREATE,
   ),
   (req: any, res: any, next: any) => {
-    req.cloudinaryFolder = CloudinaryFolder.Products;
+    req.cloudinaryFolder = orgFolderRelative(req.params.id);
     next();
   },
   upload.fields([{ name: "images", maxCount: 5 }]),

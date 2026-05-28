@@ -7,7 +7,7 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import { sendResponse, getCloudinaryPublicId } from "../../utils/apiResponse.js";
 import { AppError } from "../../utils/errors/AppError.js";
 import { isPinSectionCompatible } from "../../utils/pinCompatibility.js";
-import { invalidateProducts } from "../../utils/cache/invalidators.js";
+import { invalidateProductById } from "../../utils/cache/invalidators.js";
 
 /**
  * @desc    Update a product
@@ -111,7 +111,7 @@ export const updateProduct = asyncHandler(async (req, res) => {
     { new: true, runValidators: true },
   ).select("-__v");
 
-  void invalidateProducts();
+  invalidateProductById(productId as string);
 
   sendResponse(
     res,

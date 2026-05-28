@@ -9,7 +9,15 @@ import { sendResponse, escapeRegex } from "../../utils/apiResponse.js";
 import { AppError } from "../../utils/errors/AppError.js";
 import { getCategoryPlaceholder } from "../../utils/imageFallback.js";
 
-const MAX_LIMIT = 100;
+const MAX_LIMIT = 50;
+
+const placeholderCache = new Map<string, string>();
+function getCachedPlaceholder(category: string): string {
+  if (!placeholderCache.has(category)) {
+    placeholderCache.set(category, getCategoryPlaceholder(category));
+  }
+  return placeholderCache.get(category)!;
+}
 
 const ALLOWED_SORT_FIELDS: Record<string, string> = {
   price: "price",
@@ -117,7 +125,7 @@ export const getProducts = asyncHandler(async (req, res) => {
   const productsWithFallbacks = products.map((product: any) => {
     const p = product.toObject();
     if (!p.images || p.images.length === 0) {
-      p.images = [getCategoryPlaceholder(p.category)];
+      p.images = [getCachedPlaceholder(p.category)];
     }
     return p;
   });

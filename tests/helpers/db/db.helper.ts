@@ -232,6 +232,7 @@ export class DbHelper {
       phone: "555123456",
       city: "tbilisi",
       address: "QA Address",
+      addressEn: "QA Address En",
       categories: ["painting"],
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -275,9 +276,6 @@ export class DbHelper {
       password: hashedPassword,
       nameEn: "QA Test User",
       idNumber,
-      dateOfBirth: new Date("1990-01-01"),
-      city: "tbilisi",
-      address: "QA Address",
       phone: "555000000",
       isVerified: true,
       isActive: true,
@@ -320,6 +318,82 @@ export class DbHelper {
       { _id: { $in: ids.map((id) => new ObjectId(id)) } },
       { $set: { isPinned: false, pinnedAt: null } },
     );
+  }
+
+  /** Delete all payment cards belonging to a user id. */
+  static async deleteCardsByUserId(userId: string): Promise<void> {
+    const { ObjectId } = await import("mongodb");
+    const client = await this.getClient();
+    const db = client.db();
+    await db
+      .collection("paymentcards")
+      .deleteMany({ user: new ObjectId(userId) });
+  }
+
+  /** Delete all addresses belonging to a user id. */
+  static async deleteAddressesByUserId(userId: string): Promise<void> {
+    const { ObjectId } = await import("mongodb");
+    const client = await this.getClient();
+    const db = client.db();
+    await db
+      .collection("addresses")
+      .deleteMany({ user: new ObjectId(userId) });
+  }
+
+  /** Bulk-insert N filler addresses for a user (used for limit tests). */
+  static async seedAddresses(userId: string, count: number): Promise<void> {
+    const { ObjectId } = await import("mongodb");
+    const client = await this.getClient();
+    const db = client.db();
+    const docs = Array.from({ length: count }, (_, i) => ({
+      user: new ObjectId(userId),
+      type: "home",
+      label: `Filler ${i}`,
+      addressLine: `Filler address line ${i}`,
+      lat: 41.7,
+      lng: 44.8,
+      isDefault: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await db.collection("addresses").insertMany(docs);
+  }
+
+  /** Insert a synthetic request log; returns its string id. */
+  static async insertRequestLog(
+    overrides: Record<string, unknown> = {},
+  ): Promise<string> {
+    const client = await this.getClient();
+    const db = client.db();
+    const result = await db.collection("requestlogs").insertOne({
+      method: "GET",
+      url: "/api/qa-seeded-log",
+      statusCode: 200,
+      responseTimeMs: 5,
+      source: "public",
+      ip: "127.0.0.1",
+      userAgent: "qa-suite",
+      createdAt: new Date(),
+      ...overrides,
+    });
+    return result.insertedId.toString();
+  }
+
+  /** Count request logs (optionally filtered). */
+  static async countRequestLogs(
+    filter: Record<string, unknown> = {},
+  ): Promise<number> {
+    const client = await this.getClient();
+    const db = client.db();
+    return db.collection("requestlogs").countDocuments(filter);
+  }
+
+  /** Delete a request log by string id. */
+  static async deleteRequestLogById(id: string): Promise<void> {
+    const { ObjectId } = await import("mongodb");
+    const client = await this.getClient();
+    const db = client.db();
+    await db.collection("requestlogs").deleteOne({ _id: new ObjectId(id) });
   }
 
   static async disconnect() {
