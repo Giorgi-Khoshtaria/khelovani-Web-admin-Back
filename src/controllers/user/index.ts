@@ -12,3 +12,4 @@ export * from "./deleteAccount.js";
 export * from "./paymentCards/index.js";
 export * from "./addresses/index.js";
 export * from "./cart/index.js";
+export * from "./orders/index.js";

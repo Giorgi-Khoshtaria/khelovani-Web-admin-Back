@@ -25,6 +25,9 @@ import {
   removeCartItem,
   clearCart,
   mergeCart,
+  checkout,
+  getOrders,
+  getOrder,
 } from "../controllers/user/index.js";
 import { twoMinutesLimiter } from "../utils/limiters/rate-limit.js";
 import { authenticate } from "../middleware/auth/authenticate.js";
@@ -48,6 +51,10 @@ import {
   updateCartItemSchema,
   mergeCartSchema,
 } from "../validations/schemas/user/cart.schema.js";
+import {
+  checkoutSchema,
+  orderIdParamSchema,
+} from "../validations/schemas/user/order.schema.js";
 import upload from "../utils/config/multer.js";
 import { handleMulterError } from "../middleware/error/handleMulterError.js";
 import { CloudinaryFolder } from "../types/cloudinaryFolder.enum.js";
@@ -141,5 +148,10 @@ router.patch(
 router.delete("/cart/items/:productId", authenticate, removeCartItem);
 router.delete("/cart", authenticate, clearCart);
 router.post("/cart/merge", authenticate, validate(mergeCartSchema), mergeCart);
+
+// ✅ Protected — orders
+router.post("/orders/checkout", authenticate, validate(checkoutSchema), checkout);
+router.get("/orders", authenticate, getOrders);
+router.get("/orders/:id", authenticate, validate(orderIdParamSchema), getOrder);
 
 export default router;

@@ -9,6 +9,8 @@ import adminPartnersRoutes from "./adminRoutes/adminPartners.routes.js";
 import translationRoutes from "./adminRoutes/translation.routes.js";
 import roleRoutes from "./adminRoutes/role.routes.js";
 import partnerProductsRoutes from "./partnerProducts.routes.js";
+import partnerOrdersRoutes from "./partnerOrders.routes.js";
+import adminOrdersRoutes from "./adminRoutes/adminOrders.routes.js";
 import permissionRoutes from "./adminRoutes/permission.routes.js";
 import adminMenuRoutes from "./adminRoutes/menu.routes.js";
 import publicMenuRoutes from "./menu.routes.js";
@@ -39,6 +41,8 @@ apiRouter.get("/health", async (_req, res) => {
 });
 
 apiRouter.use("/user", userRoutes);
+// Register before "/partner" so the partner router's "/:id" doesn't swallow "/orders".
+apiRouter.use("/partner/orders", partnerOrdersRoutes);
 apiRouter.use("/partner", partnerRoutes);
 apiRouter.use("/products", partnerProductsRoutes);
 apiRouter.use("/menu", publicMenuRoutes);
@@ -51,6 +55,7 @@ apiRouter.use("/admin/permissions", permissionRoutes);
 apiRouter.use("/admin/menu", adminMenuRoutes);
 apiRouter.use("/admin/upload", uploadRoutes);
 apiRouter.use("/admin/users", adminUsersRoutes);
+apiRouter.use("/admin/orders", adminOrdersRoutes);
 apiRouter.use("/admin/categories", categoryRoutes);
 apiRouter.use("/admin/logs", logsRoutes);
 apiRouter.use("/admin/cache", cacheRoutes);
