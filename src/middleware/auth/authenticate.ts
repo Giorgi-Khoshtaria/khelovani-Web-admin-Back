@@ -26,7 +26,10 @@ export const authenticate = (
     return next();
   }
 
-  const token = req.headers.authorization?.split(" ")[1]; // Bearer <token>
+  // httpOnly cookie (web frontend) takes precedence; Bearer header is the
+  // fallback for the admin frontend and server-side rendered requests.
+  const token =
+    req.cookies?.["access-token"] ?? req.headers.authorization?.split(" ")[1];
 
   if (!token) {
     res.status(401).json({ message: "ავტორიზაცია საჭიროა" });
@@ -52,7 +55,8 @@ export const optionalAuthenticate = (
   res: Response,
   next: NextFunction,
 ): void => {
-  const token = req.headers.authorization?.split(" ")[1];
+  const token =
+    req.cookies?.["access-token"] ?? req.headers.authorization?.split(" ")[1];
 
   if (!token) {
     return next();

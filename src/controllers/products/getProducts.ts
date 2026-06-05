@@ -65,10 +65,12 @@ export const getProducts = asyncHandler(async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(targetPartnerId as string)) {
       throw new AppError(tAlerts("invalid_partner_id") || "Invalid partner ID format", 400);
     }
-    if (!isAdmin && targetPartnerId !== userId) {
-      throw new AppError("Forbidden: Cannot access another partner's products", 403);
-    }
     query.owner = new mongoose.Types.ObjectId(targetPartnerId as string);
+    // Owners/admins see all their products (including hidden); the public
+    // partner page sees only the visible ones.
+    if (!isAdmin && targetPartnerId !== userId) {
+      query.isShown = true;
+    }
   } else {
     if (!isAdmin) {
       query.isShown = true;

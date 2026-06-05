@@ -1,17 +1,9 @@
 import { z } from "zod";
 import { PartnerTypeEnum } from "../../../types/partnerTypes.js";
 import { isMalicious } from "../../../utils/security/isMalicious.js";
+import { CITY_KEYS } from "../../../utils/cities.js";
 
 const noMalicious = (v: string) => !isMalicious(v);
-
-const VALID_CITIES = [
-  "tbilisi",
-  "batumi",
-  "kutaisi",
-  "rustavi",
-  "gori",
-  "zugdidi",
-] as const;
 
 const sharedFields = {
   companyNameGe: z
@@ -34,7 +26,7 @@ const sharedFields = {
     .min(1, "phone_required")
     .regex(/^5\d{2}\s?\d{3}\s?\d{3}$/, "phone_invalid"),
 
-  city: z.enum(VALID_CITIES),
+  city: z.enum(CITY_KEYS),
 
   email: z
     .string()
@@ -116,7 +108,7 @@ const sharedRegistrationFields = {
     .trim()
     .min(1, "phone_required")
     .regex(/^5\d{2}\s?\d{3}\s?\d{3}$/, "phone_invalid"),
-  city: z.enum(VALID_CITIES),
+  city: z.enum(CITY_KEYS),
   email: z.string().trim().min(1, "email_required").email("email_invalid").max(254, "email_too_long"),
   address: z
     .string()

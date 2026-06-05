@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { PartnerStatusEnum } from "../types/partnerStatus.js";
 import { PartnerTypeEnum } from "../types/partnerTypes.js";
+import { CITY_KEYS } from "../utils/cities.js";
 
 const OrganisationSchema = new mongoose.Schema(
   {
@@ -46,7 +47,7 @@ const OrganisationSchema = new mongoose.Schema(
     city: {
       type: String,
       required: true,
-      enum: ["tbilisi", "batumi", "kutaisi", "rustavi", "gori", "zugdidi"],
+      enum: CITY_KEYS,
     },
     email: {
       type: String,

@@ -3,6 +3,7 @@ import { ROLES } from "../../middleware/role/permissions.js";
 import {
   orgIdFromPath,
   orgFolderAbsolute,
+  CLOUDINARY_ROOT,
 } from "../../utils/config/mediaFolders.js";
 import { AppError } from "../../utils/errors/AppError.js";
 
@@ -93,13 +94,20 @@ export const assertCanMutate = (req: Request, publicId: string): void => {
  */
 export const buildSearchExpression = (opts: {
   orgId: string | null;
+  folder?: string | null;
   dateFrom?: string;
   dateTo?: string;
 }): string => {
   const parts: string[] = ["resource_type:image"];
 
   if (opts.orgId) {
+    // A specific organisation drills into its own folder.
     parts.push(`folder="${orgFolderAbsolute(opts.orgId)}"`);
+  } else if (opts.folder) {
+    // A top-level folder (e.g. "general", "organizations") — match the folder
+    // itself plus anything nested beneath it.
+    const abs = `${CLOUDINARY_ROOT}/${opts.folder}`;
+    parts.push(`(folder="${abs}" OR folder:${abs}/*)`);
   } else {
     // Admin "all orgs" view — everything under khelovani except user avatars.
     parts.push(`folder:khelovani/* AND -folder="khelovani/users"`);

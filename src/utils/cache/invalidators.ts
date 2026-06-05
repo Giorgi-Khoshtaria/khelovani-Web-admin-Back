@@ -38,3 +38,7 @@ export const invalidatePartnerById = (id: string): void => {
   void invalidatePattern("partners:list:*");
   void invalidate(CacheKey.pinnedPartners());
 };
+
+/** Wipe the public information-fields cache after any create/update/delete. */
+export const invalidateInformationFields = () =>
+  invalidatePattern(CacheKey.informationFieldsPattern());

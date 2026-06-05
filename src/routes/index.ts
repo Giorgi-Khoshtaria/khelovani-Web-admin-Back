@@ -22,6 +22,10 @@ import favoritesRoutes from "./favorites.routes.js";
 import logsRoutes from "./adminRoutes/logs.routes.js";
 import cacheRoutes from "./adminRoutes/cache.routes.js";
 import mediaRoutes from "./adminRoutes/media.routes.js";
+import informationFieldRoutes from "./adminRoutes/informationField.routes.js";
+import publicInformationFieldRoutes from "./informationField.routes.js";
+import adminStatisticsRoutes from "./adminRoutes/statistics.routes.js";
+import partnerStatisticsRoutes from "./partnerStatistics.routes.js";
 
 const apiRouter = Router();
 
@@ -43,9 +47,11 @@ apiRouter.get("/health", async (_req, res) => {
 apiRouter.use("/user", userRoutes);
 // Register before "/partner" so the partner router's "/:id" doesn't swallow "/orders".
 apiRouter.use("/partner/orders", partnerOrdersRoutes);
+apiRouter.use("/partner/statistics", partnerStatisticsRoutes);
 apiRouter.use("/partner", partnerRoutes);
 apiRouter.use("/products", partnerProductsRoutes);
 apiRouter.use("/menu", publicMenuRoutes);
+apiRouter.use("/information-fields", publicInformationFieldRoutes);
 
 apiRouter.use("/admin/auth", adminAuthRoutes);
 apiRouter.use("/admin/partners", adminPartnersRoutes);
@@ -60,6 +66,8 @@ apiRouter.use("/admin/categories", categoryRoutes);
 apiRouter.use("/admin/logs", logsRoutes);
 apiRouter.use("/admin/cache", cacheRoutes);
 apiRouter.use("/admin/media", mediaRoutes);
+apiRouter.use("/admin/information-fields", informationFieldRoutes);
+apiRouter.use("/admin/statistics", adminStatisticsRoutes);
 apiRouter.use("/categories", publicCategoryRoutes);
 apiRouter.use("/favorites", favoritesRoutes);
 

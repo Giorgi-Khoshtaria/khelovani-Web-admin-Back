@@ -3,6 +3,7 @@ export * from "./getPartnerById.js";
 export * from "./getAllPartners.js";
 export * from "./getPublicPartners.js";
 export * from "./getPublicPartnerById.js";
+export * from "./contactPartner.js";
 export * from "./updatePartnerStatus.js";
 export * from "./updatePartner.js";
 export * from "./deletePartner.js";

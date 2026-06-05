@@ -2,6 +2,7 @@ import { Router, type Request, type Response, type NextFunction } from "express"
 import {
   registerUser,
   loginUser,
+  logoutUser,
   forgotPassword,
   resetPassword,
   getProfile,
@@ -69,6 +70,7 @@ router.post(
   registerUser,
 );
 router.post("/login", twoMinutesLimiter, validate(loginSchema), loginUser);
+router.post("/logout", logoutUser);
 router.post(
   "/forgot-password",
   twoMinutesLimiter,

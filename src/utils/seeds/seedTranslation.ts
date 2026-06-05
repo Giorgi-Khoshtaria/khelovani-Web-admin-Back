@@ -586,6 +586,11 @@ const translations = [
   },
   {
     namespace: "auth",
+    key: "logout_success",
+    translations: { ge: "წარმატებით გახვედით", en: "Logged out successfully" },
+  },
+  {
+    namespace: "auth",
     key: "org_role_not_found",
     translations: {
       ge: "ორგანიზაციის როლი ვერ მოიძებნა",
@@ -2250,6 +2255,58 @@ const translations = [
     key: "partner_profile.contact_btn",
     translations: { ge: "დაკავშირება", en: "Contact" },
   },
+  {
+    namespace: "pages",
+    key: "partner_profile.contact_intro",
+    translations: {
+      ge: "იკითხეთ ინდივიდუალური შეკვეთის, მასალების ან ვადების შესახებ.",
+      en: "Ask about a custom commission, materials, lead times or anything else.",
+    },
+  },
+  {
+    namespace: "pages",
+    key: "partner_profile.contact_reply_time",
+    translations: {
+      ge: "ჩვეულებრივ პასუხობს დღის განმავლობაში.",
+      en: "usually replies within a day.",
+    },
+  },
+  {
+    namespace: "pages",
+    key: "partner_profile.contact_subject",
+    translations: { ge: "თემა", en: "Subject" },
+  },
+  {
+    namespace: "pages",
+    key: "partner_profile.contact_subject_ph",
+    translations: {
+      ge: "მაგ. ხელნაკეთი სერვიზი",
+      en: "e.g. Custom dinner set in ash glaze",
+    },
+  },
+  {
+    namespace: "pages",
+    key: "partner_profile.contact_message",
+    translations: { ge: "შეტყობინება", en: "Message" },
+  },
+  {
+    namespace: "pages",
+    key: "partner_profile.contact_message_ph",
+    translations: {
+      ge: "გამარჯობა, მსურს შევუკვეთო…",
+      en: "Hi, I'd love to commission…",
+    },
+  },
+  {
+    namespace: "pages",
+    key: "partner_profile.contact_send",
+    translations: { ge: "გაგზავნა", en: "Send message" },
+  },
+  {
+    namespace: "pages",
+    key: "partner_profile.contact_sending",
+    translations: { ge: "იგზავნება…", en: "Sending…" },
+  },
 
   {
     namespace: "alerts",
@@ -2696,6 +2753,27 @@ const translations = [
     translations: { ge: "მისამართი წაიშალა", en: "Address deleted" },
   },
   {
+    namespace: "alerts",
+    key: "message_sent",
+    translations: { ge: "შეტყობინება გაიგზავნა", en: "Message sent" },
+  },
+  {
+    namespace: "alerts",
+    key: "message_failed",
+    translations: {
+      ge: "შეტყობინება ვერ გაიგზავნა",
+      en: "Message could not be sent",
+    },
+  },
+  {
+    namespace: "alerts",
+    key: "login_required",
+    translations: {
+      ge: "გთხოვთ, გაიაროთ ავტორიზაცია",
+      en: "Please log in first",
+    },
+  },
+  {
     namespace: "validation",
     key: "address_type_invalid",
     translations: {
@@ -2765,6 +2843,117 @@ const translations = [
     namespace: "validation",
     key: "address_location_invalid",
     translations: { ge: "მდებარეობა არასწორია", en: "Invalid location" },
+  },
+  {
+    namespace: "validation",
+    key: "card_number_required",
+    translations: {
+      ge: "შეიყვანეთ ბარათის ნომერი",
+      en: "Enter the card number",
+    },
+  },
+  {
+    namespace: "validation",
+    key: "card_number_too_short",
+    translations: {
+      ge: "ბარათის ნომერი ძალიან მოკლეა",
+      en: "Card number is too short",
+    },
+  },
+  {
+    namespace: "validation",
+    key: "card_number_invalid_length",
+    translations: {
+      ge: "ბარათის ნომრის სიგრძე არასწორია",
+      en: "Invalid card number length",
+    },
+  },
+  {
+    namespace: "validation",
+    key: "card_number_invalid",
+    translations: { ge: "ბარათის ნომერი არასწორია", en: "Invalid card number" },
+  },
+  {
+    namespace: "validation",
+    key: "card_holder_required",
+    translations: {
+      ge: "შეიყვანეთ მფლობელის სახელი",
+      en: "Enter the cardholder name",
+    },
+  },
+  {
+    namespace: "validation",
+    key: "card_holder_too_short",
+    translations: { ge: "სახელი ძალიან მოკლეა", en: "Name is too short" },
+  },
+  {
+    namespace: "validation",
+    key: "card_holder_too_long",
+    translations: { ge: "სახელი ძალიან გრძელია", en: "Name is too long" },
+  },
+  {
+    namespace: "validation",
+    key: "card_holder_invalid",
+    translations: { ge: "სახელი არასწორია", en: "Invalid name" },
+  },
+  {
+    namespace: "validation",
+    key: "card_expiry_required",
+    translations: {
+      ge: "შეიყვანეთ მოქმედების ვადა",
+      en: "Enter the expiry date",
+    },
+  },
+  {
+    namespace: "validation",
+    key: "card_expiry_invalid_month",
+    translations: { ge: "თვე არასწორია", en: "Invalid month" },
+  },
+  {
+    namespace: "validation",
+    key: "card_expiry_invalid_year",
+    translations: { ge: "წელი არასწორია", en: "Invalid year" },
+  },
+  {
+    namespace: "validation",
+    key: "card_expired",
+    translations: { ge: "ბარათს ვადა გაუვიდა", en: "Card has expired" },
+  },
+  {
+    namespace: "validation",
+    key: "card_cvc_required",
+    translations: { ge: "შეიყვანეთ CVC", en: "Enter the CVC" },
+  },
+  {
+    namespace: "validation",
+    key: "card_cvc_invalid",
+    translations: { ge: "CVC არასწორია", en: "Invalid CVC" },
+  },
+  {
+    namespace: "validation",
+    key: "subject_required",
+    translations: { ge: "შეიყვანეთ თემა", en: "Enter a subject" },
+  },
+  {
+    namespace: "validation",
+    key: "subject_too_long",
+    translations: { ge: "თემა ძალიან გრძელია", en: "Subject is too long" },
+  },
+  {
+    namespace: "validation",
+    key: "message_too_short",
+    translations: {
+      ge: "შეტყობინება ძალიან მოკლეა",
+      en: "Message is too short",
+    },
+  },
+  {
+    namespace: "validation",
+    key: "message_too_long",
+    translations: {
+      ge: "შეტყობინება ძალიან გრძელია",
+      en: "Message is too long",
+    },
   },
 
   // ─── cart feature ───────────────────────────────────────────────────────────

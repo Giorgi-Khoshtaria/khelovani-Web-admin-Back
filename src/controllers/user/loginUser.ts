@@ -7,6 +7,7 @@ import { TranslationNamespace } from "../../types/translation.enum.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { sendResponse } from "../../utils/apiResponse.js";
 import { AppError } from "../../utils/errors/AppError.js";
+import { setAuthCookies } from "../../utils/token/authCookie.js";
 
 /**
  * @desc    Login user
@@ -45,12 +46,14 @@ export const loginUser = asyncHandler(async (req, res) => {
     id: user._id.toString(),
   });
 
-  // 5. Prepare user object (omit password)
+  // 5. Issue the token as an httpOnly cookie (never exposed to browser JS)
+  setAuthCookies(res, token);
+
+  // 6. Prepare user object (omit password)
   const userObj = user.toObject();
   delete (userObj as any).password;
 
   sendResponse(res, 200, tAuth("login_success"), {
-    token,
     user: userObj,
   });
 });

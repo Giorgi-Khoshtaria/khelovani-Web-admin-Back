@@ -2,12 +2,17 @@ import type { Request, Response } from "express";
 import Cart from "../../../modules/cart.modules.js";
 import Product from "../../../modules/product.modules.js";
 import Address from "../../../modules/address.modules.js";
-import Order, { type IOrderItem } from "../../../modules/order.modules.js";
+import Order, { type IOrderItem, type IOrder } from "../../../modules/order.modules.js";
+import Organisation from "../../../modules/organization.modules.js";
 import { nextOrderNumber } from "../../../modules/counter.modules.js";
 import { OrderStatus } from "../../../types/orderStatus.enum.js";
 import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { sendResponse } from "../../../utils/apiResponse.js";
 import { AppError } from "../../../utils/errors/AppError.js";
+import {
+  sendBuyerOrderConfirmationEmail,
+  sendPartnerOrderNotificationEmail,
+} from "../../../utils/email/sendOrderConfirmationEmail.js";
 
 // Keep in sync with the frontend cart totals (useOrderTotals).
 const FREE_SHIPPING_THRESHOLD = 200;
@@ -125,5 +130,39 @@ export const checkout = asyncHandler(async (req: Request, res: Response) => {
   cart.items = [] as typeof cart.items;
   await cart.save();
 
+  // 7. Fire confirmation emails — one to the buyer and one to each partner.
+  //    Fire-and-forget: never block the response or fail checkout on email errors.
+  void dispatchOrderEmails(created as unknown as IOrder[]);
+
   sendResponse(res, 201, "Order placed", created);
 });
+
+const dispatchOrderEmails = async (orders: IOrder[]): Promise<void> => {
+  try {
+    const partnerIds = Array.from(new Set(orders.map((o) => String(o.partner))));
+    const partners = await Organisation.find({ _id: { $in: partnerIds } })
+      .select("email")
+      .lean();
+    const emailByPartnerId = new Map(
+      partners.map((p: any) => [String(p._id), p.email as string]),
+    );
+
+    const jobs: Promise<void>[] = [];
+    for (const order of orders) {
+      jobs.push(sendBuyerOrderConfirmationEmail(order));
+      const partnerEmail = emailByPartnerId.get(String(order.partner));
+      if (partnerEmail) {
+        jobs.push(sendPartnerOrderNotificationEmail(order, partnerEmail));
+      }
+    }
+
+    const results = await Promise.allSettled(jobs);
+    results.forEach((r, i) => {
+      if (r.status === "rejected") {
+        console.error("[order-email] dispatch failed:", i, r.reason);
+      }
+    });
+  } catch (err) {
+    console.error("[order-email] unexpected dispatch error:", err);
+  }
+};

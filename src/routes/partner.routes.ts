@@ -6,10 +6,13 @@ import {
   getPinnedPartners,
   partnerForgotPassword,
   partnerResetPassword,
+  contactPartner,
 } from "../controllers/partners/index.js";
 import { twoMinutesLimiter } from "../utils/limiters/rate-limit.js";
+import { authenticate } from "../middleware/auth/authenticate.js";
 import { validate } from "../middleware/validate.js";
 import { partnerRegistrationSchema } from "../validations/schemas/partner/partnerAuth.schema.js";
+import { partnerContactSchema } from "../validations/schemas/partner/partnerContact.schema.js";
 import {
   forgotPasswordSchema,
   resetPasswordSchema,
@@ -51,6 +54,15 @@ router.get(
     CacheTTL.partnerById,
   ),
   getPublicPartnerById,
+);
+
+// ✅ Contact artisan — authenticated user sends a message to the partner.
+router.post(
+  "/:id/contact",
+  twoMinutesLimiter,
+  authenticate,
+  validate(partnerContactSchema),
+  contactPartner,
 );
 
 export default router;

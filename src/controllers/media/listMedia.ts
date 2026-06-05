@@ -25,17 +25,25 @@ const SEARCH_FETCH_SIZE = 200;
  * locally before returning.
  */
 export const listMedia = asyncHandler(async (req, res) => {
-  const { orgId: requestedOrgId, search, dateFrom, dateTo, cursor } =
+  const { orgId: requestedOrgId, folder: rawFolder, search, dateFrom, dateTo, cursor } =
     req.query as Record<string, string | undefined>;
 
   const { orgId } = resolveOrgScope(req, requestedOrgId);
+
+  // Top-level folder filter (e.g. "general"). Only honoured for admins viewing
+  // across orgs; org users stay locked to their own folder. Sanitised to a safe
+  // folder-name charset to keep it out of the search expression unescaped.
+  const folder =
+    !orgId && rawFolder && /^[a-z0-9_-]+$/i.test(rawFolder)
+      ? rawFolder
+      : null;
 
   const limit = Math.min(
     MAX_LIMIT,
     Math.max(1, Number(req.query.limit) || 30),
   );
 
-  const expression = buildSearchExpression({ orgId, dateFrom, dateTo });
+  const expression = buildSearchExpression({ orgId, folder, dateFrom, dateTo });
   const fetchSize = search?.trim() ? SEARCH_FETCH_SIZE : limit;
 
   let searchQuery = cloudinary.search

@@ -14,7 +14,8 @@ const V = "v1";
 
 const stable = (input: unknown) => {
   if (input === null || input === undefined) return "";
-  if (typeof input === "string" || typeof input === "number") return String(input);
+  if (typeof input === "string" || typeof input === "number")
+    return String(input);
   return JSON.stringify(input);
 };
 
@@ -44,6 +45,10 @@ export const CacheKey = {
   partnerById: (id: string) => `partners:byId:${id}:${V}`,
   partnersPattern: () => `partners:*`,
 
+  // Information fields (public site info: email/phone/address)
+  informationFields: () => `information:public:${V}`,
+  informationFieldsPattern: () => `information:*`,
+
   helper: { stable },
 } as const;
 
@@ -58,4 +63,5 @@ export const CacheTTL = {
   partnersList: 5 * 60, // 5m
   pinnedPartners: 10 * 60, // 10m
   partnerById: 10 * 60, // 10m
+  informationFields: 60 * 60, // 1h — changes rarely
 } as const;

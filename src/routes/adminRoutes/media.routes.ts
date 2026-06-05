@@ -5,6 +5,7 @@ import {
   deleteMedia,
   renameMedia,
   getMediaOrganizations,
+  getFolders,
 } from "../../controllers/media/index.js";
 import { authenticate } from "../../middleware/auth/authenticate.js";
 import { requirePermission } from "../../middleware/role/requirePermission.js";
@@ -28,6 +29,13 @@ router.get(
   "/organizations",
   requirePermission(PERMISSIONS.ADMIN.MEDIA_VIEW),
   getMediaOrganizations,
+);
+
+// Top-level folder list — admin only, used to populate the folder filter.
+router.get(
+  "/folders",
+  requirePermission(PERMISSIONS.ADMIN.MEDIA_VIEW),
+  getFolders,
 );
 
 router.get("/", requirePermission(...VIEW), listMedia);

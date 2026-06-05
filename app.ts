@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import mongoSanitize from "express-mongo-sanitize";
 
@@ -38,6 +39,9 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
+
+// ✅ 1.1 Cookie parser — populates req.cookies (used for httpOnly auth token)
+app.use(cookieParser());
 
 // ✅ 2. Security Middleware (Helmet etc)
 app.use(helmet());
