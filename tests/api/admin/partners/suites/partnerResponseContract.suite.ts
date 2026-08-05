@@ -6,7 +6,9 @@ import { createPendingPartner } from "../partners.helpers.js";
 
 export const partnerResponseContractSuites = () => {
   test.describe("6. Response Shape Contract", () => {
-    test("AA-090: GET list — Content-Type is application/json", async ({ adminApi }) => {
+    test("AA-090: GET list — Content-Type is application/json", async ({
+      adminApi,
+    }) => {
       const res = await adminApi.get(ENDPOINTS.ADMIN_PARTNERS);
       expect(res.headers()["content-type"]).toContain("application/json");
     });
@@ -59,8 +61,12 @@ export const partnerResponseContractSuites = () => {
       expect(Array.isArray(body.errors)).toBe(true);
     });
 
-    test("AA-094: 404 error response is JSON object with message", async ({ adminApi }) => {
-      const res = await adminApi.get(`${ENDPOINTS.ADMIN_PARTNERS}/000000000000000000000000`);
+    test("AA-094: 404 error response is JSON object with message", async ({
+      adminApi,
+    }) => {
+      const res = await adminApi.get(
+        `${ENDPOINTS.ADMIN_PARTNERS}/000000000000000000000000`,
+      );
       const body = await res.json().catch(() => null);
       expect(body).not.toBeNull();
       expect(body).toHaveProperty("message");
@@ -79,7 +85,9 @@ export const partnerResponseContractSuites = () => {
       expect(body.data.status).toBe(PartnerStatusEnum.APPROVED);
     });
 
-    test("AA-096: all error responses are JSON objects — never plain strings", async ({ adminApi }) => {
+    test("AA-096: all error responses are JSON objects — never plain strings", async ({
+      adminApi,
+    }) => {
       const cases = [
         adminApi.get(`${ENDPOINTS.ADMIN_PARTNERS}/bad-id`),
         adminApi.get(`${ENDPOINTS.ADMIN_PARTNERS}/000000000000000000000000`),
@@ -93,7 +101,9 @@ export const partnerResponseContractSuites = () => {
       }
     });
 
-    test("AA-097: GET list — envelope has data array and meta object", async ({ adminApi }) => {
+    test("AA-097: GET list — envelope has data array and meta object", async ({
+      adminApi,
+    }) => {
       const res = await adminApi.get(ENDPOINTS.ADMIN_PARTNERS);
       expect(res.status()).toBe(200);
       const body = await res.json();

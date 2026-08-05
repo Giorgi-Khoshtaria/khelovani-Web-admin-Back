@@ -1,7 +1,10 @@
 import Product from "../../modules/product.modules.js";
 import Organisation from "../../modules/organization.modules.js";
 import { escapeRegex } from "../../utils/apiResponse.js";
-import { invalidateProducts, invalidatePartners } from "../../utils/cache/invalidators.js";
+import {
+  invalidateProducts,
+  invalidatePartners,
+} from "../../utils/cache/invalidators.js";
 
 /**
  * Keep the database in sync when media assets change on Cloudinary.
@@ -42,10 +45,6 @@ export const purgeMediaReferences = async (
   return { products, organizations };
 };
 
-/**
- * When an asset is renamed its URL changes — repoint every DB reference
- * from the old public_id to the new delivery URL.
- */
 export const remapMediaReference = async (
   oldPublicId: string,
   newUrl: string,
@@ -66,5 +65,8 @@ export const remapMediaReference = async (
   if (products.length) void invalidateProducts();
   if (orgRes.modifiedCount) void invalidatePartners();
 
-  return { products: products.length, organizations: orgRes.modifiedCount || 0 };
+  return {
+    products: products.length,
+    organizations: orgRes.modifiedCount || 0,
+  };
 };

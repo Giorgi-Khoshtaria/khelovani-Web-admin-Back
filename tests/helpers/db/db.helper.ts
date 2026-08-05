@@ -288,13 +288,17 @@ export class DbHelper {
   static async deleteEndUserByEmail(email: string): Promise<void> {
     const client = await this.getClient();
     const db = client.db();
-    await db.collection("users").deleteOne({ email: email.toLowerCase().trim() });
+    await db
+      .collection("users")
+      .deleteOne({ email: email.toLowerCase().trim() });
   }
 
   static async getEndUserByEmail(email: string): Promise<any> {
     const client = await this.getClient();
     const db = client.db();
-    return db.collection("users").findOne({ email: email.toLowerCase().trim() });
+    return db
+      .collection("users")
+      .findOne({ email: email.toLowerCase().trim() });
   }
 
   /**
@@ -314,10 +318,12 @@ export class DbHelper {
     const { ObjectId } = await import("mongodb");
     const client = await this.getClient();
     const db = client.db();
-    await db.collection("organisations").updateMany(
-      { _id: { $in: ids.map((id) => new ObjectId(id)) } },
-      { $set: { isPinned: false, pinnedAt: null } },
-    );
+    await db
+      .collection("organisations")
+      .updateMany(
+        { _id: { $in: ids.map((id) => new ObjectId(id)) } },
+        { $set: { isPinned: false, pinnedAt: null } },
+      );
   }
 
   /** Delete all payment cards belonging to a user id. */
@@ -335,9 +341,7 @@ export class DbHelper {
     const { ObjectId } = await import("mongodb");
     const client = await this.getClient();
     const db = client.db();
-    await db
-      .collection("addresses")
-      .deleteMany({ user: new ObjectId(userId) });
+    await db.collection("addresses").deleteMany({ user: new ObjectId(userId) });
   }
 
   /** Bulk-insert N filler addresses for a user (used for limit tests). */
