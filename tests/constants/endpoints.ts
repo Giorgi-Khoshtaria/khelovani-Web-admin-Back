@@ -30,6 +30,17 @@ export const ENDPOINTS = {
   PARTNER_RESET_PASSWORD: "/api/partner/reset-password",
   ADMIN_CACHE: "/api/admin/cache",
   ADMIN_LOGS: "/api/admin/logs",
+  ADMIN_REVIEWS: "/api/admin/reviews",
+  PARTNER_REVIEWS: "/api/partner/reviews",
+} as const;
+
+/** Public review endpoints for a given partner id. */
+export const partnerReviewsUrl = (partnerId: string) =>
+  `/api/partner/${partnerId}/reviews`;
+
+export const DEFAULT_REVIEW = {
+  rating: 4,
+  comment: "ძალიან კარგი ხარისხი და სასიამოვნო მომსახურება, ნამდვილად გირჩევთ.",
 } as const;
 
 export const REAL_EMAILS = [

@@ -234,6 +234,9 @@ export class DbHelper {
       address: "QA Address",
       addressEn: "QA Address En",
       categories: ["painting"],
+      // Raw driver insert bypasses the Mongoose default, and the public
+      // endpoints filter on `isShown: true`.
+      isShown: true,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -266,11 +269,20 @@ export class DbHelper {
     return result.deletedCount > 0;
   }
 
-  static async createEndUser(email: string, password: string): Promise<string> {
+  static async createEndUser(
+    email: string,
+    password: string,
+    /**
+     * `idNumber` is unique. The Date.now() default collides when tests run in
+     * parallel, so callers that create several users at once should pass one.
+     */
+    idNumberOverride?: string,
+  ): Promise<string> {
     const client = await this.getClient();
     const db = client.db();
     const hashedPassword = await bcrypt.hash(password, 10);
-    const idNumber = String(Date.now()).slice(0, 11).padEnd(11, "0");
+    const idNumber =
+      idNumberOverride ?? String(Date.now()).slice(0, 11).padEnd(11, "0");
     const result = await db.collection("users").insertOne({
       email: email.toLowerCase().trim(),
       password: hashedPassword,
@@ -324,6 +336,44 @@ export class DbHelper {
         { _id: { $in: ids.map((id) => new ObjectId(id)) } },
         { $set: { isPinned: false, pinnedAt: null } },
       );
+  }
+
+  /** Patch arbitrary fields on a partner (e.g. partnerType / isShown / status). */
+  static async setPartnerFields(
+    id: string,
+    fields: Record<string, unknown>,
+  ): Promise<void> {
+    const { ObjectId } = await import("mongodb");
+    const client = await this.getClient();
+    const db = client.db();
+    await db
+      .collection("organisations")
+      .updateOne({ _id: new ObjectId(id) }, { $set: fields });
+  }
+
+  /** Delete every review left for the given partner ids (review test cleanup). */
+  static async deleteReviewsByPartnerIds(ids: string[]): Promise<void> {
+    if (!ids.length) return;
+    const { ObjectId } = await import("mongodb");
+    const client = await this.getClient();
+    const db = client.db();
+    await db
+      .collection("reviews")
+      .deleteMany({ partner: { $in: ids.map((id) => new ObjectId(id)) } });
+  }
+
+  /** Count the reviews left for a partner, optionally only the visible ones. */
+  static async countReviewsForPartner(
+    id: string,
+    visibleOnly = false,
+  ): Promise<number> {
+    const { ObjectId } = await import("mongodb");
+    const client = await this.getClient();
+    const db = client.db();
+    return db.collection("reviews").countDocuments({
+      partner: new ObjectId(id),
+      ...(visibleOnly ? { isVisible: true } : {}),
+    });
   }
 
   /** Delete all payment cards belonging to a user id. */

@@ -48,11 +48,20 @@ export const authenticate = (
 /**
  * ✅ Optional Authentication Middleware
  * If a token is provided and valid, it sets req.user.
- * If no token is provided, it simply continues without error.
+ * If no token is provided — OR a token is present but invalid/expired — it
+ * continues as an anonymous request rather than rejecting.
+ *
+ * This must never hard-fail: a browser that's "logged out" from the app's
+ * perspective can still be holding a stale/expired `access-token` cookie
+ * (the httpOnly cookie can't be cleared from JS, so it lingers until the
+ * next login). Routes using this middleware are public GETs reachable with
+ * no token at all, so treating a bad token as 401 gained nothing — it only
+ * meant the frontend's global "redirect to /login on 401" interceptor fired
+ * on a public page for someone who was never required to be logged in.
  */
 export const optionalAuthenticate = (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction,
 ): void => {
   const token =
@@ -65,9 +74,8 @@ export const optionalAuthenticate = (
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
     req.user = decoded as Request["user"];
-    next();
   } catch {
-    // Token was provided but is invalid — reject with 401 (not silently skip)
-    res.status(401).json({ message: "არასწორი ან ვადაგასული ტოკენი" });
+    // Invalid/expired — fall back to anonymous instead of rejecting.
   }
+  next();
 };

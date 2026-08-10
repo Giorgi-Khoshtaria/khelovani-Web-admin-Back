@@ -3164,6 +3164,188 @@ const translations = [
     key: "continue_shopping",
     translations: { ge: "შოპინგის გაგრძელება", en: "Continue shopping" },
   },
+
+  // ─── partner reviews ────────────────────────────────────────────────────────
+  {
+    namespace: "validation",
+    key: "rating_required",
+    translations: { ge: "აირჩიეთ შეფასება", en: "Please pick a rating" },
+  },
+  {
+    namespace: "validation",
+    key: "rating_invalid",
+    translations: {
+      ge: "შეფასება უნდა იყოს 1-დან 5-მდე",
+      en: "Rating must be between 1 and 5",
+    },
+  },
+  {
+    namespace: "validation",
+    key: "review_comment_too_short",
+    translations: {
+      ge: "კომენტარი უნდა შეიცავდეს მინიმუმ 10 სიმბოლოს",
+      en: "Comment must be at least 10 characters",
+    },
+  },
+  {
+    namespace: "validation",
+    key: "review_comment_too_long",
+    translations: {
+      ge: "კომენტარი არ უნდა აღემატებოდეს 600 სიმბოლოს",
+      en: "Comment must be at most 600 characters",
+    },
+  },
+  {
+    namespace: "validation",
+    key: "search_too_long",
+    translations: {
+      ge: "საძიებო ტექსტი ძალიან გრძელია",
+      en: "Search term is too long",
+    },
+  },
+  {
+    namespace: "validation",
+    key: "invalid_page",
+    translations: { ge: "გვერდი არასწორია", en: "Invalid page" },
+  },
+  {
+    namespace: "validation",
+    key: "invalid_limit",
+    translations: { ge: "ლიმიტი არასწორია", en: "Invalid limit" },
+  },
+  {
+    namespace: "alerts",
+    key: "review_saved",
+    translations: {
+      ge: "თქვენი შეფასება შენახულია",
+      en: "Your review has been saved",
+    },
+  },
+  {
+    namespace: "alerts",
+    key: "review_failed",
+    translations: {
+      ge: "შეფასება ვერ შენახულია",
+      en: "Could not save your review",
+    },
+  },
+  {
+    namespace: "alerts",
+    key: "review_not_found",
+    translations: { ge: "შეფასება ვერ მოიძებნა", en: "Review not found" },
+  },
+  {
+    namespace: "alerts",
+    key: "review_updated",
+    translations: { ge: "შეფასება განახლდა", en: "Review updated" },
+  },
+  {
+    namespace: "alerts",
+    key: "review_deleted",
+    translations: { ge: "შეფასება წაიშალა", en: "Review deleted" },
+  },
+  {
+    namespace: "pages",
+    key: "partner_profile.rate_btn",
+    translations: { ge: "შეფასება", en: "Rate artisan" },
+  },
+  {
+    namespace: "pages",
+    key: "partner_profile.rate_edit_btn",
+    translations: { ge: "შეფასების რედაქტირება", en: "Edit your rating" },
+  },
+  {
+    namespace: "pages",
+    key: "partner_profile.rate_title",
+    translations: { ge: "შეაფასეთ ხელოვანი", en: "Rate this artisan" },
+  },
+  {
+    namespace: "pages",
+    key: "partner_profile.rate_intro",
+    translations: {
+      ge: "გაუზიარეთ სხვებს თქვენი გამოცდილება",
+      en: "Share your experience with others",
+    },
+  },
+  {
+    namespace: "pages",
+    key: "partner_profile.rate_stars_label",
+    translations: { ge: "თქვენი შეფასება", en: "Your rating" },
+  },
+  {
+    namespace: "pages",
+    key: "partner_profile.rate_comment_label",
+    translations: { ge: "კომენტარი", en: "Comment" },
+  },
+  {
+    namespace: "pages",
+    key: "partner_profile.rate_comment_ph",
+    translations: {
+      ge: "რა მოგეწონათ? რას გაუზიარებდით სხვებს?",
+      en: "What did you like? What would you tell others?",
+    },
+  },
+  {
+    namespace: "pages",
+    key: "partner_profile.rate_submit",
+    translations: { ge: "შეფასების გაგზავნა", en: "Submit rating" },
+  },
+  {
+    namespace: "pages",
+    key: "partner_profile.rate_edit_hint",
+    translations: {
+      ge: "თქვენ უკვე შეაფასეთ — ცვლილება ჩაანაცვლებს წინა შეფასებას",
+      en: "You already rated — saving replaces your previous review",
+    },
+  },
+  {
+    namespace: "pages",
+    key: "partner_profile.reviews_title",
+    translations: { ge: "შეფასებები", en: "Reviews" },
+  },
+  {
+    namespace: "pages",
+    key: "partner_profile.reviews_empty",
+    translations: {
+      ge: "ჯერ შეფასება არ არის — იყავით პირველი",
+      en: "No reviews yet — be the first",
+    },
+  },
+  {
+    namespace: "pages",
+    key: "partner_profile.reviews_your_badge",
+    translations: { ge: "თქვენი შეფასება", en: "Your review" },
+  },
+  {
+    namespace: "pages",
+    key: "products.category_empty_fallback",
+    translations: {
+      ge: "ამ კატეგორიაში პროდუქტები არ მოიძებნა — ნაჩვენებია ყველა პროდუქტი",
+      en: "No products in this category — showing all products instead",
+    },
+  },
+  // Rendered raw on the partner profile until now — the keys were referenced
+  // in the components but never seeded.
+  {
+    namespace: "pages",
+    key: "partner_profile.back_to_partners",
+    translations: { ge: "პარტნიორებზე დაბრუნება", en: "Back to partners" },
+  },
+  {
+    namespace: "pages",
+    key: "partner_profile.reviews",
+    translations: { ge: "შეფასება", en: "reviews" },
+  },
+  {
+    namespace: "common",
+    key: "listing.prev",
+    translations: { ge: "წინა", en: "Prev" },
+  },
+  {
+    namespace: "common",
+    key: "listing.next",
+    translations: { ge: "შემდეგი", en: "Next" },
+  },
 ];
 
 async function seed() {

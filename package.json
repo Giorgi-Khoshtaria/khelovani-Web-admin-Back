@@ -12,6 +12,7 @@
     "seed:translation": "tsx src/utils/seeds/seedTranslation.ts",
     "seed:menu": "tsx src/utils/seeds/seedMenuItems.ts",
     "seed:categories": "tsx src/utils/seeds/runSeedCategories.ts",
+    "seed:reviews": "tsx src/utils/seeds/seedReviews.ts",
     "migrate:partner-categories": "tsx src/utils/migrations/runMigratePartnerCategories.ts",
     "migrate:partner-type": "tsx src/utils/migrations/runMigratePartnerType.ts",
     "migrate:product-owner-type": "tsx src/utils/migrations/runMigrateProductOwnerType.ts",

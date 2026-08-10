@@ -26,6 +26,8 @@ import informationFieldRoutes from "./adminRoutes/informationField.routes.js";
 import publicInformationFieldRoutes from "./informationField.routes.js";
 import adminStatisticsRoutes from "./adminRoutes/statistics.routes.js";
 import partnerStatisticsRoutes from "./partnerStatistics.routes.js";
+import partnerReviewsRoutes from "./partnerReviews.routes.js";
+import adminReviewsRoutes from "./adminRoutes/adminReviews.routes.js";
 
 const apiRouter = Router();
 
@@ -48,6 +50,7 @@ apiRouter.use("/user", userRoutes);
 // Register before "/partner" so the partner router's "/:id" doesn't swallow "/orders".
 apiRouter.use("/partner/orders", partnerOrdersRoutes);
 apiRouter.use("/partner/statistics", partnerStatisticsRoutes);
+apiRouter.use("/partner/reviews", partnerReviewsRoutes);
 apiRouter.use("/partner", partnerRoutes);
 apiRouter.use("/products", partnerProductsRoutes);
 apiRouter.use("/menu", publicMenuRoutes);
@@ -68,6 +71,7 @@ apiRouter.use("/admin/cache", cacheRoutes);
 apiRouter.use("/admin/media", mediaRoutes);
 apiRouter.use("/admin/information-fields", informationFieldRoutes);
 apiRouter.use("/admin/statistics", adminStatisticsRoutes);
+apiRouter.use("/admin/reviews", adminReviewsRoutes);
 apiRouter.use("/categories", publicCategoryRoutes);
 apiRouter.use("/favorites", favoritesRoutes);
 

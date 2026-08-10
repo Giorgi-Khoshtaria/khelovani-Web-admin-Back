@@ -45,6 +45,12 @@ export const CacheKey = {
   partnerById: (id: string) => `partners:byId:${id}:${V}`,
   partnersPattern: () => `partners:*`,
 
+  // Reviews (public per-partner list)
+  partnerReviews: (id: string, queryString: string) =>
+    `reviews:partner:${id}:${queryString}:${V}`,
+  partnerReviewsPattern: (id: string) => `reviews:partner:${id}:*`,
+  reviewsPattern: () => `reviews:*`,
+
   // Information fields (public site info: email/phone/address)
   informationFields: () => `information:public:${V}`,
   informationFieldsPattern: () => `information:*`,
@@ -63,5 +69,6 @@ export const CacheTTL = {
   partnersList: 5 * 60, // 5m
   pinnedPartners: 10 * 60, // 10m
   partnerById: 10 * 60, // 10m
+  partnerReviews: 5 * 60, // 5m
   informationFields: 60 * 60, // 1h — changes rarely
 } as const;

@@ -4,6 +4,10 @@ import {
   partnerInquiryHtml,
   type PartnerInquiryEmailData,
 } from "./templates/partnerInquiryHtml.js";
+import {
+  reviewNotificationHtml,
+  type ReviewNotificationEmailData,
+} from "./templates/reviewNotificationHtml.js";
 
 /**
  * Emails a partner a customer inquiry sent from the "Contact artisan" modal.
@@ -18,6 +22,29 @@ export const sendPartnerInquiryEmail = async (
     subject: `Khelovani · ${data.subject}`,
     html: partnerInquiryHtml(data),
     replyTo: { email: data.senderEmail, name: data.senderName },
+  });
+};
+
+/**
+ * Notifies a partner that a customer rated them. The reviewer's address is the
+ * Reply-To so the partner can follow up directly.
+ */
+export const sendPartnerReviewEmail = async (
+  partnerEmail: string,
+  data: ReviewNotificationEmailData,
+): Promise<void> => {
+  const subject = data.isUpdate
+    ? `Khelovani · ${data.rating}★ განახლებული შეფასება / Updated rating`
+    : `Khelovani · ${data.rating}★ ახალი შეფასება / New rating`;
+
+  await sendEmail({
+    to: partnerEmail,
+    subject,
+    html: reviewNotificationHtml(data),
+    replyTo: {
+      email: data.reviewerEmail,
+      name: data.reviewerNameEn || data.reviewerNameGe,
+    },
   });
 };
 

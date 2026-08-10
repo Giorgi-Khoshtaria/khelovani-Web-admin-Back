@@ -19,7 +19,15 @@ export const validate = (schema: {
         req.params = (await schema.params.parseAsync(req.params)) as any;
       }
       if (schema.query) {
-        req.query = (await schema.query.parseAsync(req.query)) as any;
+        const parsedQuery = await schema.query.parseAsync(req.query);
+        // Express 5 exposes `req.query` as a getter-only accessor, so a plain
+        // assignment throws in strict mode. Shadow it on the instance instead.
+        Object.defineProperty(req, "query", {
+          value: parsedQuery,
+          writable: true,
+          configurable: true,
+          enumerable: true,
+        });
       }
       if (schema.body) {
         req.body = await schema.body.parseAsync(req.body);

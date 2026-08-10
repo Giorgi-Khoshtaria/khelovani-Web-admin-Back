@@ -35,6 +35,9 @@ export const PERMISSIONS = {
     LOGS_DELETE: "logs.delete",
     MEDIA_VIEW: "media.view",
     MEDIA_MANAGE: "media.manage",
+    REVIEW_VIEW_ALL: "reviews.viewAll",
+    REVIEW_MODERATE: "reviews.moderate",
+    REVIEW_DELETE: "reviews.delete",
   },
   PARTNER: {
     PROFILE_VIEW: "organization.profile.view",
@@ -52,6 +55,7 @@ export const PERMISSIONS = {
     ANALYTICS_VIEW: "organization.analytics.view",
     MEDIA_VIEW: "organization.media.view",
     MEDIA_MANAGE: "organization.media.manage",
+    REVIEW_VIEW: "organization.reviews.view",
   },
 } as const;
 

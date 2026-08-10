@@ -39,6 +39,11 @@ export const invalidatePartnerById = (id: string): void => {
   void invalidate(CacheKey.pinnedPartners());
 };
 
+/** Wipe every cached page of a partner's public review list after a write. */
+export const invalidatePartnerReviews = (id: string): void => {
+  void invalidatePattern(CacheKey.partnerReviewsPattern(id));
+};
+
 /** Wipe the public information-fields cache after any create/update/delete. */
 export const invalidateInformationFields = () =>
   invalidatePattern(CacheKey.informationFieldsPattern());
