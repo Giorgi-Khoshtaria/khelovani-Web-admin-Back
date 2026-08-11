@@ -3346,6 +3346,88 @@ const translations = [
     key: "listing.next",
     translations: { ge: "შემდეგი", en: "Next" },
   },
+  // ─── policy page (chrome only — Q&A content lives in frontend data, not here) ──
+  {
+    namespace: "pages",
+    key: "policy.eyebrow",
+    translations: { ge: "სამართლებრივი", en: "Legal" },
+  },
+  {
+    namespace: "pages",
+    key: "policy.title_a",
+    translations: { ge: "პირობები და", en: "Terms &" },
+  },
+  {
+    namespace: "pages",
+    key: "policy.title_b",
+    translations: { ge: "კონფიდენციალურობა", en: "Privacy" },
+  },
+  {
+    namespace: "pages",
+    key: "policy.description",
+    translations: {
+      ge: "სამი დოკუმენტი: წესები ყიდვისთვის, წესები ხელოსნებისთვის, რომლებიც პლატფორმაზე ყიდიან, და როგორ ვმართავთ თქვენს მონაცემებს. დაწერილია წასაკითხად — არცერთი პუნქტი სქოლიოში არ იმალება.",
+      en: "Three documents: the rules for buying, the rules for makers who list and sell here, and what we do with your data. Written to be read — no clause is hidden in a footnote.",
+    },
+  },
+  {
+    namespace: "pages",
+    key: "policy.last_updated",
+    translations: { ge: "ბოლო განახლება", en: "Last updated" },
+  },
+  {
+    namespace: "pages",
+    key: "policy.effective",
+    translations: { ge: "ძალაშია", en: "Effective" },
+  },
+  {
+    namespace: "pages",
+    key: "policy.tab_buyer",
+    translations: { ge: "მყიდველის პირობები", en: "Buyer Terms" },
+  },
+  {
+    namespace: "pages",
+    key: "policy.tab_partner",
+    translations: { ge: "პარტნიორის პირობები", en: "Partner Terms" },
+  },
+  {
+    namespace: "pages",
+    key: "policy.tab_privacy",
+    translations: { ge: "კონფიდენციალურობის პოლიტიკა", en: "Privacy Policy" },
+  },
+  {
+    namespace: "pages",
+    key: "policy.toc_label",
+    translations: { ge: "გვერდის სარჩევი", en: "On this page" },
+  },
+  {
+    namespace: "pages",
+    key: "policy.short_version",
+    translations: { ge: "მოკლედ", en: "The short version" },
+  },
+  {
+    namespace: "pages",
+    key: "policy.cta_title",
+    translations: { ge: "რამე გაუგებარია?", en: "Something here unclear?" },
+  },
+  {
+    namespace: "pages",
+    key: "policy.cta_subtitle",
+    translations: {
+      ge: "მოგვწერეთ ქართულად ან ინგლისურად — ადამიანი გიპასუხებთ, ჩვეულებრივ იმავე დღეს.",
+      en: "Write to us in Georgian or English and a person will answer — usually the same day.",
+    },
+  },
+  {
+    namespace: "pages",
+    key: "policy.cta_about",
+    translations: { ge: "გაიგეთ ჩვენს შესახებ", en: "Read about us" },
+  },
+  {
+    namespace: "pages",
+    key: "policy.cta_contact",
+    translations: { ge: "დაგვიკავშირდით", en: "Contact us" },
+  },
 ];
 
 async function seed() {
