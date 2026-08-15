@@ -17,6 +17,8 @@ export const invalidateCategories = () =>
 
 export const invalidateMenu = () => invalidatePattern(CacheKey.menuPattern());
 
+export const invalidatePage = () => invalidatePattern(CacheKey.pagePattern());
+
 /** Full wipe — use after create/delete where list counts change. */
 export const invalidateProducts = () =>
   invalidatePattern(CacheKey.productsPattern());

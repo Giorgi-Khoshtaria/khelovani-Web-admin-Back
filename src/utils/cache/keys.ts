@@ -33,6 +33,10 @@ export const CacheKey = {
   menu: () => `menu:${V}`,
   menuPattern: () => `menu:*`,
 
+  // Pages (SEO)
+  pageByPath: (path: string) => `page:${path}:${V}`,
+  pagePattern: () => `page:*`,
+
   // Products
   productsList: (queryString: string) => `products:list:${queryString}:${V}`,
   pinnedProducts: () => `products:pinned:${V}`,
@@ -63,6 +67,7 @@ export const CacheTTL = {
   translations: 60 * 60, // 1h
   categories: 30 * 60, // 30m
   menu: 30 * 60, // 30m
+  page: 30 * 60, // 30m
   productsList: 5 * 60, // 5m
   pinnedProducts: 10 * 60, // 10m
   productById: 10 * 60, // 10m

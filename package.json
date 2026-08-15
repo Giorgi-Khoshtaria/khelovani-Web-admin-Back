@@ -11,6 +11,7 @@
     "seed:admin": "tsx src/utils/seeds/seedAdmin.ts",
     "seed:translation": "tsx src/utils/seeds/seedTranslation.ts",
     "seed:menu": "tsx src/utils/seeds/seedMenuItems.ts",
+    "seed:pages": "tsx src/utils/seeds/seedPages.ts",
     "seed:categories": "tsx src/utils/seeds/runSeedCategories.ts",
     "seed:reviews": "tsx src/utils/seeds/seedReviews.ts",
     "migrate:partner-categories": "tsx src/utils/migrations/runMigratePartnerCategories.ts",

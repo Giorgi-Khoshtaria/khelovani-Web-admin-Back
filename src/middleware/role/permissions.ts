@@ -29,6 +29,7 @@ export const PERMISSIONS = {
     TRANSLATION_EDIT: "translations.edit",
     TRANSLATION_DELETE: "translations.delete",
     MENU_MANAGE: "menu.manage",
+    PAGE_MANAGE: "pages.manage",
     SETTINGS_VIEW: "settings.view",
     SETTINGS_EDIT: "settings.edit",
     LOGS_VIEW: "logs.view",
